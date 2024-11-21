@@ -1,15 +1,21 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Navigate } from "react-router-dom";
 import userService from "../services/userservice";
 import { Input, Button } from "@nextui-org/react";
 import supabase from "../supabaseClient";
+import { currentUser } from "../UserContext";
 
 const Register = () => {
+  const user = currentUser();
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
   const navigate = useNavigate();
+
+  if (user) {
+    return <Navigate to="/" />;
+  }
 
   const handleRegister = async (event) => {
     event.preventDefault();
@@ -43,7 +49,7 @@ const Register = () => {
           <div>
             First name:
             <Input
-              type="firstName"
+              type="text"
               label="First name"
               value={firstName}
               onChange={(event) => setFirstName(event.target.value)}
@@ -52,7 +58,7 @@ const Register = () => {
           <div>
             Last name:
             <Input
-              type="lastName"
+              type="text"
               label="Last name"
               value={lastName}
               onChange={(event) => setLastName(event.target.value)}

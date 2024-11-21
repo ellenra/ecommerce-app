@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
-import { Card, CardBody, CardFooter, Image } from "@nextui-org/react";
+import { Button, Card, CardBody, CardFooter, Image } from "@nextui-org/react";
 import supabase from "../supabaseClient";
+import { currentUser } from "../UserContext";
 
 const Home = () => {
+  const user = currentUser();
+
   const list = [
     {
       title: "Orange",
