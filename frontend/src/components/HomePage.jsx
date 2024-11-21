@@ -1,4 +1,6 @@
+import { useEffect, useState } from "react";
 import { Card, CardBody, CardFooter, Image } from "@nextui-org/react";
+import supabase from "../supabaseClient";
 
 const Home = () => {
   const list = [
