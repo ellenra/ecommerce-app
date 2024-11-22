@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import cors from "cors";
 import router from "./routes/authRoutes.js";
 import { authMiddleware } from "./middleware/auth.js";
+import userRouter from "./routes/userRoutes.js";
 
 dotenv.config({ path: "./.env" });
 
@@ -21,6 +22,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use("/api/auth", router);
+app.use("/api/users", userRouter);
 
 app.get("/", (req, res) => res.send("Server running"));
 

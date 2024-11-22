@@ -1,5 +1,5 @@
+import prisma from "../lib/prismaClient.js";
 import express from "express";
-import supabase from "../services/supabaseClient.js";
 
 const router = express.Router();
 
@@ -10,12 +10,14 @@ router.post("/register", async (req, res) => {
   }
 
   try {
-    const { data, error } = await supabase.from("User").insert({
-      id: userId,
-      firstName,
-      lastName,
-      email,
-      seller: false,
+    const { data, error } = await prisma.user.create({
+      data: {
+        id: userId,
+        firstName,
+        lastName,
+        email,
+        seller: false,
+      },
     });
 
     if (error) {

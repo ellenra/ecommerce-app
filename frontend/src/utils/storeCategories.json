@@ -1,0 +1,98 @@
+[
+  {
+    "key": "Fashion",
+    "label": "Fashion"
+  },
+  {
+    "key": "Electronics",
+    "label": "Electronics"
+  },
+  {
+    "key": "HomeAndGarden",
+    "label": "Home & Garden"
+  },
+  {
+    "key": "BeautyAndHealth",
+    "label": "Beauty & Health"
+  },
+  {
+    "key": "SportsAndOutdoors",
+    "label": "Sports & Outdoors"
+  },
+  {
+    "key": "ToysAndGames",
+    "label": "Toys & Games"
+  },
+  {
+    "key": "Books",
+    "label": "Books"
+  },
+  {
+    "key": "Accessories",
+    "label": "Accessories"
+  },
+  {
+    "key": "FoodAndBeverages",
+    "label": "Food & Beverages"
+  },
+  {
+    "key": "Art",
+    "label": "Art"
+  },
+  {
+    "key": "Handmade",
+    "label": "Handmade"
+  },
+  {
+    "key": "Automotive",
+    "label": "Automotive"
+  },
+  {
+    "key": "PetSupplies",
+    "label": "Pet Supplies"
+  },
+  {
+    "key": "BabyAndKids",
+    "label": "Baby & Kids"
+  },
+  {
+    "key": "Music",
+    "label": "Music"
+  },
+  {
+    "key": "Collectibles",
+    "label": "Collectibles"
+  },
+  {
+    "key": "OfficeSupplies",
+    "label": "Office Supplies"
+  },
+  {
+    "key": "Furniture",
+    "label": "Furniture"
+  },
+  {
+    "key": "Travel",
+    "label": "Travel"
+  },
+  {
+    "key": "TechAndGadgets",
+    "label": "Tech & Gadgets"
+  },
+  {
+    "key": "GiftsAndNovelties",
+    "label": "Gifts & Novelties"
+  },
+  {
+    "key": "Vintage",
+    "label": "Vintage"
+  },
+  {
+    "key": "DIYAndCrafts",
+    "label": "DIY & Crafts"
+  },
+  {
+    "key": "HealthAndFitness",
+    "label": "Health & Fitness"
+  }
+]

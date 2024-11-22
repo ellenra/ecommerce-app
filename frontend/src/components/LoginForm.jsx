@@ -2,10 +2,10 @@ import { useState } from "react";
 import { useNavigate, Navigate } from "react-router-dom";
 import { Button, Input } from "@nextui-org/react";
 import supabase from "../supabaseClient";
-import { currentUser } from "../UserContext";
+import { useUser } from "../UserContext";
 
 const Login = () => {
-  const user = currentUser();
+  const user = useUser();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();

@@ -9,10 +9,11 @@ import {
 } from "@nextui-org/react";
 
 import { Outlet } from "react-router-dom";
-import { currentUser } from "../UserContext";
+import { useUser } from "../UserContext";
+import supabase from "../supabaseClient";
 
 const Layout = () => {
-  const user = currentUser();
+  const user = useUser();
 
   const handleLogout = async () => {
     const { error } = await supabase.auth.signOut();
@@ -45,6 +46,9 @@ const Layout = () => {
         </NavbarContent>
         {user ? (
           <NavbarContent justify="end">
+            <NavbarItem className="hidden lg:flex">
+              <Link href="/store">Create store</Link>
+            </NavbarItem>
             <NavbarItem className="hidden lg:flex">
               <Button onClick={handleLogout}>Log out</Button>
             </NavbarItem>

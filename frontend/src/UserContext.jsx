@@ -3,8 +3,6 @@ import supabase from "./supabaseClient";
 
 const UserContext = createContext(null);
 
-export const currentUser = () => useContext(UserContext);
-
 export const UserProvider = ({ children }) => {
   const [user, setUser] = useState(null);
 
@@ -23,3 +21,5 @@ export const UserProvider = ({ children }) => {
 
   return <UserContext.Provider value={user}>{children}</UserContext.Provider>;
 };
+
+export const useUser = () => useContext(UserContext);

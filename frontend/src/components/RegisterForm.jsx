@@ -3,10 +3,10 @@ import { useNavigate, Navigate } from "react-router-dom";
 import userService from "../services/userservice";
 import { Input, Button } from "@nextui-org/react";
 import supabase from "../supabaseClient";
-import { currentUser } from "../UserContext";
+import { useUser } from "../UserContext";
 
 const Register = () => {
-  const user = currentUser();
+  const user = useUser();
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [password, setPassword] = useState("");

@@ -12,4 +12,27 @@ const register = async (data) => {
   }
 };
 
-export default { register };
+const getUser = async (userId) => {
+  try {
+    const response = await axios.get(
+      `http://localhost:5000/api/users/${userId}`
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error in fetching user:", error.message);
+  }
+};
+
+const createStore = async (data) => {
+  try {
+    const response = await axios.post(
+      `http://localhost:5000/api/users/${data.userId}/store`,
+      data
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error creating store", error.message);
+  }
+};
+
+export default { register, getUser, createStore };
