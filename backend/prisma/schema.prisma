@@ -53,7 +53,7 @@ model Store {
 model Product {
   id          String    @id @default(cuid())
   createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  updatedAt   DateTime  @default(now()) @updatedAt
   
   name        String
   description String
@@ -66,24 +66,15 @@ model Product {
   
   store       Store     @relation(fields: [storeId], references: [id], onDelete: Cascade)
   user        User      @relation(fields: [userId], references: [id])
-  category    Category  @relation(fields: [categoryId], references: [id])
   
   orders      OrderItem[]
   carts       CartItem[]
 }
 
-model Category {
-  id          String    @id @default(cuid())
-  name        String    @unique
-  description String?
-  
-  products    Product[]
-}
-
 model Order {
   id          String    @id @default(cuid())
   createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  updatedAt   DateTime  @default(now()) @updatedAt
   total       Float
   status      OrderStatus
   userId      String
@@ -97,7 +88,7 @@ model Order {
 model OrderItem {
   id          String    @id @default(cuid())
   createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  updatedAt   DateTime  @default(now()) @updatedAt
   orderId     String
   productId   String
   quantity    Int       @default(1)
@@ -117,7 +108,7 @@ enum OrderStatus {
 model Cart {
   id          String    @id @default(uuid())
   createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  updatedAt   DateTime  @default(now()) @updatedAt
   userId      String    @unique
   
   user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -127,7 +118,7 @@ model Cart {
 model CartItem {
   id          String    @id @default(uuid())
   createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  updatedAt   DateTime  @default(now()) @updatedAt
   quantity    Int       @default(1)
   productId   String
   cartId      String
@@ -139,7 +130,7 @@ model CartItem {
 model Payment {
   id           String        @id @default(cuid())
   createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
+  updatedAt    DateTime      @default(now()) @updatedAt
   orderId      String        @unique
   amount       Float
   paymentStatus PaymentStatus

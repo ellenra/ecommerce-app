@@ -1,40 +1,45 @@
 import { useEffect, useState } from "react";
 import { Button, Card, CardBody, CardFooter, Image } from "@nextui-org/react";
-import supabase from "../supabaseClient";
-import { useUser } from "../UserContext";
+import axios from "axios";
 
 const Home = () => {
-  const user = useUser();
-  const list = [
-    {
-      name: "test",
-    },
-    {
-      name: "test",
-    },
-  ];
+  const [stores, setStores] = useState([]);
+
+  useEffect(() => {
+    const fetchStores = async () => {
+      try {
+        const response = await axios.get("http://localhost:5000/api/stores");
+        setStores(response.data);
+      } catch (error) {
+        console.error("Error fetching stores:", error.message);
+      }
+    };
+
+    fetchStores();
+  }, []);
+
   return (
     <div className="gap-2 grid grid-cols-2 sm:grid-cols-4">
-      {list.map((item, index) => (
+      {stores.map((store, index) => (
         <Card
           shadow="sm"
           key={index}
           isPressable
-          onPress={() => console.log("item pressed")}
+          onPress={() => console.log("store pressed")}
         >
           <CardBody className="overflow-visible p-0">
             <Image
               shadow="sm"
               radius="lg"
               width="100%"
-              alt={item.title}
+              alt={store.name}
               className="w-full object-cover h-[140px]"
-              src={item.img}
+              src={store.profileUrl}
             />
           </CardBody>
           <CardFooter className="text-small justify-between">
-            <b>{item.name}</b>
-            <p className="text-default-500">{item.name}</p>
+            <b>{store.name}</b>
+            <p className="text-default-500">{store.description}</p>{" "}
           </CardFooter>
         </Card>
       ))}

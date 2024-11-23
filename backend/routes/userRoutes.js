@@ -10,6 +10,10 @@ userRouter.get("/:id", async (req, res) => {
       where: {
         id: userId,
       },
+      include: {
+        store: true,
+        favorites: true,
+      },
     });
 
     if (user) {
@@ -17,29 +21,6 @@ userRouter.get("/:id", async (req, res) => {
     } else {
       res.status(404).json({ error: "User not found" });
     }
-  } catch (error) {
-    console.log(error.message);
-  }
-});
-
-userRouter.post("/:id/store", async (req, res) => {
-  const { userId, name, description, category, profileUrl, bannerUrl } =
-    req.body;
-  console.log(userId, name, description, category, profileUrl, bannerUrl);
-
-  try {
-    const store = await prisma.store.create({
-      data: {
-        userId,
-        name,
-        description,
-        category,
-        profileUrl,
-        bannerUrl,
-      },
-    });
-
-    res.status(201).json(store);
   } catch (error) {
     console.log(error.message);
   }

@@ -47,7 +47,7 @@ const Layout = () => {
         {user ? (
           <NavbarContent justify="end">
             <NavbarItem className="hidden lg:flex">
-              <Link href="/store">Create store</Link>
+              <Link href="/profile">Profile</Link>
             </NavbarItem>
             <NavbarItem className="hidden lg:flex">
               <Button onClick={handleLogout}>Log out</Button>

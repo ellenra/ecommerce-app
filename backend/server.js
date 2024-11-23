@@ -4,6 +4,8 @@ import cors from "cors";
 import router from "./routes/authRoutes.js";
 import { authMiddleware } from "./middleware/auth.js";
 import userRouter from "./routes/userRoutes.js";
+import storeRouter from "./routes/storeRoutes.js";
+import productRouter from "./routes/productRoutes.js";
 
 dotenv.config({ path: "./.env" });
 
@@ -23,6 +25,8 @@ app.use(express.json());
 
 app.use("/api/auth", router);
 app.use("/api/users", userRouter);
+app.use("/api/stores", storeRouter);
+storeRouter.use("", productRouter);
 
 app.get("/", (req, res) => res.send("Server running"));
 

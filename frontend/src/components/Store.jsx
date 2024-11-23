@@ -1,124 +1,48 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { Button, Input } from "@nextui-org/react";
+import React, { useState, useEffect } from "react";
+import { useParams, Link } from "react-router-dom";
+import axios from "axios";
 import { useUser } from "../UserContext";
-import storeCategories from "../utils/storeCategories.json";
-import userService from "../services/userservice";
+import { Button } from "@nextui-org/react";
+import ListProductForm from "./ListProductForm";
 
 const Store = () => {
-  const navigate = useNavigate();
-  const currentUser = useUser();
-  const [user, setUser] = useState(null);
-  const [storeName, setStoreName] = useState("");
-  const [description, setDescription] = useState("");
-  const [category, setCategory] = useState("");
-  const [profileUrl, setProfileUrl] = useState("");
-  const [bannerUrl, setBannerUrl] = useState("");
+  const { storeId } = useParams();
+  const [store, setStore] = useState(null);
+  const user = useUser();
 
   useEffect(() => {
-    if (currentUser) {
-      const fetchUserData = async () => {
-        try {
-          const user = await userService.getUser(currentUser.id);
-          setUser(user);
-          console.log("Fetched user data:", user);
-        } catch (error) {
-          console.error("Error fetching user data:", error.message);
-        }
-      };
+    const fetchStore = async () => {
+      try {
+        const response = await axios.get(`/api/stores/${storeId}`);
+        setStore(response.data);
+      } catch (error) {
+        console.error("Error fetching store data:", error);
+      }
+    };
 
-      fetchUserData();
-    }
-  }, [currentUser]);
+    fetchStore();
+  }, [storeId]);
 
-  console.log(user);
+  if (!store) {
+    return <div>Loading...</div>;
+  }
 
-  const handleCreateStore = async (event) => {
-    event.preventDefault();
-    try {
-      const newStore = await userService.createStore({
-        userId: user.id,
-        name: storeName,
-        description,
-        category,
-        profileUrl,
-        bannerUrl,
-      });
-      setStoreName("");
-      setDescription("");
-      setCategory("");
-      setProfileUrl("");
-      setBannerUrl("");
-      navigate("/");
-    } catch (exception) {
-      console.log("error in creating store", exception.message);
-    }
-  };
+  const isOwner = user && user.id === store.userId;
 
   return (
-    <div className="gap-2 grid grid-cols-2 sm:grid-cols-4">
-      <form onSubmit={handleCreateStore}>
-        <div>Create store:</div>
-        <div>
-          Store Name:
-          <Input
-            type="text"
-            label="Store Name"
-            value={storeName}
-            onChange={(event) => setStoreName(event.target.value)}
-            required
-          />
-        </div>
+    <div>
+      <h1>{store.name}</h1>
+      <p>{store.description}</p>
+      <p>Category: {store.category}</p>
 
-        <div>
-          Store Description:
-          <Input
-            type="text"
-            label="Store Description"
-            value={description}
-            onChange={(event) => setDescription(event.target.value)}
-            required
-          />
-        </div>
-
-        <div>
-          Store Category:
-          <select
-            value={category}
-            onChange={(event) => setCategory(event.target.value)}
-            required
-          >
-            <option value="">Select a category</option>
-            {storeCategories.map((cat) => (
-              <option key={cat.key} value={cat.key}>
-                {cat.label}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div>
-          Profile Image URL (optional):
-          <Input
-            type="url"
-            label="Profile Image URL"
-            value={profileUrl}
-            onChange={(event) => setProfileUrl(event.target.value)}
-          />
-        </div>
-
-        <div>
-          Banner Image URL (optional):
-          <Input
-            type="url"
-            label="Banner Image URL"
-            value={bannerUrl}
-            onChange={(event) => setBannerUrl(event.target.value)}
-          />
-        </div>
-
-        <Button type="submit">Create Store</Button>
-      </form>
+      {isOwner && (
+        <>
+          <ListProductForm storeId={storeId} />
+          <Link to={`/stores/${storeId}/manage`}>
+            <button>Manage Your Store</button>
+          </Link>
+        </>
+      )}
     </div>
   );
 };

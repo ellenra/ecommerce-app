@@ -23,16 +23,4 @@ const getUser = async (userId) => {
   }
 };
 
-const createStore = async (data) => {
-  try {
-    const response = await axios.post(
-      `http://localhost:5000/api/users/${data.userId}/store`,
-      data
-    );
-    return response.data;
-  } catch (error) {
-    console.error("Error creating store", error.message);
-  }
-};
-
-export default { register, getUser, createStore };
+export default { register, getUser };
