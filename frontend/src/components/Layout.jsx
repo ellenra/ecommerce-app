@@ -15,6 +15,7 @@ import supabase from "../supabaseClient";
 const Layout = () => {
   const user = useUser();
 
+  //TODO: move this elsewhere
   const handleLogout = async () => {
     const { error } = await supabase.auth.signOut();
     if (error) {
@@ -22,54 +23,59 @@ const Layout = () => {
     }
   };
   return (
-    <div className="flex flex-col h-screen">
-      <Navbar>
-        <NavbarBrand>
-          <p className="font-bold text-inherit">STORE</p>
-        </NavbarBrand>
-        <NavbarContent className="hidden sm:flex gap-4" justify="center">
-          <NavbarItem>
-            <Link color="foreground" href="/stores">
-              Stores
-            </Link>
-          </NavbarItem>
-          <NavbarItem isActive>
-            <Link href="#" aria-current="page">
-              Products
-            </Link>
-          </NavbarItem>
-          <NavbarItem>
-            <Link color="foreground" href="/favorites">
-              Favorites
-            </Link>
-          </NavbarItem>
-        </NavbarContent>
-        {user ? (
-          <NavbarContent justify="end">
-            <NavbarItem className="hidden lg:flex">
-              <Link href="/profile">Profile</Link>
+    <div className="flex flex-col min-h-screen">
+      <div className=" bg-zinc-100">
+        <Navbar>
+          <NavbarBrand>
+            <p className="font-bold text-inherit">STORE</p>
+          </NavbarBrand>
+          <NavbarContent className="hidden sm:flex gap-4" justify="center">
+            <NavbarItem>
+              <Link color="foreground" href="/stores">
+                Stores
+              </Link>
             </NavbarItem>
-            <NavbarItem className="hidden lg:flex">
-              <Button onClick={handleLogout}>Log out</Button>
-            </NavbarItem>
-          </NavbarContent>
-        ) : (
-          <NavbarContent justify="end">
-            <NavbarItem className="hidden lg:flex">
-              <Link href="/login">Login</Link>
+            <NavbarItem isActive>
+              <Link href="/" aria-current="page">
+                Home
+              </Link>
             </NavbarItem>
             <NavbarItem>
-              <Link href="/register">Sign up</Link>
+              <Link color="foreground" href="/favorites">
+                Favorites
+              </Link>
             </NavbarItem>
           </NavbarContent>
-        )}
-      </Navbar>
+          {user ? (
+            <NavbarContent justify="end">
+              <NavbarItem className="hidden lg:flex">
+                <Link href="/profile">Profile</Link>
+              </NavbarItem>
+              <NavbarItem className="hidden lg:flex">
+                <Button onClick={handleLogout}>Log out</Button>
+              </NavbarItem>
+            </NavbarContent>
+          ) : (
+            <NavbarContent justify="end">
+              <NavbarItem className="hidden lg:flex">
+                <Link href="/login">Login</Link>
+              </NavbarItem>
+              <NavbarItem>
+                <Link href="/register">Sign up</Link>
+              </NavbarItem>
+            </NavbarContent>
+          )}
+        </Navbar>
+      </div>
+
       <main className="flex-grow p-4">
         <Outlet />{" "}
       </main>
-      <footer className="p-4 text-center">
-        <p>© 2024 My App</p>
-      </footer>
+      <div>
+        <footer className="p-4 text-center bg-zinc-100">
+          <p>best app</p>
+        </footer>
+      </div>
     </div>
   );
 };

@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import { Button, Card, CardBody, CardFooter, Image } from "@nextui-org/react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const Home = () => {
   const [stores, setStores] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchStores = async () => {
@@ -25,7 +27,7 @@ const Home = () => {
           shadow="sm"
           key={index}
           isPressable
-          onPress={() => console.log("store pressed")}
+          onPress={() => navigate(`/stores/${store.id}`)}
         >
           <CardBody className="overflow-visible p-0">
             <Image

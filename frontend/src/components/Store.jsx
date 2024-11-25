@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate, Outlet } from "react-router-dom";
 import axios from "axios";
 import { useUser } from "../UserContext";
-import { Button } from "@nextui-org/react";
-import ListProductForm from "./ListProductForm";
+import { Button, Card, CardBody, CardFooter, Image } from "@nextui-org/react";
 
 const Store = () => {
   const { storeId } = useParams();
   const [store, setStore] = useState(null);
   const user = useUser();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchStore = async () => {
@@ -34,15 +34,41 @@ const Store = () => {
       <h1>{store.name}</h1>
       <p>{store.description}</p>
       <p>Category: {store.category}</p>
+      {store.products.map((product, index) => (
+        <Card
+          shadow="sm"
+          key={index}
+          isPressable
+          onPress={() => navigate(`/stores/${product.id}`)}
+        >
+          <CardBody className="overflow-visible p-0">
+            <Image
+              shadow="sm"
+              radius="lg"
+              width="100%"
+              alt={product.name}
+              className="w-full object-cover h-[140px]"
+              src={product.imageUrl}
+            />
+          </CardBody>
+          <CardFooter className="text-small justify-between">
+            <b>{product.name}</b>
+            <p className="text-default-500">{product.description}</p>{" "}
+          </CardFooter>
+        </Card>
+      ))}
 
       {isOwner && (
         <>
-          <ListProductForm storeId={storeId} />
+          <Link to={`/stores/${storeId}/products/new`}>
+            <Button>List new product</Button>
+          </Link>
           <Link to={`/stores/${storeId}/manage`}>
             <button>Manage Your Store</button>
           </Link>
         </>
       )}
+      <Outlet />
     </div>
   );
 };

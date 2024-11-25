@@ -19,6 +19,9 @@ storeRouter.get("/:id", async (req, res) => {
       where: {
         id: storeId,
       },
+      include: {
+        products: true,
+      },
     });
     res.json(store);
   } catch (error) {

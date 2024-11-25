@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
-import { Link, Card, CardBody, CardFooter, Image } from "@nextui-org/react";
+import { Button } from "@nextui-org/react";
 import { useUser } from "../UserContext";
 import userService from "../services/userservice";
+import { Link } from "react-router-dom";
 
 const Profile = () => {
   const currentUser = useUser();
@@ -34,9 +35,15 @@ const Profile = () => {
   return (
     <div>
       <div>Favorites:</div>
-      {user.store && (
-        <Link href={`/stores/${user.store.id}`}>Own Store</Link>
-      )}{" "}
+      {user.store ? (
+        <Button as={Link} to={`/stores/${user.store.id}`}>
+          Own Store
+        </Button>
+      ) : (
+        <Button as={Link} to="/stores/create">
+          Create Store
+        </Button>
+      )}
     </div>
   );
 };

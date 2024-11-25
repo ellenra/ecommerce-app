@@ -4,6 +4,7 @@ import { Button, Input } from "@nextui-org/react";
 import { useUser } from "../UserContext";
 import storeCategories from "../utils/storeCategories.json";
 import userService from "../services/userservice";
+import storeservice from "../services/storeservice";
 
 const CreateStore = () => {
   const navigate = useNavigate();
@@ -34,7 +35,7 @@ const CreateStore = () => {
   const handleCreateStore = async (event) => {
     event.preventDefault();
     try {
-      const newStore = await userService.createStore({
+      const newStore = await storeservice.createStore({
         userId: user.id,
         name: storeName,
         description,

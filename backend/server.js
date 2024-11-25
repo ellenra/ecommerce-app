@@ -1,6 +1,7 @@
 import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
+import multer from "multer";
 import router from "./routes/authRoutes.js";
 import { authMiddleware } from "./middleware/auth.js";
 import userRouter from "./routes/userRoutes.js";
@@ -22,6 +23,7 @@ if (!jwt_secret) {
 app.use(cors());
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 app.use("/api/auth", router);
 app.use("/api/users", userRouter);

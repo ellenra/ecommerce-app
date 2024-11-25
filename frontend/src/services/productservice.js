@@ -3,10 +3,9 @@ import axios from "axios";
 const baseUrl = "http://localhost:5000/api/stores/";
 
 const listProduct = async (data) => {
-  console.log("urlll", `${baseUrl}${data.storeId}/products`);
   try {
     const response = await axios.post(
-      `${baseUrl}${data.storeId}/products`,
+      `${baseUrl}${data.get("storeId")}/products`,
       data
     );
     return response.data;
