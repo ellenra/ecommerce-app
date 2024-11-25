@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import { Button, Card, CardBody, CardFooter, Image } from "@nextui-org/react";
+import { Card, CardBody, CardFooter, Image } from "@nextui-org/react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-const Home = () => {
+const ViewStores = () => {
   const [stores, setStores] = useState([]);
   const navigate = useNavigate();
 
@@ -21,13 +21,14 @@ const Home = () => {
   }, []);
 
   return (
-    <div className="gap-2 grid grid-cols-2 sm:grid-cols-4">
+    <div className="grid grid-cols-1 lg:grid-cols-8 gap-6 p-6">
       {stores.map((store, index) => (
         <Card
           shadow="sm"
           key={index}
           isPressable
           onPress={() => navigate(`/stores/${store.id}`)}
+          className="mx-auto"
         >
           <CardBody className="overflow-visible p-0">
             <Image
@@ -37,11 +38,16 @@ const Home = () => {
               alt={store.name}
               className="w-full object-cover h-[140px]"
               src={store.profileUrl}
+              style={{
+                width: "200px",
+                height: "200px",
+                objectFit: "cover",
+                borderRadius: "8px",
+              }}
             />
           </CardBody>
-          <CardFooter className="text-small justify-between">
+          <CardFooter className="p-4 text-sm flex justify-between items-center">
             <b>{store.name}</b>
-            <p className="text-default-500">{store.description}</p>{" "}
           </CardFooter>
         </Card>
       ))}
@@ -49,4 +55,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default ViewStores;

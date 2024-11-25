@@ -1,15 +1,17 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Button, Input } from "@nextui-org/react";
 import { useUser } from "../UserContext";
 import storeCategories from "../utils/storeCategories.json";
 import userService from "../services/userservice";
 import storeservice from "../services/storeservice";
 
-const CreateStore = () => {
-  const navigate = useNavigate();
+const StoreForm = () => {
+  const { storeId } = useParams();
   const currentUser = useUser();
+  const navigate = useNavigate();
   const [user, setUser] = useState(null);
+  const [store, setStore] = useState(null);
   const [storeName, setStoreName] = useState("");
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("");
@@ -32,32 +34,62 @@ const CreateStore = () => {
     }
   }, [currentUser]);
 
-  const handleCreateStore = async (event) => {
+  useEffect(() => {
+    if (storeId) {
+      const fetchStoreData = async () => {
+        try {
+          const storeData = await storeservice.getStore(storeId);
+          setStore(storeData);
+          setStoreName(storeData.name);
+          setDescription(storeData.description);
+          setCategory(storeData.category);
+          setProfileUrl(storeData.profileUrl || "");
+          setBannerUrl(storeData.bannerUrl || "");
+        } catch (error) {
+          console.error("Error fetching store data:", error.message);
+        }
+      };
+
+      fetchStoreData();
+    }
+  }, [storeId]);
+
+  const handleStoreForm = async (event) => {
     event.preventDefault();
     try {
-      const newStore = await storeservice.createStore({
-        userId: user.id,
-        name: storeName,
-        description,
-        category,
-        profileUrl,
-        bannerUrl,
-      });
-      setStoreName("");
-      setDescription("");
-      setCategory("");
-      setProfileUrl("");
-      setBannerUrl("");
-      navigate("/");
+      if (storeId) {
+        await storeservice.updateStore(storeId, {
+          name: storeName,
+          description,
+          category,
+          profileUrl,
+          bannerUrl,
+        });
+        navigate(`/stores/${storeId}`);
+      } else {
+        const newStore = await storeservice.createStore({
+          userId: user.id,
+          name: storeName,
+          description,
+          category,
+          profileUrl,
+          bannerUrl,
+        });
+        navigate(`/stores/${newStore.id}`);
+      }
     } catch (exception) {
-      console.log("error in creating store", exception.message);
+      console.log("error in store form", exception.message);
     }
   };
 
+  if (!user) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <div className="gap-2 grid grid-cols-2 sm:grid-cols-4">
-      <form onSubmit={handleCreateStore}>
-        <div>Create store:</div>
+      <form onSubmit={handleStoreForm}>
+        <div>{storeId ? "Edit Store" : "Create Store"}</div>
         <div>
           Store Name:
           <Input
@@ -116,10 +148,12 @@ const CreateStore = () => {
           />
         </div>
 
-        <Button type="submit">Create Store</Button>
+        <Button type="submit">
+          {storeId ? "Update Store" : "Create Store"}
+        </Button>
       </form>
     </div>
   );
 };
 
-export default CreateStore;
+export default StoreForm;

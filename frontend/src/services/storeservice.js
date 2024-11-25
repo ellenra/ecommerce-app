@@ -11,4 +11,23 @@ const createStore = async (data) => {
   }
 };
 
-export default { createStore };
+const getStore = async (id) => {
+  try {
+    const response = await axios.get(`${baseUrl}/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error in fetching store:", error.message);
+  }
+};
+
+const updateStore = async (storeId, data) => {
+  try {
+    console.log("data", data);
+    const response = await axios.put(`${baseUrl}/${storeId}`, data);
+    return response.data;
+  } catch (error) {
+    console.error("Error updating store", error.message);
+  }
+};
+
+export default { createStore, getStore, updateStore };

@@ -51,4 +51,30 @@ storeRouter.post("/", async (req, res) => {
   }
 });
 
+storeRouter.put("/:storeId", async (req, res) => {
+  const { storeId } = req.params;
+  const { userId, name, description, category, profileUrl, bannerUrl } =
+    req.body;
+
+  try {
+    const store = await prisma.store.update({
+      where: { id: storeId },
+      data: {
+        userId,
+        name,
+        description,
+        category,
+        profileUrl,
+        bannerUrl,
+      },
+    });
+
+    console.log(store);
+
+    res.status(201).json(store);
+  } catch (error) {
+    console.log(error.message);
+  }
+});
+
 export default storeRouter;
