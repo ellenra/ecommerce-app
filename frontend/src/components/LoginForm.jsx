@@ -33,41 +33,52 @@ const Login = () => {
 
   const goToRegister = async (event) => {
     event.preventDefault();
-    navigate(`/register`);
+    navigate("/register");
   };
 
   return (
     <div>
       <div>
-        <p>Log in</p>
-        <form onSubmit={handleLogin}>
+        <form
+          onSubmit={handleLogin}
+          className="w-full max-w-3xl space-y-6 p-10"
+        >
+          <h2 className="text-2xl text-center">Log in</h2>
+
           <div>
-            Email:
+            <label className="ml-3">Email:</label>
             <Input
               type="email"
-              label="email"
               value={email}
               onChange={(event) => setEmail(event.target.value)}
+              className="mt-4"
             />
           </div>
           <div>
-            Password:
+            <label className="ml-3">Password:</label>
             <Input
               type="text"
-              label="password"
               value={password}
               onChange={(event) => setPassword(event.target.value)}
+              className="mt-4"
             />
           </div>
-          <Button type="submit">Login</Button>
-          <div>
-            <br />
-            Don't have an account?
-            <br></br>
-            <Button onClick={goToRegister}>Register here</Button>
-            <br></br>
-          </div>
+          <Button
+            type="submit"
+            className="ml-3 border border-gray-200 hover:bg-gray-100 rounded-lg"
+          >
+            Login
+          </Button>
         </form>
+        <div className="pt-4 p-10 ml-3">
+          <p className="mb-4">Don't have an account?</p>
+          <Button
+            onClick={goToRegister}
+            className="border border-gray-200 hover:bg-gray-100 rounded-lg"
+          >
+            Register here
+          </Button>
+        </div>
       </div>
     </div>
   );

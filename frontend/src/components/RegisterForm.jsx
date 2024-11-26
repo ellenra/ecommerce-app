@@ -41,49 +41,68 @@ const Register = () => {
     }
   };
 
+  const goToLogin = async (event) => {
+    event.preventDefault();
+    navigate("/login");
+  };
+
   return (
     <div>
       <div>
-        <form onSubmit={handleRegister}>
-          <div>Register:</div>
+        <form
+          onSubmit={handleRegister}
+          className="w-full max-w-3xl space-y-6 p-10"
+        >
+          <h2 className="text-2xl text-center">Sign up</h2>
           <div>
-            First name:
+            <label className="ml-3">First name:</label>
             <Input
               type="text"
-              label="First name"
               value={firstName}
               onChange={(event) => setFirstName(event.target.value)}
             />
           </div>
           <div>
-            Last name:
+            <label className="ml-3">Last name:</label>
             <Input
               type="text"
-              label="Last name"
               value={lastName}
               onChange={(event) => setLastName(event.target.value)}
             />
           </div>
           <div>
-            Password:
+            <label className="ml-3">Password:</label>
             <Input
               type="password"
-              label="Password"
               value={password}
               onChange={(event) => setPassword(event.target.value)}
             />
           </div>
           <div>
-            Email address:
+            <label className="ml-3">Email:</label>
             <Input
               type="email"
-              label="Email"
               value={email}
               onChange={(event) => setEmail(event.target.value)}
             />
           </div>
-          <Button type="submit">Create account</Button>
+          <Button
+            type="submit"
+            className="ml-3 border border-gray-200 hover:bg-gray-100 rounded-lg"
+          >
+            Create account
+          </Button>
         </form>
+
+        <div className="pt-4 p-10 ml-3">
+          <p className="mb-4">Already have an account?</p>
+          <Button
+            onClick={goToLogin}
+            className="border border-gray-200 hover:bg-gray-100 rounded-lg"
+          >
+            Log in here
+          </Button>
+        </div>
       </div>
     </div>
   );

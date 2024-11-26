@@ -98,37 +98,43 @@ const StoreForm = () => {
   }
 
   return (
-    <div className="gap-2 grid grid-cols-2 sm:grid-cols-4">
-      <form onSubmit={handleStoreForm}>
-        <div>{storeId ? "Edit Store" : "Create Store"}</div>
-        <div>
-          Store Name:
+    <div className="flex justify-center">
+      <form
+        onSubmit={handleStoreForm}
+        className="w-full max-w-3xl space-y-6 p-10"
+      >
+        <h2 className="text-2xl text-center">
+          {storeId ? "Edit Store" : "Create Store"}
+        </h2>
+        <div className="pb-2">
+          <label className="ml-3">Store Name:</label>
           <Input
             type="text"
-            label="Store Name"
             value={storeName}
             onChange={(event) => setStoreName(event.target.value)}
             required
+            className="mt-4"
           />
         </div>
 
-        <div>
-          Store Description:
+        <div className="pb-2">
+          <label className="ml-3">Store Description:</label>
           <Input
             type="text"
-            label="Store Description"
             value={description}
             onChange={(event) => setDescription(event.target.value)}
             required
+            className="mt-4"
           />
         </div>
 
-        <div>
-          Store Category:
+        <div className="pb-2">
+          <label className="ml-3">Store Category:</label>
           <select
             value={categoryId}
             onChange={(event) => setCategoryId(event.target.value)}
             required
+            className="w-full ml-3 bg-white mt-4 border border-gray-200 rounded-lg p-2.5"
           >
             <option value="">Select a category</option>
             {storeCategories.map((cat) => (
@@ -138,11 +144,11 @@ const StoreForm = () => {
             ))}
           </select>
         </div>
-        <div>
-          Profile Image URL (optional):
+        <div className="pb-2">
+          <label className="ml-3">Profile Image:</label>
           {viewProfilePicture && viewProfilePicture !== "null" ? (
             <>
-              <div className="mb-2">
+              <div className="mb-2 ml-3 mt-4">
                 <Image
                   shadow="sm"
                   radius="lg"
@@ -159,8 +165,6 @@ const StoreForm = () => {
               </div>
               <div className="mt-2 flex gap-2">
                 <Button
-                  color="danger"
-                  variant="flat"
                   onClick={() => {
                     setProfileUrl("");
                     setViewProfilePicture("");
@@ -174,18 +178,21 @@ const StoreForm = () => {
             <Input type="file" name="file" onChange={handleImageUpload} />
           )}
         </div>
-
-        <div>
-          Banner Image URL (optional):
+        <div className="pb-2">
+          <label className="ml-3">Banner Image</label>
           <Input
             type="url"
             label="Banner Image URL"
             value={bannerUrl}
             onChange={(event) => setBannerUrl(event.target.value)}
+            className="mt-4"
           />
         </div>
 
-        <Button type="submit">
+        <Button
+          type="submit"
+          className="border border-gray-200 hover:bg-gray-100 rounded-lg"
+        >
           {storeId ? "Update Store" : "Create Store"}
         </Button>
       </form>
