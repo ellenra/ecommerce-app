@@ -14,4 +14,15 @@ const listProduct = async (data) => {
   }
 };
 
-export default { listProduct };
+const deleteProduct = async (productId, storeId) => {
+  try {
+    const response = await axios.delete(
+      `${baseUrl}${storeId}/products/${productId}`
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error deleting product", error.message);
+  }
+};
+
+export default { listProduct, deleteProduct };

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useUser } from "../UserContext";
-import { Button, Input } from "@nextui-org/react";
+import { Button, Input, Image } from "@nextui-org/react";
 import productService from "../services/productservice";
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -9,8 +9,8 @@ const ListProductForm = () => {
   const { storeId } = useParams();
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  const [price, setPrice] = useState(0);
-  const [quantity, setQuantity] = useState(0);
+  const [price, setPrice] = useState("");
+  const [quantity, setQuantity] = useState("");
   const [image, setImage] = useState(null);
   const [categoryId, setCategoryId] = useState("1");
   const navigate = useNavigate();
@@ -34,11 +34,6 @@ const ListProductForm = () => {
         formData.append("file", image);
       }
       const newProduct = await productService.listProduct(formData);
-      setName("");
-      setDescription("");
-      setPrice(0);
-      setQuantity(0);
-      setImage(null);
       navigate(`/stores/${storeId}`);
     } catch (exception) {
       console.log("error in listing product", exception.message);
@@ -48,53 +43,88 @@ const ListProductForm = () => {
   return (
     <div>
       <>
-        <form onSubmit={handleListProduct}>
+        <form
+          onSubmit={handleListProduct}
+          className="w-full max-w-3xl space-y-6 p-10"
+        >
+          <h2 className="text-2xl text-center">Add new product</h2>
+
           <div>
-            Product Name:
+            <label className="ml-3">Product name:</label>
             <Input
               type="text"
-              label="Product Name"
               value={name}
               onChange={(event) => setName(event.target.value)}
               required
             />
           </div>
           <div>
-            Description:
+            <label className="ml-3">Description:</label>
             <Input
               type="text"
-              label="Description"
               value={description}
               onChange={(event) => setDescription(event.target.value)}
               required
             />
           </div>
           <div>
-            Price:
+            <label className="ml-3">Price:</label>
             <Input
               type="number"
               step="any"
-              label="Price"
               value={price}
               onChange={(event) => setPrice(event.target.value)}
               required
             />
           </div>
           <div>
-            Quantity:
+            <label className="ml-3">Quantity:</label>
             <Input
               type="number"
-              label="Quantity"
               value={quantity}
               onChange={(event) => setQuantity(event.target.value)}
               required
             />
           </div>
           <div>
-            Image Url:
-            <Input type="file" name="file" onChange={handleImageUpload} />
+            <label className="ml-3">Image:</label>
+            {image ? (
+              <>
+                <div className="mb-2 ml-3 mt-4">
+                  <Image
+                    shadow="sm"
+                    radius="lg"
+                    alt="Profile"
+                    className="w-full object-cover h-[140px]"
+                    src={URL.createObjectURL(image)}
+                    style={{
+                      width: "200px",
+                      height: "200px",
+                      objectFit: "cover",
+                      borderRadius: "8px",
+                    }}
+                  />
+                </div>
+                <div className="mt-2 flex gap-2">
+                  <Button
+                    onClick={() => {
+                      setImage(null);
+                    }}
+                  >
+                    Delete Image
+                  </Button>
+                </div>
+              </>
+            ) : (
+              <Input type="file" name="file" onChange={handleImageUpload} />
+            )}
           </div>
-          <Button type="submit">List Product</Button>
+          <Button
+            type="submit"
+            className="ml-3 border border-gray-200 hover:bg-gray-100 rounded-lg"
+          >
+            Add Product
+          </Button>
         </form>
       </>
     </div>

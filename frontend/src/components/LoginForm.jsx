@@ -82,8 +82,6 @@ const Login = () => {
       </div>
     </div>
   );
-
-  return null;
 };
 
 export default Login;

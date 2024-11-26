@@ -35,11 +35,12 @@ productRouter.post(
       }
 
       const file = req.file;
+      const uniqueFileName = `${Date.now()}-${file.name}`;
       const fileBase64 = decode(file.buffer.toString("base64"));
 
       const { data, error } = await supabase.storage
         .from("product-images")
-        .upload(file.originalname, fileBase64, {
+        .upload(uniqueFileName, fileBase64, {
           contentType: "image/png",
         });
 
@@ -82,6 +83,20 @@ productRouter.get("/:id", async (req, res) => {
     res.json(product);
   } catch (error) {
     res.status(500).json({ error: "Error fetching product" });
+  }
+});
+
+productRouter.delete("/:storeId/products/:id", async (req, res) => {
+  const productId = req.params.id;
+  try {
+    const deleteProduct = await prisma.product.delete({
+      where: {
+        id: productId,
+      },
+    });
+    res.json(deleteProduct);
+  } catch (error) {
+    res.status(500).json({ error: "Error deleting product" });
   }
 });
 
