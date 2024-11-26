@@ -1,7 +1,6 @@
 import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
-import multer from "multer";
 import router from "./routes/authRoutes.js";
 import { authMiddleware } from "./middleware/auth.js";
 import userRouter from "./routes/userRoutes.js";

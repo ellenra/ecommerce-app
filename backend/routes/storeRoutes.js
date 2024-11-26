@@ -1,7 +1,13 @@
 import prisma from "../lib/prismaClient.js";
 import express from "express";
+import multer from "multer";
+import supabase from "../services/supabaseClient.js";
+import { decode } from "base64-arraybuffer";
 
 const storeRouter = express.Router();
+
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
 
 storeRouter.get("/", async (req, res) => {
   try {
@@ -29,18 +35,34 @@ storeRouter.get("/:id", async (req, res) => {
   }
 });
 
-storeRouter.post("/", async (req, res) => {
-  const { userId, name, description, category, profileUrl, bannerUrl } =
-    req.body;
+storeRouter.post("/", upload.single("file"), async (req, res) => {
+  const { userId, name, description, categoryId, bannerUrl } = req.body;
 
   try {
+    const file = req.file;
+    const fileBase64 = decode(file.buffer.toString("base64"));
+
+    const { data, error } = await supabase.storage
+      .from("store-images")
+      .upload(file.originalname, fileBase64, {
+        contentType: "image/png",
+      });
+
+    if (error) {
+      throw error;
+    }
+
+    const { data: image } = supabase.storage
+      .from("store-images")
+      .getPublicUrl(data.path);
+
     const store = await prisma.store.create({
       data: {
         userId,
         name,
         description,
-        category,
-        profileUrl,
+        categoryId,
+        profileUrl: image.publicUrl,
         bannerUrl,
       },
     });
@@ -51,25 +73,50 @@ storeRouter.post("/", async (req, res) => {
   }
 });
 
-storeRouter.put("/:storeId", async (req, res) => {
+storeRouter.put("/:storeId", upload.single("file"), async (req, res) => {
   const { storeId } = req.params;
-  const { userId, name, description, category, profileUrl, bannerUrl } =
+  let { userId, name, description, categoryId, profileUrl, bannerUrl } =
     req.body;
 
   try {
+    if (req.file) {
+      const file = req.file;
+      //TODO: Edit so that if image exists, use that, don't upload new
+      const uniqueFileName = `${Date.now()}-${file.name}`;
+      const fileBase64 = decode(file.buffer.toString("base64"));
+
+      const { data, error } = await supabase.storage
+        .from("store-images")
+        .upload(uniqueFileName, fileBase64, {
+          contentType: "image/png",
+        });
+
+      if (error) {
+        throw error;
+      }
+
+      const { data: image } = supabase.storage
+        .from("store-images")
+        .getPublicUrl(data.path);
+
+      if (!image) {
+        throw new Error("Failed to generate public URL for uploaded image.");
+      }
+
+      profileUrl = image.publicUrl;
+    }
+
     const store = await prisma.store.update({
       where: { id: storeId },
       data: {
         userId,
         name,
         description,
-        category,
+        categoryId,
         profileUrl,
         bannerUrl,
       },
     });
-
-    console.log(store);
 
     res.status(201).json(store);
   } catch (error) {

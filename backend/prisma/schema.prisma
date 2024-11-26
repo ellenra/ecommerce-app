@@ -43,7 +43,7 @@ model Store {
   description String
   profileUrl  String?
   bannerUrl   String?
-  category    String
+  categoryId  String
   is_verified Boolean    @default(false)
   
   user        User       @relation(fields: [userId], references: [id])
