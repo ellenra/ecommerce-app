@@ -11,7 +11,6 @@ const StoreForm = () => {
   const currentUser = useUser();
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
-  const [store, setStore] = useState(null);
   const [storeName, setStoreName] = useState("");
   const [description, setDescription] = useState("");
   const [categoryId, setCategoryId] = useState("");
@@ -39,7 +38,6 @@ const StoreForm = () => {
       const fetchStoreData = async () => {
         try {
           const storeData = await storeservice.getStore(storeId);
-          setStore(storeData);
           setStoreName(storeData.name);
           setDescription(storeData.description);
           setCategoryId(storeData.categoryId);

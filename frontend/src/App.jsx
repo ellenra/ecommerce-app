@@ -5,9 +5,10 @@ import Login from "./components/LoginForm";
 import { UserProvider } from "./UserContext";
 import Profile from "./components/Profile";
 import Store from "./components/Store";
-import ListProductForm from "./components/ListProductForm";
 import ViewStores from "./components/ViewStores";
 import StoreForm from "./components/StoreForm";
+import Product from "./components/Product";
+import ProductForm from "./components/ProductForm";
 
 function App() {
   return (
@@ -24,7 +25,15 @@ function App() {
             <Route path="stores/:storeId/edit" element={<StoreForm />} />
             <Route
               path="stores/:storeId/products/new"
-              element={<ListProductForm />}
+              element={<ProductForm />}
+            />
+            <Route
+              path="stores/:storeId/products/:productId"
+              element={<Product />}
+            />
+            <Route
+              path="stores/:storeId/products/:productId/edit"
+              element={<ProductForm />}
             />
             <Route path="/profile" element={<Profile />} />
           </Route>{" "}

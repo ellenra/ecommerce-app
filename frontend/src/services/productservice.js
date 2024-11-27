@@ -14,6 +14,18 @@ const listProduct = async (data) => {
   }
 };
 
+const getProduct = async (productId, storeId) => {
+  try {
+    const response = await axios.get(
+      `${baseUrl}${storeId}/products/${productId}`,
+      productId
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error getting product:", error.message);
+  }
+};
+
 const deleteProduct = async (productId, storeId) => {
   try {
     const response = await axios.delete(
@@ -25,4 +37,17 @@ const deleteProduct = async (productId, storeId) => {
   }
 };
 
-export default { listProduct, deleteProduct };
+const updateProduct = async (productId, storeId, data) => {
+  try {
+    console.log(data);
+    const response = await axios.put(
+      `${baseUrl}${storeId}/products/${productId}`,
+      data
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error updating product data:", error.message);
+  }
+};
+
+export default { listProduct, deleteProduct, getProduct, updateProduct };

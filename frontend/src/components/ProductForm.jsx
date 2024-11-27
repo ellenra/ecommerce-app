@@ -1,22 +1,54 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useUser } from "../UserContext";
 import { Button, Input, Image } from "@nextui-org/react";
 import productService from "../services/productservice";
 import { useNavigate, useParams } from "react-router-dom";
 
-const ListProductForm = () => {
+//TODO: Possibility to add many pics
+const ProductForm = () => {
   const user = useUser();
-  const { storeId } = useParams();
+  const { storeId, productId } = useParams();
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
   const [quantity, setQuantity] = useState("");
   const [image, setImage] = useState(null);
   const [categoryId, setCategoryId] = useState("1");
+  const [viewProductPicture, setViewProductPicture] = useState(null);
   const navigate = useNavigate();
 
+  useEffect(() => {
+    if (productId) {
+      const fetchProductData = async () => {
+        try {
+          const productData = await productService.getProduct(productId);
+          console.log(productData);
+          setName(productData.name);
+          setDescription(productData.description);
+          setPrice(productData.price);
+          setQuantity(productData.quantity);
+          setViewProductPicture(productData.imageUrl || "");
+          setCategoryId(productData.categoryId);
+        } catch (error) {
+          console.error("Error fetching store data:", error.message);
+        }
+      };
+
+      fetchProductData();
+    }
+  }, [productId]);
+
   const handleImageUpload = (event) => {
-    setImage(event.target.files[0]);
+    const file = event.target.files[0];
+    if (file) {
+      setImage(file);
+      const reader = new FileReader();
+
+      reader.onloadend = () => {
+        setViewProductPicture(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const handleListProduct = async (event) => {
@@ -32,9 +64,16 @@ const ListProductForm = () => {
       formData.append("categoryId", categoryId);
       if (image) {
         formData.append("file", image);
+      } else {
+        formData.append("imageUrl", viewProductPicture);
       }
-      const newProduct = await productService.listProduct(formData);
-      navigate(`/stores/${storeId}`);
+      if (productId) {
+        await productService.updateProduct(productId, storeId, formData);
+        navigate(`/stores/${storeId}/products/${productId}`);
+      } else {
+        await productService.listProduct(formData);
+        navigate(`/stores/${storeId}/products`);
+      }
     } catch (exception) {
       console.log("error in listing product", exception.message);
     }
@@ -47,7 +86,9 @@ const ListProductForm = () => {
           onSubmit={handleListProduct}
           className="w-full max-w-3xl space-y-6 p-10"
         >
-          <h2 className="text-2xl text-center">Add new product</h2>
+          <h2 className="text-2xl text-center">
+            {productId ? "Edit product info" : "Add new product"}
+          </h2>
 
           <div>
             <label className="ml-3">Product name:</label>
@@ -88,7 +129,7 @@ const ListProductForm = () => {
           </div>
           <div>
             <label className="ml-3">Image:</label>
-            {image ? (
+            {viewProductPicture && viewProductPicture !== "null" ? (
               <>
                 <div className="mb-2 ml-3 mt-4">
                   <Image
@@ -96,7 +137,7 @@ const ListProductForm = () => {
                     radius="lg"
                     alt="Profile"
                     className="w-full object-cover h-[140px]"
-                    src={URL.createObjectURL(image)}
+                    src={viewProductPicture}
                     style={{
                       width: "200px",
                       height: "200px",
@@ -108,7 +149,8 @@ const ListProductForm = () => {
                 <div className="mt-2 flex gap-2">
                   <Button
                     onClick={() => {
-                      setImage(null);
+                      setImage("");
+                      setViewProductPicture("");
                     }}
                   >
                     Delete Image
@@ -123,7 +165,7 @@ const ListProductForm = () => {
             type="submit"
             className="ml-3 border border-gray-200 hover:bg-gray-100 rounded-lg"
           >
-            Add Product
+            {productId ? "Save" : "Add Product"}
           </Button>
         </form>
       </>
@@ -131,4 +173,4 @@ const ListProductForm = () => {
   );
 };
 
-export default ListProductForm;
+export default ProductForm;
