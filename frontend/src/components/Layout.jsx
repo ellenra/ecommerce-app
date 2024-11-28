@@ -7,13 +7,14 @@ import {
   Link,
   Button,
 } from "@nextui-org/react";
-
 import { Outlet } from "react-router-dom";
 import { useUser } from "../UserContext";
 import supabase from "../supabaseClient";
+import { useCart } from "../CartContext";
 
 const Layout = () => {
   const user = useUser();
+  const { cartItems } = useCart();
 
   //TODO: move this elsewhere
   const handleLogout = async () => {
@@ -46,25 +47,30 @@ const Layout = () => {
               </Link>
             </NavbarItem>
           </NavbarContent>
-          {user ? (
-            <NavbarContent justify="end">
-              <NavbarItem className="hidden lg:flex">
-                <Link href="/profile">Profile</Link>
-              </NavbarItem>
-              <NavbarItem className="hidden lg:flex">
-                <Button onClick={handleLogout}>Log out</Button>
-              </NavbarItem>
-            </NavbarContent>
-          ) : (
-            <NavbarContent justify="end">
-              <NavbarItem className="hidden lg:flex">
-                <Link href="/login">Login</Link>
-              </NavbarItem>
-              <NavbarItem>
-                <Link href="/register">Sign up</Link>
-              </NavbarItem>
-            </NavbarContent>
-          )}
+          <NavbarContent justify="end">
+            <NavbarItem>
+              <Link href="/cart">Cart: {cartItems.length}</Link>
+            </NavbarItem>
+            {user ? (
+              <>
+                <NavbarItem>
+                  <Link href="/profile">Profile</Link>
+                </NavbarItem>
+                <NavbarItem>
+                  <Button onClick={handleLogout}>Log out</Button>
+                </NavbarItem>
+              </>
+            ) : (
+              <>
+                <NavbarItem>
+                  <Link href="/login">Login</Link>
+                </NavbarItem>
+                <NavbarItem>
+                  <Link href="/register">Sign up</Link>
+                </NavbarItem>
+              </>
+            )}
+          </NavbarContent>
         </Navbar>
       </div>
 

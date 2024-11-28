@@ -12,12 +12,14 @@ import {
   useDisclosure,
 } from "@nextui-org/react";
 import productService from "../services/productservice";
+import { useCart } from "../CartContext";
 
 const Product = () => {
   const { storeId, productId } = useParams();
   const user = useUser();
   const [product, setProduct] = useState(null);
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const { addToCart } = useCart();
 
   const navigate = useNavigate();
 
@@ -71,6 +73,7 @@ const Product = () => {
             borderRadius: "8px",
           }}
         />
+        <Button onClick={addToCart(product)}>Add to cart</Button>
         {isOwner && (
           <>
             <div>
