@@ -25,7 +25,7 @@ const Layout = () => {
   };
   return (
     <div className="flex flex-col min-h-screen">
-      <div className=" bg-zinc-100">
+      <div className=" bg-zinc-50">
         <Navbar>
           <NavbarBrand>
             <p className="font-bold text-inherit">STORE</p>
@@ -78,7 +78,7 @@ const Layout = () => {
         <Outlet />{" "}
       </main>
       <div>
-        <footer className="p-4 text-center bg-zinc-100">
+        <footer className="p-4 text-center bg-zinc-50">
           <p>best app</p>
         </footer>
       </div>

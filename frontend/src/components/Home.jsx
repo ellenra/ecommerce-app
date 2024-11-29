@@ -60,7 +60,6 @@ const Home = () => {
                   alt={product.name}
                   width="200px"
                   height="200px"
-                  objectFit="cover"
                 />
               </CardBody>
               <CardFooter className="flex flex-row justify-between">
@@ -72,9 +71,9 @@ const Home = () => {
         </div>
       </div>
 
-      <div className="mt-6 py-10 px-10 bg-zinc-100 rounded-lg">
+      <div className="mt-6 py-10 px-10 bg-zinc-100 rounded-lg mb-10">
         <h2 className="mb-4">Top Stores</h2>
-        <div className="grid grid-cols-3 gap-6">
+        <div className="grid grid-cols-3 gap-6 mb-6">
           {stores.map((store, index) => (
             <Card
               key={index}
