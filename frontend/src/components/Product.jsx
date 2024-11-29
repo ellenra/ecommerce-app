@@ -11,8 +11,8 @@ import {
   ModalFooter,
   useDisclosure,
 } from "@nextui-org/react";
-import productService from "../services/productservice";
 import { useCart } from "../CartContext";
+import storeservice from "../services/storeservice";
 
 const Product = () => {
   const { storeId, productId } = useParams();
@@ -26,7 +26,7 @@ const Product = () => {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const response = await productService.getProduct(productId, storeId);
+        const response = await storeservice.getProduct(productId, storeId);
         setProduct(response);
       } catch (error) {
         console.error("Error fetching product:", error);
@@ -44,7 +44,7 @@ const Product = () => {
 
   const handleDeleteProduct = async (productId) => {
     try {
-      await productService.deleteProduct(productId, storeId);
+      await storeservice.deleteProduct(productId, storeId);
       onOpenChange(false);
       navigate(`/stores/${storeId}`);
     } catch (error) {
@@ -73,7 +73,7 @@ const Product = () => {
             borderRadius: "8px",
           }}
         />
-        <Button onClick={addToCart(product)}>Add to cart</Button>
+        <Button onClick={() => addToCart(product)}>Add to cart</Button>
         {isOwner && (
           <>
             <div>

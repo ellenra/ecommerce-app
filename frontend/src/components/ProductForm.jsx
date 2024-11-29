@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useUser } from "../UserContext";
 import { Button, Input, Image } from "@nextui-org/react";
-import productService from "../services/productservice";
 import { useNavigate, useParams } from "react-router-dom";
+import storeservice from "../services/storeservice";
 
 //TODO: Possibility to add many pics
 const ProductForm = () => {
@@ -21,7 +21,7 @@ const ProductForm = () => {
     if (productId) {
       const fetchProductData = async () => {
         try {
-          const productData = await productService.getProduct(productId);
+          const productData = await storeservice.getProduct(productId);
           console.log(productData);
           setName(productData.name);
           setDescription(productData.description);
@@ -68,11 +68,11 @@ const ProductForm = () => {
         formData.append("imageUrl", viewProductPicture);
       }
       if (productId) {
-        await productService.updateProduct(productId, storeId, formData);
+        await storeservice.updateProduct(productId, storeId, formData);
         navigate(`/stores/${storeId}/products/${productId}`);
       } else {
-        await productService.listProduct(formData);
-        navigate(`/stores/${storeId}/products`);
+        await storeservice.listProduct(formData);
+        navigate(`/stores/${storeId}`);
       }
     } catch (exception) {
       console.log("error in listing product", exception.message);

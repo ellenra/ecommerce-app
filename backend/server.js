@@ -27,7 +27,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/api/auth", router);
 app.use("/api/users", userRouter);
 app.use("/api/stores", storeRouter);
-storeRouter.use("", productRouter);
+app.use("/api/products", productRouter);
 
 app.get("/", (req, res) => res.send("Server running"));
 
