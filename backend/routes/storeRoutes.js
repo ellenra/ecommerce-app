@@ -142,12 +142,11 @@ storeRouter.post(
 
       const file = req.file;
       const uniqueFileName = `${Date.now()}-${file.name}`;
-      const fileBase64 = decode(file.buffer.toString("base64"));
 
       const { data, error } = await supabase.storage
         .from("product-images")
-        .upload(uniqueFileName, fileBase64, {
-          contentType: "image/png",
+        .upload(uniqueFileName, file.buffer, {
+          contentType: file.mimetype,
         });
 
       if (error) {
@@ -214,7 +213,6 @@ storeRouter.put(
     const storeId = req.params.storeId;
     let { name, description, price, quantity, categoryId, imageUrl, userId } =
       req.body;
-    console.log(req.body);
     const parsedPrice = parseFloat(price);
     const parsedQuantity = parseInt(quantity, 10);
 
@@ -226,12 +224,11 @@ storeRouter.put(
       if (req.file) {
         const file = req.file;
         const uniqueFileName = `${Date.now()}-${file.name}`;
-        const fileBase64 = decode(file.buffer.toString("base64"));
 
         const { data, error } = await supabase.storage
           .from("product-images")
-          .upload(uniqueFileName, fileBase64, {
-            contentType: "image/png",
+          .upload(uniqueFileName, file.buffer, {
+            contentType: file.mimetype,
           });
 
         if (error) {

@@ -65,11 +65,10 @@ const deleteProduct = async (productId, storeId) => {
   }
 };
 
-const updateProduct = async (productId, storeId, data) => {
+const updateProduct = async (data) => {
   try {
-    console.log(data);
     const response = await axios.put(
-      `${baseUrl}${storeId}/products/${productId}`,
+      `${baseUrl}${data.get("storeId")}/products/${data.get("productId")}`,
       data
     );
     return response.data;

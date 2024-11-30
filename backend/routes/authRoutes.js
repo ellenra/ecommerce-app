@@ -19,14 +19,9 @@ router.post("/register", async (req, res) => {
         seller: false,
       },
     });
-
-    if (error) {
-      console.log("error database insertion", error);
-      return res.status(400).json({ error: error.message });
-    }
-
     res.status(200).json({ message: "User registered", data });
-  } catch (err) {
+  } catch (error) {
+    console.error("server error", error);
     res.status(500).json({ error: "Server error" });
   }
 });

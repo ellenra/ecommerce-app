@@ -62,7 +62,7 @@ const Cart = () => {
       )}
 
       {cartItems.length > 0 && (
-        <div className="m-6 p-6 bg-zinc-50 rounded-lg w-4/5 lg:w-[40%] mx-auto">
+        <div className="m-6 p-6 bg-zinc-50 rounded-lg w-4/5 lg:w-[40%] mx-auto shadow-lg">
           <h3 className="ml-4">Orger Summary</h3>
           <p className="text-sm ml-4">
             Total: <span className="font-bold">{totalPrice.toFixed(2)} €</span>

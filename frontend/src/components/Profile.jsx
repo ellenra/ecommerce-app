@@ -7,30 +7,32 @@ import { Link, useNavigate } from "react-router-dom";
 const Profile = () => {
   const currentUser = useUser();
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-
   useEffect(() => {
-    if (currentUser) {
-      const fetchUserData = async () => {
-        try {
-          const user = await userService.getUser(currentUser.id);
-          setUser(user);
-        } catch (error) {
-          console.error("Error fetching user data:", error.message);
-        }
-      };
+    const fetchUserData = async () => {
+      if (!currentUser) return;
 
-      fetchUserData();
-    }
+      try {
+        const fetchedUser = await userService.getUser(currentUser.id);
+        setUser(fetchedUser);
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUserData();
   }, [currentUser]);
 
   useEffect(() => {
-    if (!user) {
+    if (!currentUser && !loading) {
       navigate("/");
     }
   }, [user]);
 
-  if (!user) {
+  if (loading) {
     return <div>Loading...</div>;
   }
 
