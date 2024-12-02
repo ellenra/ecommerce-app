@@ -25,7 +25,7 @@ model User {
   email     String     @unique
   imageUrl  String     @default("")
   
-  favorites Product[]
+  favorites Product[]  @relation("UserFavorites")
   orders    Order[]
   cart      Cart?
 
@@ -51,35 +51,35 @@ model Store {
 }
 
 model Product {
-  id          String    @id @default(cuid())
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @default(now()) @updatedAt
+  id          String      @id @default(cuid())
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @default(now()) @updatedAt
   
   name        String
   description String
   price       Float
   quantity    Int
-  imageUrl    String    @default("")
+  imageUrl    String      @default("")
   storeId     String
   userId      String
   categoryId  String
   
-  store       Store     @relation(fields: [storeId], references: [id], onDelete: Cascade)
-  user        User      @relation(fields: [userId], references: [id])
+  store       Store       @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  users       User[]      @relation("UserFavorites")
   
   orders      OrderItem[]
   carts       CartItem[]
 }
 
 model Order {
-  id          String    @id @default(cuid())
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @default(now()) @updatedAt
+  id          String      @id @default(cuid())
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @default(now()) @updatedAt
   total       Float
   status      OrderStatus
   userId      String
   
-  user        User      @relation(fields: [userId], references: [id])
+  user        User        @relation(fields: [userId], references: [id])
   orderItems  OrderItem[]
   
   Payment     Payment?

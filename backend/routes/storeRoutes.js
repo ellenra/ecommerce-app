@@ -11,7 +11,11 @@ const upload = multer({ storage: storage });
 
 storeRouter.get("/", async (req, res) => {
   try {
-    const stores = await prisma.store.findMany();
+    const stores = await prisma.store.findMany({
+      include: {
+        products: true,
+      },
+    });
     res.json(stores);
   } catch (error) {
     res.status(500).json({ error: "Error fetching stores" });

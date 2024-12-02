@@ -26,4 +26,79 @@ userRouter.get("/:id", async (req, res) => {
   }
 });
 
+userRouter.post("/:id/favorites", async (req, res) => {
+  const userId = req.params.id;
+  const { productId } = req.body;
+  try {
+    const user = await prisma.user.findUnique({
+      where: {
+        id: userId,
+      },
+      select: {
+        favorites: { select: { id: true } },
+      },
+    });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    if (user.favorites.some((favorite) => favorite.id === productId)) {
+      return res.status(400).json({ message: "Product already in favorites" });
+    }
+
+    const updatedUser = await prisma.user.update({
+      where: {
+        id: userId,
+      },
+      data: {
+        favorites: {
+          connect: { id: productId },
+        },
+      },
+    });
+
+    res.json(updatedUser);
+  } catch (error) {
+    console.error(error);
+  }
+});
+
+userRouter.delete("/:id/favorites/:productId", async (req, res) => {
+  const { id: userId, productId } = req.params;
+  try {
+    const user = await prisma.user.findUnique({
+      where: {
+        id: userId,
+      },
+      select: {
+        favorites: {
+          select: { id: true },
+        },
+      },
+    });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    if (!user.favorites.some((favorite) => favorite.id === productId)) {
+      return res.status(400).json({ message: "Product not in favorites" });
+    }
+
+    const updatedUser = await prisma.user.update({
+      where: { id: userId },
+      data: {
+        favorites: {
+          disconnect: { id: productId },
+        },
+      },
+    });
+
+    res.json(updatedUser);
+  } catch (error) {
+    console.error("Error deleting fav", error);
+  }
+});
+
 export default userRouter;

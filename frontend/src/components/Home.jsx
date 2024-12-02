@@ -1,18 +1,39 @@
 import { useEffect, useState } from "react";
 import { Card, CardBody, CardFooter, Image, Button } from "@nextui-org/react";
 import axios from "axios";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import FavoriteIcon from "@mui/icons-material/Favorite";
 import { useNavigate } from "react-router-dom";
-import productService from "../services/productservice";
+import { useUser } from "../UserContext";
+import productservice from "../services/productservice";
+import userservice from "../services/userservice";
 
 const Home = () => {
+  const currentUser = useUser();
+  const [user, setUser] = useState(null);
   const [products, setProducts] = useState([]);
   const [stores, setStores] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
+    const fetchUserData = async () => {
+      if (!currentUser) return;
+
+      try {
+        const fetchedUser = await userservice.getUser(currentUser.id);
+        setUser(fetchedUser);
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
+
+    fetchUserData();
+  }, [currentUser]);
+
+  useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await productService.getProducts();
+        const response = await productservice.getProducts();
         setProducts(response);
       } catch (error) {
         console.error("Error fetching products:", error.message);
@@ -32,6 +53,30 @@ const Home = () => {
     fetchStores();
   }, []);
 
+  const handleAddFavorite = async (productId) => {
+    if (user) {
+      try {
+        await userservice.addProductToFavorites(productId, user.id);
+        const fetchedUser = await userservice.getUser(user.id);
+        setUser(fetchedUser);
+      } catch (error) {
+        console.error("Error adding product to favorites", error.message);
+      }
+    } else {
+      navigate("/login");
+    }
+  };
+
+  const handleDeleteFavorite = async (productId) => {
+    try {
+      await userservice.deleteProductFromFavorites(productId, user.id);
+      const fetchedUser = await userservice.getUser(user.id);
+      setUser(fetchedUser);
+    } catch (error) {
+      console.error("Error deleting product from favs", error.message);
+    }
+  };
+
   return (
     <div>
       <div className="text-center py-16">
@@ -48,13 +93,14 @@ const Home = () => {
           {products.map((product, index) => (
             <Card
               key={index}
-              isPressable
-              className="min-w-[200px] shadow-md rounded-lg"
-              onPress={() =>
-                navigate(`/stores/${product.storeId}/products/${product.id}`)
-              }
+              className="min-w-[200px] shadow-md rounded-lg hover:shadow-xl"
             >
-              <CardBody className="p-0">
+              <CardBody
+                className="p-0 hover:cursor-pointer"
+                onClick={() =>
+                  navigate(`/stores/${product.storeId}/products/${product.id}`)
+                }
+              >
                 <Image
                   src={product.imageUrl}
                   alt={product.name}
@@ -62,10 +108,28 @@ const Home = () => {
                   height="200px"
                 />
               </CardBody>
-              <CardFooter className="flex flex-row justify-between">
+              <CardFooter
+                className="flex flex-row justify-between hover:cursor-pointer"
+                onClick={() =>
+                  navigate(`/stores/${product.storeId}/products/${product.id}`)
+                }
+              >
                 <p>{product.name}</p>
                 <p>{product.price} €</p>
               </CardFooter>
+              <div className="flex justify-end -mr-3">
+                {user?.favorites.some(
+                  (favorite) => favorite.id === product.id
+                ) ? (
+                  <Button onClick={() => handleDeleteFavorite(product.id)}>
+                    <FavoriteIcon />
+                  </Button>
+                ) : (
+                  <Button onClick={() => handleAddFavorite(product.id)}>
+                    <FavoriteBorderIcon />
+                  </Button>
+                )}
+              </div>
             </Card>
           ))}
         </div>
