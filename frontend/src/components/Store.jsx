@@ -1,15 +1,38 @@
 import React, { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { Button, Card, CardBody, CardFooter, Image } from "@nextui-org/react";
 import { useAuth } from "../hooks/AuthContext";
+import userservice from "../services/userservice";
+import { useFavorites } from "../hooks/favoriteProducts";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import { Button, Card, CardBody, CardFooter, Image } from "@nextui-org/react";
 
 const Store = () => {
   const { storeId } = useParams();
   const session = useAuth();
+  const [user, setUser] = useState(null);
   const [store, setStore] = useState(null);
-
+  const { addFavorite, deleteFavorite, isFavorite } = useFavorites(
+    user,
+    setUser
+  );
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (!session.user) return;
+
+      try {
+        const fetchedUser = await userservice.getUser(session.user.id);
+        setUser(fetchedUser);
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
+
+    fetchUserData();
+  }, [session.user]);
 
   useEffect(() => {
     const fetchStore = async () => {
@@ -29,7 +52,6 @@ const Store = () => {
   }
 
   const isOwner = session.user && session.user.id === store.userId;
-  console.log(store.products);
 
   return (
     <div>
@@ -37,37 +59,45 @@ const Store = () => {
         <h1 className="text-3xl font-bold">{store.name}</h1>
         <p className="text-lg mt-2">{store.description}</p>
       </div>
-      <div className="grid grid-cols-2 lg:grid-cols-8 gap-6 p-6">
-        {store.products.map((product) => (
+      <div className="grid md:grid-cols-4 lg:grid-cols-8 gap-6 p-6">
+        {store.products.map((product, index) => (
           <Card
-            shadow="sm"
-            key={product.id}
-            isPressable
-            onPress={() =>
-              navigate(`/stores/${storeId}/products/${product.id}`)
-            }
-            className="mx-auto"
+            key={index}
+            className="min-w-[200px] shadow-md rounded-lg hover:shadow-xl"
           >
-            <CardBody className="overflow-visible p-0">
+            <CardBody
+              className="p-0 hover:cursor-pointer"
+              onClick={() =>
+                navigate(`/stores/${product.storeId}/products/${product.id}`)
+              }
+            >
               <Image
-                shadow="sm"
-                radius="lg"
-                alt={product.name}
-                className="w-full object-cover h-[140px]"
                 src={product.imageUrl}
-                style={{
-                  width: "200px",
-                  height: "200px",
-                  objectFit: "cover",
-                  borderRadius: "8px",
-                }}
+                alt={product.name}
+                width="200px"
+                height="200px"
               />
             </CardBody>
-            <CardFooter className=" text-sm flex justify-between items-start">
-              <p className="p-2.5">
-                {product.name} {product.price}
-              </p>
+            <CardFooter
+              className="flex flex-row justify-between hover:cursor-pointer"
+              onClick={() =>
+                navigate(`/stores/${product.storeId}/products/${product.id}`)
+              }
+            >
+              <p>{product.name}</p>
+              <p>{product.price} €</p>
             </CardFooter>
+            <div className="flex justify-end -mr-3">
+              {isFavorite(product.id) ? (
+                <Button onClick={() => deleteFavorite(product.id)}>
+                  <FavoriteIcon />
+                </Button>
+              ) : (
+                <Button onClick={() => addFavorite(product.id)}>
+                  <FavoriteBorderIcon />
+                </Button>
+              )}
+            </div>
           </Card>
         ))}
       </div>

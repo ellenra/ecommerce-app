@@ -5,6 +5,7 @@ import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import userservice from "../services/userservice";
 import { useAuth } from "../hooks/AuthContext";
+import { useFavorites } from "../hooks/favoriteProducts";
 
 const Profile = () => {
   const session = useAuth();
@@ -12,6 +13,7 @@ const Profile = () => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const [hoveredProductId, setHoveredProductId] = useState(null);
+  const { deleteFavorite } = useFavorites(user, setUser);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -39,16 +41,6 @@ const Profile = () => {
   if (loading) {
     return <div>Loading...</div>;
   }
-
-  const handleDeleteFavorite = async (productId) => {
-    try {
-      await userservice.deleteProductFromFavorites(productId, user.id);
-      const fetchedUser = await userservice.getUser(user.id);
-      setUser(fetchedUser);
-    } catch (error) {
-      console.error("Error deleting product from favs", error.message);
-    }
-  };
 
   return (
     <div>
@@ -84,7 +76,7 @@ const Profile = () => {
               </CardFooter>
               <div className="flex justify-end -mr-3">
                 <Button
-                  onClick={() => handleDeleteFavorite(product.id)}
+                  onClick={() => deleteFavorite(product.id)}
                   onMouseEnter={() => setHoveredProductId(product.id)}
                   onMouseLeave={() => setHoveredProductId(null)}
                 >

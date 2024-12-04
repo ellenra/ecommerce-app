@@ -7,12 +7,17 @@ import { useNavigate } from "react-router-dom";
 import productservice from "../services/productservice";
 import userservice from "../services/userservice";
 import { useAuth } from "../hooks/AuthContext";
+import { useFavorites } from "../hooks/favoriteProducts";
 
 const Home = () => {
   const session = useAuth();
   const [user, setUser] = useState(null);
   const [products, setProducts] = useState([]);
   const [stores, setStores] = useState([]);
+  const { addFavorite, deleteFavorite, isFavorite } = useFavorites(
+    user,
+    setUser
+  );
   const navigate = useNavigate();
 
   console.log(session);
@@ -55,30 +60,6 @@ const Home = () => {
     fetchStores();
   }, []);
 
-  const handleAddFavorite = async (productId) => {
-    if (user) {
-      try {
-        await userservice.addProductToFavorites(productId, user.id);
-        const fetchedUser = await userservice.getUser(user.id);
-        setUser(fetchedUser);
-      } catch (error) {
-        console.error("Error adding product to favorites", error.message);
-      }
-    } else {
-      navigate("/login");
-    }
-  };
-
-  const handleDeleteFavorite = async (productId) => {
-    try {
-      await userservice.deleteProductFromFavorites(productId, user.id);
-      const fetchedUser = await userservice.getUser(user.id);
-      setUser(fetchedUser);
-    } catch (error) {
-      console.error("Error deleting product from favs", error.message);
-    }
-  };
-
   return (
     <div>
       <div className="text-center py-16">
@@ -120,14 +101,12 @@ const Home = () => {
                 <p>{product.price} €</p>
               </CardFooter>
               <div className="flex justify-end -mr-3">
-                {user?.favorites.some(
-                  (favorite) => favorite.id === product.id
-                ) ? (
-                  <Button onClick={() => handleDeleteFavorite(product.id)}>
+                {isFavorite(product.id) ? (
+                  <Button onClick={() => deleteFavorite(product.id)}>
                     <FavoriteIcon />
                   </Button>
                 ) : (
-                  <Button onClick={() => handleAddFavorite(product.id)}>
+                  <Button onClick={() => addFavorite(product.id)}>
                     <FavoriteBorderIcon />
                   </Button>
                 )}
