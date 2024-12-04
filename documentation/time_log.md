@@ -10,6 +10,13 @@
 | 21.11  | 4     | Created basic layout component. Added login, logout and session management                                 |
 | 22.11. | 3     | Added store creation feature, fixed database schema.                                                       |
 | 23.11. |  2    |  Added product listing feature and fixed structure.                                                        |
-| 25.11. |       | Added image upload to product listing and possibility to edit store info.                                  |
+| 25.11. | 5     | Added image upload to product listing and possibility to edit store info.                                  |
+| 26.11. | 4     | Improved design and added product deletion feature and possibility to add profile picture for store.       |
+| 27.11. | 4     | Created page to view product and functionality to edit product info.                                       |
+| 28.11. | 5     | Implemented simple version of shopping cart feature.                                                       |
+| 29.11. | 5     |  Created home page, did some refactoring and improved cart page design.                                    |
+| 30.11. | 4     | Improved form validation with react hook form and zod.                                                     |
+|  2.12  | 2     |  Added functionality to add products to favorites and remove them.                                         |
+|  3.12  | 2     | Improved session handling.                                                                                 |
 
 | yht | |

@@ -1,10 +1,10 @@
 import { useNavigate, Navigate } from "react-router-dom";
 import { Button, Input } from "@nextui-org/react";
 import supabase from "../supabaseClient";
-import { useUser } from "../UserContext";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useAuth } from "../hooks/AuthContext";
 
 const loginSchema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
@@ -12,7 +12,7 @@ const loginSchema = z.object({
 });
 
 const Login = () => {
-  const user = useUser();
+  const session = useAuth();
   const navigate = useNavigate();
 
   const {
@@ -21,7 +21,7 @@ const Login = () => {
     formState: { errors },
   } = useForm({ resolver: zodResolver(loginSchema) });
 
-  if (user) {
+  if (session.user) {
     return <Navigate to="/" />;
   }
 

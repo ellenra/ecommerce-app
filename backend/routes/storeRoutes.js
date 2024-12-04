@@ -43,35 +43,47 @@ storeRouter.post("/", upload.single("file"), async (req, res) => {
   const { userId, name, description, categoryId, bannerUrl } = req.body;
 
   try {
-    const file = req.file;
-    const fileBase64 = decode(file.buffer.toString("base64"));
+    if (req.file) {
+      const file = req.file;
+      const fileBase64 = decode(file.buffer.toString("base64"));
 
-    const { data, error } = await supabase.storage
-      .from("store-images")
-      .upload(file.originalname, fileBase64, {
-        contentType: "image/png",
+      const { data, error } = await supabase.storage
+        .from("store-images")
+        .upload(file.originalname, fileBase64, {
+          contentType: "image/png",
+        });
+
+      if (error) {
+        throw error;
+      }
+
+      const { data: image } = supabase.storage
+        .from("store-images")
+        .getPublicUrl(data.path);
+
+      const store = await prisma.store.create({
+        data: {
+          userId,
+          name,
+          description,
+          categoryId,
+          profileUrl: image.publicUrl,
+          bannerUrl,
+        },
       });
-
-    if (error) {
-      throw error;
+      res.status(201).json(store);
+    } else {
+      const store = await prisma.store.create({
+        data: {
+          userId,
+          name,
+          description,
+          categoryId,
+          bannerUrl,
+        },
+      });
+      res.status(201).json(store);
     }
-
-    const { data: image } = supabase.storage
-      .from("store-images")
-      .getPublicUrl(data.path);
-
-    const store = await prisma.store.create({
-      data: {
-        userId,
-        name,
-        description,
-        categoryId,
-        profileUrl: image.publicUrl,
-        bannerUrl,
-      },
-    });
-
-    res.status(201).json(store);
   } catch (error) {
     console.log(error.message);
   }

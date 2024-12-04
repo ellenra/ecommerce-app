@@ -1,5 +1,5 @@
 import { Card, CardBody, CardFooter, Image, Button } from "@nextui-org/react";
-import { useCart } from "../CartContext";
+import { useCart } from "../hooks/CartContext";
 import { useNavigate } from "react-router-dom";
 
 const Cart = () => {

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { useUser } from "../UserContext";
 import {
   Button,
   Image,
@@ -11,12 +10,13 @@ import {
   ModalFooter,
   useDisclosure,
 } from "@nextui-org/react";
-import { useCart } from "../CartContext";
+import { useCart } from "../hooks/CartContext";
 import storeservice from "../services/storeservice";
+import { useAuth } from "../hooks/AuthContext";
 
 const Product = () => {
   const { storeId, productId } = useParams();
-  const user = useUser();
+  const session = useAuth();
   const [product, setProduct] = useState(null);
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const { addToCart } = useCart();
@@ -40,7 +40,7 @@ const Product = () => {
     return <div>Loading...</div>;
   }
 
-  const isOwner = user && user.id === product.userId;
+  const isOwner = session.user && session.user.id === product.userId;
 
   const handleDeleteProduct = async (productId) => {
     try {

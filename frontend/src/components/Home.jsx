@@ -4,23 +4,25 @@ import axios from "axios";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import { useNavigate } from "react-router-dom";
-import { useUser } from "../UserContext";
 import productservice from "../services/productservice";
 import userservice from "../services/userservice";
+import { useAuth } from "../hooks/AuthContext";
 
 const Home = () => {
-  const currentUser = useUser();
+  const session = useAuth();
   const [user, setUser] = useState(null);
   const [products, setProducts] = useState([]);
   const [stores, setStores] = useState([]);
   const navigate = useNavigate();
 
+  console.log(session);
+
   useEffect(() => {
     const fetchUserData = async () => {
-      if (!currentUser) return;
+      if (!session.user) return;
 
       try {
-        const fetchedUser = await userservice.getUser(currentUser.id);
+        const fetchedUser = await userservice.getUser(session.user.id);
         setUser(fetchedUser);
       } catch (error) {
         console.error("Error fetching user data:", error);
@@ -28,7 +30,7 @@ const Home = () => {
     };
 
     fetchUserData();
-  }, [currentUser]);
+  }, [session.user]);
 
   useEffect(() => {
     const fetchProducts = async () => {

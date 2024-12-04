@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 import { Button, Card, CardBody, CardFooter, Image } from "@nextui-org/react";
-import { useUser } from "../UserContext";
 import { Link, useNavigate } from "react-router-dom";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import userservice from "../services/userservice";
+import { useAuth } from "../hooks/AuthContext";
 
 const Profile = () => {
-  const currentUser = useUser();
+  const session = useAuth();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
@@ -15,10 +15,10 @@ const Profile = () => {
 
   useEffect(() => {
     const fetchUserData = async () => {
-      if (!currentUser) return;
+      if (!session.user) return;
 
       try {
-        const fetchedUser = await userservice.getUser(currentUser.id);
+        const fetchedUser = await userservice.getUser(session.user.id);
         setUser(fetchedUser);
       } catch (error) {
         console.error("Error fetching user data:", error);
@@ -28,10 +28,10 @@ const Profile = () => {
     };
 
     fetchUserData();
-  }, [currentUser]);
+  }, [session.user]);
 
   useEffect(() => {
-    if (!currentUser && !loading) {
+    if (!session.user && !loading) {
       navigate("/");
     }
   }, [user]);

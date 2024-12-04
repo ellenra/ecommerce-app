@@ -2,10 +2,10 @@ import React, { useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useUser } from "../UserContext";
 import { Button, Input, Image } from "@nextui-org/react";
 import { useNavigate, useParams } from "react-router-dom";
 import storeservice from "../services/storeservice";
+import { useAuth } from "../hooks/AuthContext";
 
 const productSchema = z.object({
   name: z.string().min(1, { message: "Product name is required" }),
@@ -32,7 +32,7 @@ const productSchema = z.object({
 });
 
 const ProductForm = () => {
-  const user = useUser();
+  const session = useAuth();
   const { storeId, productId } = useParams();
   const [viewProductPicture, setViewProductPicture] = useState(null);
   const navigate = useNavigate();
@@ -87,7 +87,7 @@ const ProductForm = () => {
       if (productId) {
         formData.append("productId", productId);
       }
-      formData.append("userId", user.id);
+      formData.append("userId", session.user.id);
       formData.append("storeId", storeId);
       formData.append("name", name);
       formData.append("description", description);

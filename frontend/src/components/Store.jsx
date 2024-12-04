@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { useUser } from "../UserContext";
 import { Button, Card, CardBody, CardFooter, Image } from "@nextui-org/react";
+import { useAuth } from "../hooks/AuthContext";
 
 const Store = () => {
   const { storeId } = useParams();
-  const user = useUser();
+  const session = useAuth();
   const [store, setStore] = useState(null);
 
   const navigate = useNavigate();
@@ -28,7 +28,7 @@ const Store = () => {
     return <div>Loading...</div>;
   }
 
-  const isOwner = user && user.id === store.userId;
+  const isOwner = session.user && session.user.id === store.userId;
   console.log(store.products);
 
   return (

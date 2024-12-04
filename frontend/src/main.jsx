@@ -2,15 +2,15 @@ import { createRoot } from "react-dom/client";
 import "./globals.css";
 import App from "./App.jsx";
 import { NextUIProvider } from "@nextui-org/system";
-import { CartProvider } from "./CartContext.jsx";
-import { UserProvider } from "./UserContext.jsx";
+import { CartProvider } from "./hooks/CartContext.jsx";
+import { AuthProvider } from "./hooks/AuthContext.jsx";
 
 createRoot(document.getElementById("root")).render(
   <NextUIProvider>
     <CartProvider>
-      <UserProvider>
+      <AuthProvider>
         <App />
-      </UserProvider>
+      </AuthProvider>
     </CartProvider>
   </NextUIProvider>
 );

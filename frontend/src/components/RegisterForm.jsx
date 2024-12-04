@@ -2,10 +2,10 @@ import { useNavigate, Navigate } from "react-router-dom";
 import userService from "../services/userservice";
 import { Input, Button } from "@nextui-org/react";
 import supabase from "../supabaseClient";
-import { useUser } from "../UserContext";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useAuth } from "../hooks/AuthContext";
 
 const registerSchema = z.object({
   firstName: z.string().min(1, { message: "First name is required" }),
@@ -17,7 +17,7 @@ const registerSchema = z.object({
 });
 
 const Register = () => {
-  const user = useUser();
+  const session = useAuth();
   const navigate = useNavigate();
 
   const {
@@ -28,7 +28,7 @@ const Register = () => {
     resolver: zodResolver(registerSchema),
   });
 
-  if (user) {
+  if (session.user) {
     return <Navigate to="/" />;
   }
 

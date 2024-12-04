@@ -4,10 +4,10 @@ import { useForm, Controller } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button, Input, Image } from "@nextui-org/react";
-import { useUser } from "../UserContext";
 import storeCategories from "../utils/storeCategories.json";
 import userService from "../services/userservice";
 import storeservice from "../services/storeservice";
+import { useAuth } from "../hooks/AuthContext";
 
 const storeSchema = z.object({
   name: z.string().min(1, { message: "Store name is required" }),
@@ -18,7 +18,7 @@ const storeSchema = z.object({
 
 const StoreForm = () => {
   const { storeId } = useParams();
-  const currentUser = useUser();
+  const session = useAuth();
   const [user, setUser] = useState(null);
   const [viewProfilePicture, setViewProfilePicture] = useState(null);
   const navigate = useNavigate();
@@ -37,10 +37,10 @@ const StoreForm = () => {
   const file = watch("file");
 
   useEffect(() => {
-    if (currentUser) {
+    if (session.user) {
       const fetchUserData = async () => {
         try {
-          const user = await userService.getUser(currentUser.id);
+          const user = await userService.getUser(session.user.id);
           setUser(user);
         } catch (error) {
           console.error("Error fetching user data:", error.message);
@@ -49,7 +49,7 @@ const StoreForm = () => {
 
       fetchUserData();
     }
-  }, [currentUser]);
+  }, [session.user]);
 
   useEffect(() => {
     if (storeId) {

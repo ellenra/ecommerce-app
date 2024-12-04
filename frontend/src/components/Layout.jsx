@@ -8,12 +8,12 @@ import {
   Button,
 } from "@nextui-org/react";
 import { Outlet } from "react-router-dom";
-import { useUser } from "../UserContext";
 import supabase from "../supabaseClient";
-import { useCart } from "../CartContext";
+import { useCart } from "../hooks/CartContext";
+import { useAuth } from "../hooks/AuthContext";
 
 const Layout = () => {
-  const user = useUser();
+  const session = useAuth();
   const { cartItems } = useCart();
 
   //TODO: move this elsewhere
@@ -51,7 +51,7 @@ const Layout = () => {
             <NavbarItem>
               <Link href="/cart">Cart: {cartItems.length}</Link>
             </NavbarItem>
-            {user ? (
+            {session.user ? (
               <>
                 <NavbarItem>
                   <Link href="/profile">Profile</Link>
