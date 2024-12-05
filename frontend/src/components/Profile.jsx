@@ -17,7 +17,9 @@ const Profile = () => {
 
   useEffect(() => {
     const fetchUserData = async () => {
-      if (!session.user) return;
+      if (!session.user) {
+        navigate("/");
+      }
 
       try {
         const fetchedUser = await userservice.getUser(session.user.id);
@@ -31,12 +33,6 @@ const Profile = () => {
 
     fetchUserData();
   }, [session.user]);
-
-  useEffect(() => {
-    if (!session.user && !loading) {
-      navigate("/");
-    }
-  }, [user]);
 
   if (loading) {
     return <div>Loading...</div>;

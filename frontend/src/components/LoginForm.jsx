@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAuth } from "../hooks/AuthContext";
+import { toast } from "react-toastify";
 
 const loginSchema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
@@ -35,6 +36,7 @@ const Login = () => {
       if (error) throw new Error(error.message);
     } catch (exception) {
       console.log("error in login", exception);
+      toast.error(`Log in failed! Reason: ${exception.message}`);
     }
   };
 

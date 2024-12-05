@@ -4,6 +4,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button, Input, Image } from "@nextui-org/react";
 import { useNavigate, useParams } from "react-router-dom";
+import { toast } from "react-toastify";
 import storeservice from "../services/storeservice";
 import { useAuth } from "../hooks/AuthContext";
 
@@ -28,7 +29,8 @@ const productSchema = z.object({
       })
       .positive({ message: "Quantity must be positive" })
   ),
-  file: z.instanceof(File, { message: "Image is required" }),
+  imageUrl: z.string(),
+  file: z.instanceof(File, { message: "Image is required" }).optional(),
 });
 
 const ProductForm = () => {
@@ -61,6 +63,7 @@ const ProductForm = () => {
           setValue("categoryId", productData.categoryId);
           setValue("imageUrl", productData.imageUrl);
           setViewProductPicture(productData.imageUrl);
+          console.log(productData);
         } catch (error) {
           console.error("Error fetching product data:", error.message);
         }
@@ -101,13 +104,20 @@ const ProductForm = () => {
       }
       if (productId) {
         await storeservice.updateProduct(formData);
+        toast.success("Product updated successfully!");
         navigate(`/stores/${storeId}/products/${productId}`);
       } else {
         await storeservice.listProduct(formData);
+        toast.success("Product created!");
         navigate(`/stores/${storeId}`);
       }
     } catch (error) {
       console.error("Error listing product:", error.message);
+      if (productId) {
+        toast.error("Failed to update product!");
+      } else {
+        toast.error("Failed to create product.");
+      }
     }
   };
 

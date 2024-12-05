@@ -3,6 +3,7 @@ import userService from "../services/userservice";
 import { Input, Button } from "@nextui-org/react";
 import supabase from "../supabaseClient";
 import { useForm } from "react-hook-form";
+import { toast } from "react-toastify";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAuth } from "../hooks/AuthContext";
@@ -52,6 +53,7 @@ const Register = () => {
       navigate("/");
     } catch (exception) {
       console.log("error in registration", exception.message);
+      toast.error(`Failed to register! Reason: ${exception.message}`);
     }
   };
 

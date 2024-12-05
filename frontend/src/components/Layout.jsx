@@ -8,6 +8,8 @@ import {
   Button,
 } from "@nextui-org/react";
 import { Outlet } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import supabase from "../supabaseClient";
 import { useCart } from "../hooks/CartContext";
 import { useAuth } from "../hooks/AuthContext";
@@ -16,7 +18,6 @@ const Layout = () => {
   const session = useAuth();
   const { cartItems } = useCart();
 
-  //TODO: move this elsewhere
   const handleLogout = async () => {
     const { error } = await supabase.auth.signOut();
     if (error) {
@@ -25,6 +26,7 @@ const Layout = () => {
   };
   return (
     <div className="flex flex-col min-h-screen">
+      <ToastContainer position="top-right" autoClose={3000} hideProgressBar />
       <div className=" bg-zinc-50">
         <Navbar>
           <NavbarBrand>

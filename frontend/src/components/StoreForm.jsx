@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useForm, Controller } from "react-hook-form";
 import { z } from "zod";
+import { toast } from "react-toastify";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button, Input, Image } from "@nextui-org/react";
 import storeCategories from "../utils/storeCategories.json";
@@ -99,13 +100,20 @@ const StoreForm = () => {
 
       if (storeId) {
         await storeservice.updateStore(storeId, formData);
+        toast.success("Store updated successfully!");
         navigate(`/stores/${storeId}`);
       } else {
         const newStore = await storeservice.createStore(formData);
+        toast.success("Store created!");
         navigate(`/stores/${newStore.id}`);
       }
     } catch (exception) {
       console.log("error in store form", exception.message);
+      if (storeId) {
+        toast.error("Failed to update store.");
+      } else {
+        toast.error("Failed to create store.");
+      }
     }
   };
 

@@ -13,6 +13,7 @@ import {
 import { useCart } from "../hooks/CartContext";
 import storeservice from "../services/storeservice";
 import { useAuth } from "../hooks/AuthContext";
+import { toast } from "react-toastify";
 
 const Product = () => {
   const { storeId, productId } = useParams();
@@ -46,9 +47,11 @@ const Product = () => {
     try {
       await storeservice.deleteProduct(productId, storeId);
       onOpenChange(false);
+      toast.success("Product deleted successfully!");
       navigate(`/stores/${storeId}`);
     } catch (error) {
       console.error("Error deleting product", error);
+      toast.error("Failed to delete product!");
     }
   };
 
