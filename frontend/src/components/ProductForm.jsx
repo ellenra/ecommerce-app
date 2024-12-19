@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Button, Input, Image } from "@nextui-org/react";
+import { Button, Input, Image, Link } from "@nextui-org/react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import storeservice from "../services/storeservice";
@@ -30,7 +30,10 @@ const productSchema = z.object({
       .positive({ message: "Quantity must be positive" })
   ),
   imageUrl: z.string(),
-  file: z.instanceof(File, { message: "Image is required" }).optional(),
+  file: z
+    .instanceof(File, { message: "Image is required" })
+    .optional()
+    .nullable(),
 });
 
 const ProductForm = () => {
@@ -38,6 +41,8 @@ const ProductForm = () => {
   const { storeId, productId } = useParams();
   const [viewProductPicture, setViewProductPicture] = useState(null);
   const navigate = useNavigate();
+
+  if (!session) return;
 
   const {
     handleSubmit,
@@ -47,15 +52,29 @@ const ProductForm = () => {
     formState: { errors },
   } = useForm({
     resolver: zodResolver(productSchema),
+    defaultValues: {
+      name: "",
+      description: "",
+      price: 0,
+      quantity: 0,
+      categoryId: "",
+      imageUrl: "",
+      file: null,
+    },
   });
 
   const file = watch("file");
 
   useEffect(() => {
+    if (!session.user) return;
     if (productId) {
       const fetchProductData = async () => {
         try {
           const productData = await storeservice.getProduct(productId);
+          if (session.user.id !== productData.userId) {
+            navigate("/");
+            return;
+          }
           setValue("name", productData.name);
           setValue("description", productData.description);
           setValue("price", productData.price);
@@ -63,7 +82,6 @@ const ProductForm = () => {
           setValue("categoryId", productData.categoryId);
           setValue("imageUrl", productData.imageUrl);
           setViewProductPicture(productData.imageUrl);
-          console.log(productData);
         } catch (error) {
           console.error("Error fetching product data:", error.message);
         }
@@ -71,7 +89,7 @@ const ProductForm = () => {
 
       fetchProductData();
     }
-  }, [productId]);
+  }, [productId, session.user]);
 
   const handleImageUpload = (event) => {
     const file = event.target.files[0];
@@ -200,8 +218,17 @@ const ProductForm = () => {
           )}
           {errors.file && <p className="text-red-500">{errors.file.message}</p>}
         </div>
+        <Link
+          href={`/stores/${storeId}`}
+          className="mr-2 border border-gray-200 rounded px-4 py-2 hover:bg-gray-100 text-sm"
+        >
+          Cancel
+        </Link>
 
-        <Button type="submit">
+        <Button
+          type="submit"
+          className="border border-gray-200 rounded hover:bg-gray-100 text-sm"
+        >
           {productId ? "Save Changes" : "Add Product"}
         </Button>
       </form>

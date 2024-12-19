@@ -44,8 +44,8 @@ const Layout = () => {
               </Link>
             </NavbarItem>
             <NavbarItem>
-              <Link color="foreground" href="/favorites">
-                Favorites
+              <Link color="foreground" href="/products">
+                Products
               </Link>
             </NavbarItem>
           </NavbarContent>

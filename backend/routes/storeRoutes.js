@@ -155,37 +155,51 @@ storeRouter.post(
       if (isNaN(parsedPrice) || isNaN(parsedQuantity)) {
         return res.status(400).json({ error: "Invalid price or quantity" });
       }
+      if (req.file) {
+        const file = req.file;
+        const uniqueFileName = `${Date.now()}-${file.name}`;
 
-      const file = req.file;
-      const uniqueFileName = `${Date.now()}-${file.name}`;
+        const { data, error } = await supabase.storage
+          .from("product-images")
+          .upload(uniqueFileName, file.buffer, {
+            contentType: file.mimetype,
+          });
 
-      const { data, error } = await supabase.storage
-        .from("product-images")
-        .upload(uniqueFileName, file.buffer, {
-          contentType: file.mimetype,
+        if (error) {
+          throw error;
+        }
+
+        const { data: image } = supabase.storage
+          .from("product-images")
+          .getPublicUrl(data.path);
+
+        const product = await prisma.product.create({
+          data: {
+            storeId: storeId,
+            userId,
+            name,
+            description,
+            price: parsedPrice,
+            quantity: parsedQuantity,
+            imageUrl: image.publicUrl,
+            categoryId,
+          },
         });
-
-      if (error) {
-        throw error;
+        res.json(product);
+      } else {
+        const product = await prisma.product.create({
+          data: {
+            storeId: storeId,
+            userId,
+            name,
+            description,
+            price: parsedPrice,
+            quantity: parsedQuantity,
+            categoryId,
+          },
+        });
+        res.json(product);
       }
-
-      const { data: image } = supabase.storage
-        .from("product-images")
-        .getPublicUrl(data.path);
-
-      const product = await prisma.product.create({
-        data: {
-          storeId: storeId,
-          userId,
-          name,
-          description,
-          price: parsedPrice,
-          quantity: parsedQuantity,
-          imageUrl: image.publicUrl,
-          categoryId,
-        },
-      });
-      res.json(product);
     } catch (error) {
       console.log("errorrr", error);
       res.status(500).json({ error: "Error listing product" });

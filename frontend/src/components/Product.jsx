@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams, Link, useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import {
   Button,
   Image,
@@ -9,7 +9,9 @@ import {
   ModalBody,
   ModalFooter,
   useDisclosure,
+  Link,
 } from "@nextui-org/react";
+import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
 import { useCart } from "../hooks/CartContext";
 import storeservice from "../services/storeservice";
 import { useAuth } from "../hooks/AuthContext";
@@ -56,101 +58,112 @@ const Product = () => {
   };
 
   return (
-    <div className="flex">
-      <div className="p-10">
-        <h1 className="text-3xl font-bold">{product.name}</h1>
-        <p className="text-lg mt-2">{product.description}</p>
-        <p className="text-lg mt-2">{product.price} €</p>
-      </div>
-      <div className="grid grid-cols-2 lg:grid-cols-8 gap-6 p-6">
-        <Image
-          shadow="sm"
-          radius="lg"
-          alt={product.name}
-          className="w-full object-cover h-[140px]"
-          src={product.imageUrl}
-          style={{
-            width: "200px",
-            height: "200px",
-            objectFit: "cover",
-            borderRadius: "8px",
-          }}
-        />
-        <Button onClick={() => addToCart(product)}>Add to cart</Button>
-        {isOwner && (
-          <>
-            <div>
-              <Button
-                onPress={onOpen}
-                className="hover:bg-gray-100 rounded-lg size-0"
-              >
-                Delete
-              </Button>
-            </div>
+    <>
+      <Link
+        href={`/stores/${storeId}`}
+        className="ml-10 rounded px-4 py-2 hover:bg-gray-100 text-sm"
+      >
+        <KeyboardBackspaceIcon />
+      </Link>
+      <div className="flex">
+        <div className="p-10">
+          <h1 className="text-3xl font-bold">{product.name}</h1>
+          <p className="text-lg mt-2">{product.description}</p>
+          <p className="text-lg mt-2">{product.price} €</p>
+        </div>
+        <div className="grid grid-cols-2 lg:grid-cols-8 gap-6 p-6">
+          <Image
+            shadow="sm"
+            radius="lg"
+            alt={product.name}
+            className="w-full object-cover h-[140px]"
+            src={product.imageUrl}
+            style={{
+              width: "200px",
+              height: "200px",
+              objectFit: "cover",
+              borderRadius: "8px",
+            }}
+          />
+          <Button onClick={() => addToCart(product)}>Add to cart</Button>
+          {isOwner && (
+            <>
+              <div>
+                <Button
+                  onPress={onOpen}
+                  className="border border-gray-200 rounded hover:bg-gray-100 text-sm"
+                >
+                  Delete
+                </Button>
+              </div>
 
-            <Modal
-              isOpen={isOpen}
-              onOpenChange={onOpenChange}
-              classNames={{
-                backdrop: "bg-black/40",
-                base: "bg-white rounded-lg",
-                header: "pt-10",
-                closeButton: "hover:bg-white/5 active:bg-white/10 border m-2",
-              }}
-              motionProps={{
-                variants: {
-                  enter: {
-                    y: 0,
-                    opacity: 1,
-                    transition: {
-                      duration: 0.3,
-                      ease: "easeOut",
+              <Modal
+                isOpen={isOpen}
+                onOpenChange={onOpenChange}
+                classNames={{
+                  backdrop: "bg-black/40",
+                  base: "bg-white rounded-lg",
+                  header: "pt-10",
+                  closeButton: "hover:bg-white/5 active:bg-white/10 border m-2",
+                }}
+                motionProps={{
+                  variants: {
+                    enter: {
+                      y: 0,
+                      opacity: 1,
+                      transition: {
+                        duration: 0.3,
+                        ease: "easeOut",
+                      },
+                    },
+                    exit: {
+                      y: -20,
+                      opacity: 0,
+                      transition: {
+                        duration: 0.2,
+                        ease: "easeIn",
+                      },
                     },
                   },
-                  exit: {
-                    y: -20,
-                    opacity: 0,
-                    transition: {
-                      duration: 0.2,
-                      ease: "easeIn",
-                    },
-                  },
-                },
-              }}
-            >
-              <ModalContent>
-                {(onClose) => (
-                  <>
-                    <ModalHeader>
-                      <p>
-                        Are you sure you want to delete this product from your
-                        store?
-                      </p>
-                    </ModalHeader>
-                    <ModalBody>
-                      <p>This action cannot be undone.</p>
-                    </ModalBody>
-                    <ModalFooter>
-                      <Button onPress={onClose}>Close</Button>
-                      <Button onPress={() => handleDeleteProduct(product.id)}>
-                        Delete
-                      </Button>
-                    </ModalFooter>
-                  </>
-                )}
-              </ModalContent>
-            </Modal>
-          </>
-        )}
-        {isOwner && (
-          <div>
-            <Link to={`/stores/${storeId}/products/${productId}/edit`}>
-              <Button>Edit product info</Button>
-            </Link>
-          </div>
-        )}
+                }}
+              >
+                <ModalContent>
+                  {(onClose) => (
+                    <>
+                      <ModalHeader>
+                        <p>
+                          Are you sure you want to delete this product from your
+                          store?
+                        </p>
+                      </ModalHeader>
+                      <ModalBody>
+                        <p>This action cannot be undone.</p>
+                      </ModalBody>
+                      <ModalFooter>
+                        <Button onPress={onClose}>Close</Button>
+                        <Button onPress={() => handleDeleteProduct(product.id)}>
+                          Delete
+                        </Button>
+                      </ModalFooter>
+                    </>
+                  )}
+                </ModalContent>
+              </Modal>
+            </>
+          )}
+          {isOwner && (
+            <div>
+              <Link
+                href={`/stores/${storeId}/products/${productId}/edit`}
+                className="border border-gray-200 rounded hover:bg-gray-100 text-sm"
+              >
+                <Button>Edit product info</Button>
+              </Link>
+            </div>
+          )}
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 

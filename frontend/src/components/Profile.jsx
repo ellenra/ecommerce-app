@@ -9,32 +9,37 @@ import { useFavorites } from "../hooks/favoriteProducts";
 
 const Profile = () => {
   const session = useAuth();
+  const [sessionReady, setSessionReady] = useState(false);
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const [hoveredProductId, setHoveredProductId] = useState(null);
   const { deleteFavorite } = useFavorites(user, setUser);
 
   useEffect(() => {
-    const fetchUserData = async () => {
-      if (!session.user) {
-        navigate("/");
-      }
+    if (session === null) {
+      return;
+    }
+    setSessionReady(true);
+  }, [session]);
 
-      try {
-        const fetchedUser = await userservice.getUser(session.user.id);
-        setUser(fetchedUser);
-      } catch (error) {
-        console.error("Error fetching user data:", error);
-      } finally {
-        setLoading(false);
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (sessionReady && session.user) {
+        try {
+          const fetchedUser = await userservice.getUser(session.user.id);
+          setUser(fetchedUser);
+        } catch (error) {
+          console.error("Error fetching user data:", error);
+        }
+      } else if (sessionReady && !session.user) {
+        navigate("/login");
       }
     };
 
     fetchUserData();
-  }, [session.user]);
+  }, [sessionReady, session]);
 
-  if (loading) {
+  if (!sessionReady || !user) {
     return <div>Loading...</div>;
   }
 

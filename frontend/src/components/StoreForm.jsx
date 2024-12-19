@@ -4,7 +4,7 @@ import { useForm, Controller } from "react-hook-form";
 import { z } from "zod";
 import { toast } from "react-toastify";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Button, Input, Image } from "@nextui-org/react";
+import { Button, Input, Image, Link } from "@nextui-org/react";
 import storeCategories from "../utils/storeCategories.json";
 import userService from "../services/userservice";
 import storeservice from "../services/storeservice";
@@ -20,9 +20,17 @@ const storeSchema = z.object({
 const StoreForm = () => {
   const { storeId } = useParams();
   const session = useAuth();
+  const [sessionReady, setSessionReady] = useState(false);
   const [user, setUser] = useState(null);
   const [viewProfilePicture, setViewProfilePicture] = useState(null);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (session === null) {
+      return;
+    }
+    setSessionReady(true);
+  }, [session]);
 
   const {
     register,
@@ -33,30 +41,42 @@ const StoreForm = () => {
     formState: { errors },
   } = useForm({
     resolver: zodResolver(storeSchema),
+    defaultValues: {
+      name: "",
+      description: "",
+      categoryId: "",
+      file: null,
+    },
   });
 
   const file = watch("file");
 
   useEffect(() => {
-    if (session.user) {
-      const fetchUserData = async () => {
+    const fetchUserData = async () => {
+      if (sessionReady && session.user) {
         try {
-          const user = await userService.getUser(session.user.id);
-          setUser(user);
+          const userData = await userService.getUser(session.user.id);
+          setUser(userData);
         } catch (error) {
           console.error("Error fetching user data:", error.message);
         }
-      };
-
-      fetchUserData();
-    }
-  }, [session.user]);
+      } else if (sessionReady && !session.user) {
+        navigate("/");
+      }
+    };
+    fetchUserData();
+  }, [sessionReady, session]);
 
   useEffect(() => {
+    if (!session.user) return;
     if (storeId) {
       const fetchStoreData = async () => {
         try {
           const storeData = await storeservice.getStore(storeId);
+          if (session.user.id !== storeData.userId) {
+            navigate("/");
+            return;
+          }
           setValue("name", storeData.name);
           setValue("description", storeData.description);
           setValue("categoryId", storeData.categoryId);
@@ -69,7 +89,7 @@ const StoreForm = () => {
 
       fetchStoreData();
     }
-  }, [storeId]);
+  }, [session, sessionReady, storeId]);
 
   const handleImageUpload = (event) => {
     const file = event.target.files[0];
@@ -117,7 +137,7 @@ const StoreForm = () => {
     }
   };
 
-  if (!user) {
+  if (!sessionReady) {
     return <div>Loading...</div>;
   }
 
@@ -204,10 +224,15 @@ const StoreForm = () => {
           )}
           {errors.file && <p className="text-red-500">{errors.file.message}</p>}
         </div>
-
+        <Link
+          href={`/stores/${storeId}`}
+          className="mr-2 border border-gray-200 rounded px-4 py-2 hover:bg-gray-100 text-sm"
+        >
+          Cancel
+        </Link>
         <Button
           type="submit"
-          className="border border-gray-200 hover:bg-gray-100 rounded-lg"
+          className="border border-gray-200 rounded px-4 py-2 hover:bg-gray-100 text-sm"
         >
           {storeId ? "Update Store" : "Create Store"}
         </Button>
