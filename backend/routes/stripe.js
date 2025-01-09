@@ -13,10 +13,13 @@ router.post("/create-checkout-session", async (req, res) => {
   const customer = await stripe.customers.create({
     metadata: {
       userId: req.body.userId,
-      cart: JSON.stringify(req.body.cartItems),
+      cartItemsCount: req.body.cartItems.length,
+      totalPrice: req.body.cartItems.reduce(
+        (total, item) => total + item.price * item.count,
+        0
+      ),
     },
   });
-
   const line_items = req.body.cartItems.map((item) => {
     return {
       price_data: {
@@ -35,12 +38,35 @@ router.post("/create-checkout-session", async (req, res) => {
     };
   });
 
+  const order = await prisma.order.create({
+    data: {
+      userId: req.body.userId,
+      total: req.body.cartItems.reduce(
+        (total, item) => total + item.price * item.count,
+        0
+      ),
+      status: "PENDING",
+      paymentStatus: "PENDING",
+      customerId: customer.id,
+      orderItems: {
+        create: req.body.cartItems.map((item) => ({
+          productId: item.id,
+          quantity: item.count,
+        })),
+      },
+    },
+  });
+  console.log("Order created, payment pending:", order);
+
   const session = await stripe.checkout.sessions.create({
     customer: customer.id,
     line_items,
     mode: "payment",
-    success_url: `${process.env.CLIENT_URL}/checkout-success`,
+    success_url: `${process.env.CLIENT_URL}/checkout-success?orderId=${order.id}`,
     cancel_url: `${process.env.CLIENT_URL}/checkout-error`,
+    metadata: {
+      orderId: order.id,
+    },
   });
 
   res.send({ url: session.url });
@@ -70,28 +96,17 @@ router.post("/webhook", (request, response) => {
     stripe.customers
       .retrieve(data.customer)
       .then(async (customer) => {
-        const items = JSON.parse(customer.metadata.cart);
-        const totalPrice = items.reduce(
-          (total, item) => total + item.price * item.quantity,
-          0
-        );
+        const session = event.data.object;
+        const orderId = session.metadata.orderId;
 
-        const order = await prisma.order.create({
+        const order = await prisma.order.update({
+          where: { id: orderId },
           data: {
-            userId: customer.metadata.userId,
-            total: totalPrice,
-            status: "PENDING",
             paymentStatus: "COMPLETED",
-            customerId: customer.id,
-            orderItems: {
-              create: items.map((item) => ({
-                productId: item.id,
-                quantity: item.quantity,
-              })),
-            },
           },
         });
-        console.log("Order created:", order);
+
+        console.log("Order updated, payment completed:", order);
 
         console.log(customer);
         console.log(data);

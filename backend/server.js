@@ -7,6 +7,7 @@ import userRouter from "./routes/userRoutes.js";
 import storeRouter from "./routes/storeRoutes.js";
 import productRouter from "./routes/productRoutes.js";
 import stripe from "./routes/stripe.js";
+import orderRouter from "./routes/orderRoutes.js";
 
 dotenv.config({ path: "./.env" });
 
@@ -31,6 +32,7 @@ app.use("/api/auth", router);
 app.use("/api/users", userRouter);
 app.use("/api/stores", storeRouter);
 app.use("/api/products", productRouter);
+app.use("/api/orders", orderRouter);
 app.use("/api/stripe", stripe);
 
 app.get("/", (req, res) => res.send("Server running"));
