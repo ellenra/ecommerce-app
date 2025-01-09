@@ -75,14 +75,15 @@ model Order {
   id          String      @id @default(cuid())
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @default(now()) @updatedAt
+  userId      String
   total       Float
   status      OrderStatus
-  userId      String
+  paymentStatus PaymentStatus
+  customerId String?
   
   user        User        @relation(fields: [userId], references: [id])
   orderItems  OrderItem[]
   
-  Payment     Payment?
 }
 
 model OrderItem {
@@ -125,17 +126,6 @@ model CartItem {
   
   product     Product   @relation(fields: [productId], references: [id])
   cart        Cart      @relation(fields: [cartId], references: [id], onDelete: Cascade)
-}
-
-model Payment {
-  id           String        @id @default(cuid())
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @default(now()) @updatedAt
-  orderId      String        @unique
-  amount       Float
-  paymentStatus PaymentStatus
-  
-  order        Order         @relation(fields: [orderId], references: [id])
 }
 
 enum PaymentStatus {

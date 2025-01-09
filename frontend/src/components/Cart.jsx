@@ -1,6 +1,7 @@
 import { Card, CardBody, CardFooter, Image, Button } from "@nextui-org/react";
 import { useCart } from "../hooks/CartContext";
 import { useNavigate } from "react-router-dom";
+import CheckoutButton from "./checkout/CheckoutButton";
 
 const Cart = () => {
   const { cartItems, removeFromCart, clearCart, addToCart } = useCart();
@@ -69,9 +70,7 @@ const Cart = () => {
           </p>
           <div className="mt-4 flex justify-between">
             <Button onClick={clearCart}>Clear Cart</Button>
-            <Button onClick={() => navigate("/checkout")}>
-              Proceed to Checkout
-            </Button>
+            <CheckoutButton cartItems={cartItems} />
           </div>
           <Button
             className="text-sm underline"

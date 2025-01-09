@@ -6,6 +6,7 @@ import { authMiddleware } from "./middleware/auth.js";
 import userRouter from "./routes/userRoutes.js";
 import storeRouter from "./routes/storeRoutes.js";
 import productRouter from "./routes/productRoutes.js";
+import stripe from "./routes/stripe.js";
 
 dotenv.config({ path: "./.env" });
 
@@ -19,6 +20,8 @@ if (!jwt_secret) {
   process.exit(1);
 }
 
+app.use("/api/stripe/webhook", express.raw({ type: "application/json" }));
+
 app.use(cors());
 
 app.use(express.json());
@@ -28,6 +31,7 @@ app.use("/api/auth", router);
 app.use("/api/users", userRouter);
 app.use("/api/stores", storeRouter);
 app.use("/api/products", productRouter);
+app.use("/api/stripe", stripe);
 
 app.get("/", (req, res) => res.send("Server running"));
 

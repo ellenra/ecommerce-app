@@ -10,6 +10,7 @@ import Product from "./components/Product";
 import ProductForm from "./components/ProductForm";
 import Cart from "./components/Cart";
 import Home from "./components/Home";
+import CheckoutSuccess from "./components/checkout/CheckoutSuccess";
 
 function App() {
   return (
@@ -17,7 +18,6 @@ function App() {
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route path="/" element={<Home />} />
-          <Route path="/" element={<ViewStores />} />
           <Route path="register" element={<Register />} />
           <Route path="login" element={<Login />} />
           <Route path="stores" element={<ViewStores />} />
@@ -38,6 +38,7 @@ function App() {
           />
           <Route path="/profile" element={<Profile />} />
           <Route path="/cart" element={<Cart />} />
+          <Route path="/checkout-success" element={<CheckoutSuccess />} />
         </Route>{" "}
       </Routes>
     </Router>
