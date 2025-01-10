@@ -101,4 +101,27 @@ userRouter.delete("/:id/favorites/:productId", async (req, res) => {
   }
 });
 
+userRouter.put("/:userId", async (req, res) => {
+  const { userId } = req.params;
+  const { firstName, lastName, email, address, postalCode, city, country } =
+    req.body;
+  try {
+    const user = await prisma.user.update({
+      where: { id: userId },
+      data: {
+        firstName,
+        lastName,
+        email,
+        address,
+        postalCode,
+        city,
+        country,
+      },
+    });
+    res.status(201).json(user);
+  } catch (error) {
+    console.log(error.message);
+  }
+});
+
 export default userRouter;

@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const baseUrl = "http://localhost:5000/api/users/";
+const baseUrl = "http://localhost:5000/api/users";
 
 const register = async (data) => {
   console.log("Sending data to backend:", data);
@@ -17,7 +17,7 @@ const register = async (data) => {
 
 const getUser = async (userId) => {
   try {
-    const response = await axios.get(`${baseUrl}${userId}`);
+    const response = await axios.get(`${baseUrl}/${userId}`);
     return response.data;
   } catch (error) {
     console.error("Error in fetching user:", error.message);
@@ -26,7 +26,7 @@ const getUser = async (userId) => {
 
 const addProductToFavorites = async (productId, userId) => {
   try {
-    const response = await axios.post(`${baseUrl}${userId}/favorites`, {
+    const response = await axios.post(`${baseUrl}/${userId}/favorites`, {
       productId,
     });
     return response;
@@ -38,11 +38,20 @@ const addProductToFavorites = async (productId, userId) => {
 const deleteProductFromFavorites = async (productId, userId) => {
   try {
     const response = await axios.delete(
-      `${baseUrl}${userId}/favorites/${productId}`
+      `${baseUrl}/${userId}/favorites/${productId}`
     );
     return response;
   } catch (error) {
     console.error("Error deleting from favs", error.message);
+  }
+};
+
+const updateUser = async (userId, data) => {
+  try {
+    const response = await axios.put(`${baseUrl}/${userId}`, data);
+    return response.data;
+  } catch (error) {
+    console.error("Error updating profile", error.message);
   }
 };
 
@@ -51,4 +60,5 @@ export default {
   getUser,
   addProductToFavorites,
   deleteProductFromFavorites,
+  updateUser,
 };

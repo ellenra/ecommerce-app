@@ -16,21 +16,28 @@ model Admin {
 }
 
 model User {
-  id        String     @id
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @default(now()) @updatedAt
+  id         String     @id
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @default(now()) @updatedAt
 
-  firstName String
-  lastName  String
-  email     String     @unique
-  imageUrl  String     @default("")
+  firstName  String
+  lastName   String
+  email      String     @unique
+
+  address    String?
+  postalCode Int?
+  city       String?
+  country    String?
+  mobile     String?
+
+  imageUrl   String     @default("")
   
-  favorites Product[]  @relation("UserFavorites")
-  orders    Order[]
-  cart      Cart?
+  favorites  Product[]  @relation("UserFavorites")
+  orders     Order[]
+  cart       Cart?
 
-  seller    Boolean
-  store     Store?
+  seller     Boolean
+  store      Store?
 }
 
 model Store {
