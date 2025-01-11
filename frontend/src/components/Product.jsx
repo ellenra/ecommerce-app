@@ -65,83 +65,78 @@ const Product = () => {
       >
         <KeyboardBackspaceIcon />
       </Link>
-      <div className="flex">
-        <div className="p-10">
-          <h1 className="text-3xl font-bold">{product.name}</h1>
-          <p className="text-lg mt-2">{product.description}</p>
-          <p className="text-lg mt-2">{product.price} €</p>
-        </div>
-        <div className="grid grid-cols-2 lg:grid-cols-8 gap-6 p-6">
+      <div className="flex justify-center items-center flex-row p-10 space-x-10">
+        <div>
           <Image
-            shadow="sm"
-            radius="lg"
+            shadow="lg"
+            radius="md"
             alt={product.name}
-            className="w-full object-cover h-[140px]"
+            className="object-cover w-full h-[400px] rounded-lg"
             src={product.imageUrl}
-            style={{
-              width: "200px",
-              height: "200px",
-              objectFit: "cover",
-              borderRadius: "8px",
-            }}
           />
-          <Button onClick={() => addToCart(product)}>Add to cart</Button>
+        </div>
+
+        <div className="mt-6">
+          <h1 className="text-3xl font-semibold text-zinc-800">
+            {product.name}
+          </h1>
+          <p className="text-lg mt-4 text-zinc-600">{product.description}</p>
+          <p className="text-xl font-semibold mt-6 text-zinc-900">
+            {product.price} €
+          </p>
+
+          <div className="mt-6 flex space-x-4">
+            <Button
+              color="gradient"
+              onClick={() => addToCart(product)}
+              className="w-full md:w-auto border border-zinc-200 rounded-lg py-2 text-sm hover:bg-zinc-100 hover:border-zinc-300"
+            >
+              Add to cart
+            </Button>
+          </div>
+
           {isOwner && (
-            <>
-              <div>
-                <Button
-                  onPress={onOpen}
-                  className="border border-gray-200 rounded hover:bg-gray-100 text-sm"
-                >
-                  Delete
-                </Button>
-              </div>
+            <div className="mt-20 space-y-4">
+              <h3 className="text-xl font-medium text-gray-700">
+                Product Management
+              </h3>
+
+              <Button
+                onPress={onOpen}
+                className="mr-4 border border-zinc-200 text-sm rounded-lg hover:border-red-600 hover:bg-zinc-100"
+              >
+                Delete Product
+              </Button>
 
               <Modal
                 isOpen={isOpen}
                 onOpenChange={onOpenChange}
                 classNames={{
-                  backdrop: "bg-black/40",
-                  base: "bg-white rounded-lg",
-                  header: "pt-10",
-                  closeButton: "hover:bg-white/5 active:bg-white/10 border m-2",
-                }}
-                motionProps={{
-                  variants: {
-                    enter: {
-                      y: 0,
-                      opacity: 1,
-                      transition: {
-                        duration: 0.3,
-                        ease: "easeOut",
-                      },
-                    },
-                    exit: {
-                      y: -20,
-                      opacity: 0,
-                      transition: {
-                        duration: 0.2,
-                        ease: "easeIn",
-                      },
-                    },
-                  },
+                  backdrop: "bg-black/50",
+                  base: "bg-white p-8 rounded-lg shadow-xl",
+                  header: "text-lg font-medium text-zinc-900",
+                  closeButton: "text-zinc-600 hover:text-zinc-800",
                 }}
               >
                 <ModalContent>
                   {(onClose) => (
                     <>
                       <ModalHeader>
-                        <p>
-                          Are you sure you want to delete this product from your
-                          store?
-                        </p>
+                        Are you sure you want to delete this product from your
+                        store?
                       </ModalHeader>
-                      <ModalBody>
-                        <p>This action cannot be undone.</p>
-                      </ModalBody>
+                      <ModalBody>This action cannot be undone.</ModalBody>
                       <ModalFooter>
-                        <Button onPress={onClose}>Close</Button>
-                        <Button onPress={() => handleDeleteProduct(product.id)}>
+                        <Button
+                          onPress={onClose}
+                          className="mr-3 border border-zinc-200 text-sm rounded-lg hover:bg-zinc-100 hover:border-zinc-300"
+                        >
+                          Close
+                        </Button>
+                        <Button
+                          onPress={() => handleDeleteProduct(product.id)}
+                          className="border text-sm rounded-lg border-red-600 hover:bg-zinc-100 hover:text-red-600"
+                        >
                           Delete
                         </Button>
                       </ModalFooter>
@@ -149,15 +144,11 @@ const Product = () => {
                   )}
                 </ModalContent>
               </Modal>
-            </>
-          )}
-          {isOwner && (
-            <div>
-              <Link
-                href={`/stores/${storeId}/products/${productId}/edit`}
-                className="border border-gray-200 rounded hover:bg-gray-100 text-sm"
-              >
-                <Button>Edit product info</Button>
+
+              <Link href={`/stores/${storeId}/products/${productId}/edit`}>
+                <Button className="border border-zinc-200 text-sm rounded-lg hover:bg-zinc-100 hover:border-zinc-300">
+                  Edit product info
+                </Button>
               </Link>
             </div>
           )}

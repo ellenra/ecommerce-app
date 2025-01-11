@@ -224,15 +224,14 @@ const StoreForm = () => {
           )}
           {errors.file && <p className="text-red-500">{errors.file.message}</p>}
         </div>
-        <Link
-          href={`/stores/${storeId}`}
-          className="mr-2 border border-gray-200 rounded px-4 py-2 hover:bg-gray-100 text-sm"
-        >
-          Cancel
+        <Link href={`/stores/${storeId}`}>
+          <Button className="mr-4 border border-zinc-200 text-sm rounded-lg hover:bg-zinc-100 hover:border-zinc-300">
+            Cancel
+          </Button>
         </Link>
         <Button
           type="submit"
-          className="border border-gray-200 rounded px-4 py-2 hover:bg-gray-100 text-sm"
+          className="border border-zinc-200 text-sm rounded-lg hover:bg-zinc-100 hover:border-zinc-300"
         >
           {storeId ? "Update Store" : "Create Store"}
         </Button>

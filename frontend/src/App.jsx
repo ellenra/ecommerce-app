@@ -11,6 +11,7 @@ import ProductForm from "./components/ProductForm";
 import Cart from "./components/Cart";
 import Home from "./components/Home";
 import CheckoutSuccess from "./components/checkout/CheckoutSuccess";
+import ViewProducts from "./components/ViewProducts";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
           <Route path="register" element={<Register />} />
           <Route path="login" element={<Login />} />
           <Route path="stores" element={<ViewStores />} />
+          <Route path="products" element={<ViewProducts />} />
           <Route path="stores/create" element={<StoreForm />} />
           <Route path="stores/:storeId" element={<Store />} />
           <Route path="stores/:storeId/edit" element={<StoreForm />} />

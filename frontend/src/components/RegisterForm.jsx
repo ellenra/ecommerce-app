@@ -95,7 +95,7 @@ const Register = () => {
           </div>
           <Button
             type="submit"
-            className="ml-3 border border-gray-200 hover:bg-gray-100 rounded-lg"
+            className="ml-3 border border-zinc-200 rounded-lg hover:bg-zinc-100 hover:border-zinc-300"
           >
             Create account
           </Button>
@@ -105,7 +105,7 @@ const Register = () => {
           <p className="mb-4">Already have an account?</p>
           <Button
             onClick={() => navigate("/login")}
-            className="border border-gray-200 hover:bg-gray-100 rounded-lg"
+            className="border border-zinc-200 rounded-lg hover:bg-zinc-100 hover:border-zinc-300"
           >
             Log in here
           </Button>

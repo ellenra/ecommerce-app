@@ -47,40 +47,55 @@ const Profile = () => {
 
   return (
     <div className="flex">
-      <div className="mt-10">
-        <div className="space-y-4">
+      <div className="mt-10 w-1/4 mr-10">
+        <div>
           <Button
             onClick={() => setSelectedView("account")}
-            className="w-full hover:bg-zinc-100"
+            className={`w-full p-6 ${
+              selectedView === "account" ? "bg-zinc-100" : "hover:bg-zinc-100"
+            }`}
           >
             My Account
           </Button>
           <Button
             onClick={() => setSelectedView("favorites")}
-            className="w-full hover:bg-zinc-100"
+            className={`w-full p-6 ${
+              selectedView === "favorites" ? "bg-zinc-100" : "hover:bg-zinc-100"
+            }`}
           >
             Favorites
           </Button>
           <Button
             onClick={() => setSelectedView("orders")}
-            className="w-full hover:bg-zinc-100"
+            className={`w-full p-6 ${
+              selectedView === "orders" ? "bg-zinc-100" : "hover:bg-zinc-100"
+            }`}
           >
             Orders
           </Button>
           <Button
             onClick={() => setSelectedView("store")}
-            className="w-full hover:bg-zinc-100"
+            className={`w-full p-6 ${
+              selectedView === "store" ? "bg-zinc-100" : "hover:bg-zinc-100"
+            }`}
           >
             My Store
           </Button>
         </div>
       </div>
 
-      <div className="p-10">
+      <div className="p-10 flex-grow">
+        {selectedView === "account" && (
+          <div>
+            <h2 className="text-2xl font-semibold mb-6">My Account</h2>
+            <ProfileForm />
+          </div>
+        )}
+
         {selectedView === "favorites" && (
           <div>
             <h2 className="text-2xl font-bold mb-6">Favorites</h2>
-            <div className="grid grid-cols-8 gap-6">
+            <div className="grid grid-cols-6 gap-6">
               {user.favorites.map((product, index) => (
                 <Card
                   key={index}
@@ -128,13 +143,6 @@ const Profile = () => {
                 </Card>
               ))}
             </div>
-          </div>
-        )}
-
-        {selectedView === "account" && (
-          <div>
-            <h2 className="text-2xl font-semibold mb-6">My Account</h2>
-            <ProfileForm />
           </div>
         )}
 

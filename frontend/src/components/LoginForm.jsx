@@ -64,7 +64,7 @@ const Login = () => {
         </div>
         <Button
           type="submit"
-          className="ml-3 border border-gray-200 hover:bg-gray-100 rounded-lg"
+          className="ml-3 border border-zinc-200 rounded-lg hover:bg-zinc-100 hover:border-zinc-300"
         >
           Login
         </Button>
@@ -75,7 +75,7 @@ const Login = () => {
           onClick={() => {
             navigate("/register");
           }}
-          className="border border-gray-200 hover:bg-gray-100 rounded-lg"
+          className="border border-zinc-200 rounded-lg hover:bg-zinc-100 hover:border-zinc-300"
         >
           Register here
         </Button>

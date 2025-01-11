@@ -105,10 +105,14 @@ const Store = () => {
       {isOwner && (
         <div className="flex justify-between gap-4 p-8">
           <Link to={`/stores/${storeId}/products/new`}>
-            <Button>List new product</Button>
+            <Button className="border border-zinc-200 text-sm rounded-lg hover:bg-zinc-100 hover:border-zinc-300">
+              List new product
+            </Button>
           </Link>
           <Link to={`/stores/${storeId}/edit`}>
-            <Button>Manage Your Store</Button>
+            <Button className="border border-zinc-200 text-sm rounded-lg hover:bg-zinc-100 hover:border-zinc-300">
+              Manage Your Store
+            </Button>
           </Link>
         </div>
       )}

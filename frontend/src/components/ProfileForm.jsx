@@ -98,7 +98,7 @@ const ProfileForm = () => {
   }
 
   return (
-    <div className="flex justify-center mt-10">
+    <div className="w-1/3 mt-10">
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         <div className="pb-2">
           <label className="ml-3">First Name:</label>
