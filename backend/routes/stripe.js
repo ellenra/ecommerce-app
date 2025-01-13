@@ -62,6 +62,63 @@ router.post("/create-checkout-session", async (req, res) => {
     customer: customer.id,
     line_items,
     mode: "payment",
+    billing_address_collection: "required",
+    shipping_address_collection: {
+      allowed_countries: [
+        "US",
+        "CA",
+        "AL",
+        "AD",
+        "AM",
+        "AT",
+        "AZ",
+        "BY",
+        "BE",
+        "BA",
+        "BG",
+        "HR",
+        "CY",
+        "CZ",
+        "DK",
+        "EE",
+        "FI",
+        "FR",
+        "GE",
+        "DE",
+        "GR",
+        "HU",
+        "IS",
+        "IE",
+        "IT",
+        "KZ",
+        "LV",
+        "LI",
+        "LT",
+        "LU",
+        "MT",
+        "MD",
+        "MC",
+        "ME",
+        "NL",
+        "MK",
+        "NO",
+        "PL",
+        "PT",
+        "RO",
+        "RU",
+        "SM",
+        "RS",
+        "SK",
+        "SI",
+        "ES",
+        "SE",
+        "CH",
+        "TR",
+        "UA",
+        "GB",
+        "VA",
+      ],
+    },
     success_url: `${process.env.CLIENT_URL}/checkout-success?orderId=${order.id}`,
     cancel_url: `${process.env.CLIENT_URL}/checkout-error`,
     metadata: {
@@ -98,11 +155,29 @@ router.post("/webhook", (request, response) => {
       .then(async (customer) => {
         const session = event.data.object;
         const orderId = session.metadata.orderId;
+        const shippingAddress = session.shipping_details?.address || null;
+
+        let shippingAddressId = null;
+
+        if (shippingAddress) {
+          const address = await prisma.shippingAddress.create({
+            data: {
+              line1: shippingAddress.line1,
+              line2: shippingAddress.line2 || null,
+              city: shippingAddress.city,
+              state: shippingAddress.state || null,
+              postalCode: shippingAddress.postal_code,
+              country: shippingAddress.country,
+            },
+          });
+          shippingAddressId = address.id;
+        }
 
         const order = await prisma.order.update({
           where: { id: orderId },
           data: {
             paymentStatus: "COMPLETED",
+            shippingAddressId: shippingAddressId,
           },
         });
 

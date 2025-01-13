@@ -42,7 +42,7 @@ const CheckoutSuccess = () => {
         {order && (
           <div>
             <div className="flex justify-between items-center border-b pb-4 mb-6">
-              <p className="text-sm">Order ID:</p>
+              <p className="text-sm">Order Number:</p>
               <p className="font-semibold">{order.id}</p>
             </div>
             <div className="flex justify-between items-center border-b pb-4">

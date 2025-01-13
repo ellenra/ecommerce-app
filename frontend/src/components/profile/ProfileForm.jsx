@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useForm, Controller } from "react-hook-form";
 import { z } from "zod";
 import { toast } from "react-toastify";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button, Input } from "@nextui-org/react";
-import userService from "../services/userservice";
-import { useAuth } from "../hooks/AuthContext";
-import userservice from "../services/userservice";
+import userService from "../../services/userservice";
+import { useAuth } from "../../hooks/AuthContext";
+import userservice from "../../services/userservice";
 
 const profileFormSchema = z.object({
   firstName: z.string().min(1, { message: "First name is required" }),

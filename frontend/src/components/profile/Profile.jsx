@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import { Button, Card, CardBody, CardFooter, Image } from "@nextui-org/react";
-import { Link, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import FavoriteIcon from "@mui/icons-material/Favorite";
-import userservice from "../services/userservice";
-import { useAuth } from "../hooks/AuthContext";
-import { useFavorites } from "../hooks/favoriteProducts";
+import userservice from "../../services/userservice";
+import { useAuth } from "../../hooks/AuthContext";
+import { useFavorites } from "../../hooks/favoriteProducts";
 import ProfileForm from "./ProfileForm";
+import OrdersPage from "./OrdersPage";
 
 const Profile = () => {
   const session = useAuth();
@@ -16,6 +17,7 @@ const Profile = () => {
   const [hoveredProductId, setHoveredProductId] = useState(null);
   const { deleteFavorite } = useFavorites(user, setUser);
   const [selectedView, setSelectedView] = useState("account");
+  const location = useLocation();
 
   useEffect(() => {
     if (session === null) {
@@ -41,6 +43,16 @@ const Profile = () => {
     fetchUserData();
   }, [sessionReady, session]);
 
+  useEffect(() => {
+    const path = location.pathname.split("/").pop();
+    setSelectedView(path || "account");
+  }, [location]);
+
+  const handleViewChange = (view) => {
+    setSelectedView(view);
+    navigate(`/profile/${view}`);
+  };
+
   if (!sessionReady || !user) {
     return <div>Loading...</div>;
   }
@@ -50,7 +62,7 @@ const Profile = () => {
       <div className="mt-10 w-1/4 mr-10">
         <div>
           <Button
-            onClick={() => setSelectedView("account")}
+            onClick={() => handleViewChange("account")}
             className={`w-full p-6 ${
               selectedView === "account" ? "bg-zinc-100" : "hover:bg-zinc-100"
             }`}
@@ -58,7 +70,7 @@ const Profile = () => {
             My Account
           </Button>
           <Button
-            onClick={() => setSelectedView("favorites")}
+            onClick={() => handleViewChange("favorites")}
             className={`w-full p-6 ${
               selectedView === "favorites" ? "bg-zinc-100" : "hover:bg-zinc-100"
             }`}
@@ -66,7 +78,7 @@ const Profile = () => {
             Favorites
           </Button>
           <Button
-            onClick={() => setSelectedView("orders")}
+            onClick={() => handleViewChange("orders")}
             className={`w-full p-6 ${
               selectedView === "orders" ? "bg-zinc-100" : "hover:bg-zinc-100"
             }`}
@@ -74,7 +86,7 @@ const Profile = () => {
             Orders
           </Button>
           <Button
-            onClick={() => setSelectedView("store")}
+            onClick={() => handleViewChange("store")}
             className={`w-full p-6 ${
               selectedView === "store" ? "bg-zinc-100" : "hover:bg-zinc-100"
             }`}
@@ -149,7 +161,7 @@ const Profile = () => {
         {selectedView === "orders" && (
           <div>
             <h2 className="text-2xl font-semibold mb-6">Orders</h2>
-            <p>Orders here</p>
+            <OrdersPage />
           </div>
         )}
 

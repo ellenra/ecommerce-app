@@ -27,12 +27,13 @@ const Layout = () => {
   return (
     <div className="flex flex-col min-h-screen">
       <ToastContainer position="top-right" autoClose={3000} hideProgressBar />
-      <div className=" bg-zinc-50">
+      <div className="bg-zinc-50">
         <Navbar>
           <NavbarBrand>
             <p className="font-bold text-inherit">STORE</p>
           </NavbarBrand>
-          <NavbarContent className="hidden sm:flex gap-4" justify="center">
+
+          <NavbarContent className="gap-4">
             <NavbarItem>
               <Link color="foreground" href="/stores">
                 Stores
@@ -49,14 +50,15 @@ const Layout = () => {
               </Link>
             </NavbarItem>
           </NavbarContent>
-          <NavbarContent justify="end">
+
+          <NavbarContent className="gap-4">
             <NavbarItem>
               <Link href="/cart">Cart: {cartItems.length}</Link>
             </NavbarItem>
             {session.user ? (
               <>
                 <NavbarItem>
-                  <Link href="/profile">Profile</Link>
+                  <Link href="/profile/account">Profile</Link>
                 </NavbarItem>
                 <NavbarItem>
                   <Button onClick={handleLogout}>Log out</Button>

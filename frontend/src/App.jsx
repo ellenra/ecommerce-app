@@ -2,7 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Layout from "./components/Layout";
 import Register from "./components/RegisterForm";
 import Login from "./components/LoginForm";
-import Profile from "./components/Profile";
+import Profile from "./components/profile/Profile";
 import Store from "./components/Store";
 import ViewStores from "./components/ViewStores";
 import StoreForm from "./components/StoreForm";
@@ -12,6 +12,7 @@ import Cart from "./components/Cart";
 import Home from "./components/Home";
 import CheckoutSuccess from "./components/checkout/CheckoutSuccess";
 import ViewProducts from "./components/ViewProducts";
+import OrderPage from "./components/profile/OrderPage";
 
 function App() {
   return (
@@ -38,7 +39,8 @@ function App() {
             path="stores/:storeId/products/:productId/edit"
             element={<ProductForm />}
           />
-          <Route path="/profile" element={<Profile />} />
+          <Route path="/profile/:view" element={<Profile />} />
+          <Route path="/orders/:orderId" element={<OrderPage />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/checkout-success" element={<CheckoutSuccess />} />
         </Route>{" "}
