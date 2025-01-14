@@ -18,5 +18,10 @@
 | 30.11. | 4     | Improved form validation with react hook form and zod.                                                     |
 |  2.12  | 2     |  Added functionality to add products to favorites and remove them.                                         |
 |  3.12  | 2     | Improved session handling.                                                                                 |
+| 16.12  | 5     | Added session loading state, return buttons and started Stripe integration.                                |
+|  6.1   | 5     | Building checkout with Stripe.                                                                             |
+|  7.1   | 4     | Building checkout with Stripe.                                                                             |
+|  10.1  | 4     | Built user profile views and improved user model.                                                          |
+|  11.1  | 3     | Improved UI.                                                                                               |
 
-| yht | |
+| yht | 73|
