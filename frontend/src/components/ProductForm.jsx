@@ -7,6 +7,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import storeservice from "../services/storeservice";
 import { useAuth } from "../hooks/AuthContext";
+import productservice from "../services/productservice";
+import Select from "react-select";
 
 const productSchema = z.object({
   name: z.string().min(1, { message: "Product name is required" }),
@@ -34,12 +36,16 @@ const productSchema = z.object({
     .instanceof(File, { message: "Image is required" })
     .optional()
     .nullable(),
+  categories: z
+    .array(z.string())
+    .min(1, { message: "Select at least one category" }),
 });
 
 const ProductForm = () => {
   const session = useAuth();
   const { storeId, productId } = useParams();
   const [viewProductPicture, setViewProductPicture] = useState(null);
+  const [categoryList, setCategoryList] = useState([]);
   const navigate = useNavigate();
 
   if (!session) return;
@@ -57,9 +63,9 @@ const ProductForm = () => {
       description: "",
       price: 0,
       quantity: 0,
-      categoryId: "",
       imageUrl: "",
       file: null,
+      categories: [],
     },
   });
 
@@ -67,6 +73,19 @@ const ProductForm = () => {
 
   useEffect(() => {
     if (!session.user) return;
+
+    const fetchCategories = async () => {
+      try {
+        const categories = await productservice.getProductCategories();
+        setCategoryList(
+          categories.map((cat) => ({ value: cat.id, label: cat.name }))
+        );
+      } catch (error) {
+        console.error("Error fetching categories", error.message);
+      }
+    };
+    fetchCategories();
+
     if (productId) {
       const fetchProductData = async () => {
         try {
@@ -79,9 +98,12 @@ const ProductForm = () => {
           setValue("description", productData.description);
           setValue("price", productData.price);
           setValue("quantity", productData.quantity);
-          setValue("categoryId", productData.categoryId);
           setValue("imageUrl", productData.imageUrl);
           setViewProductPicture(productData.imageUrl);
+          const categoryIds = productData.categories.map(
+            (category) => category.categoryId
+          );
+          setValue("categories", categoryIds);
         } catch (error) {
           console.error("Error fetching product data:", error.message);
         }
@@ -104,7 +126,7 @@ const ProductForm = () => {
   const onSubmit = async (data) => {
     try {
       const formData = new FormData();
-      const { name, description, price, quantity, file } = data;
+      const { name, description, price, quantity, file, categories } = data;
       if (productId) {
         formData.append("productId", productId);
       }
@@ -114,7 +136,7 @@ const ProductForm = () => {
       formData.append("description", description);
       formData.append("price", price);
       formData.append("quantity", quantity);
-      formData.append("categoryId", "1");
+      formData.append("categories", JSON.stringify(categories));
       if (file instanceof File) {
         formData.append("file", file);
       } else {
@@ -192,6 +214,45 @@ const ProductForm = () => {
           />
           {errors.quantity && (
             <p className="text-red-500">{errors.quantity.message}</p>
+          )}
+        </div>
+
+        <div>
+          <label className="ml-3">Categories:</label>
+          <Controller
+            control={control}
+            name="categories"
+            render={({ field: { onChange, value } }) => {
+              return (
+                <Select
+                  options={categoryList}
+                  isMulti
+                  styles={{
+                    multiValue: (provided) => ({
+                      ...provided,
+                      backgroundColor: "#F4F4F5",
+                      border: "1px solid",
+                      borderColor: "#F4F4F5",
+                      "&:hover": {
+                        backgroundColor: "#FFFFFF",
+                      },
+                    }),
+                    multiValueRemove: (provided) => ({
+                      ...provided,
+                      "&:hover": {
+                        backgroundColor: "#FFFFFF",
+                        color: "#000000",
+                      },
+                    }),
+                  }}
+                  value={categoryList.filter((c) => value?.includes(c.value))}
+                  onChange={(e) => onChange(e.map((c) => c.value))}
+                />
+              );
+            }}
+          />
+          {errors.categories && (
+            <p className="text-red-500">{errors.categories.message}</p>
           )}
         </div>
 

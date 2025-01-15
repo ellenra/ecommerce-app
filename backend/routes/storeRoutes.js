@@ -144,11 +144,11 @@ storeRouter.post(
   "/:storeId/products",
   upload.single("file"),
   async (req, res) => {
-    try {
-      const storeId = req.params.storeId;
-      const { name, description, price, quantity, categoryId, userId } =
-        req.body;
+    const storeId = req.params.storeId;
+    let { name, description, price, quantity, categories, userId } = req.body;
 
+    try {
+      categories = JSON.parse(categories);
       const parsedPrice = parseFloat(price);
       const parsedQuantity = parseInt(quantity, 10);
 
@@ -182,7 +182,12 @@ storeRouter.post(
             price: parsedPrice,
             quantity: parsedQuantity,
             imageUrl: image.publicUrl,
-            categoryId,
+            categories: {
+              create:
+                categories?.map((categoryId) => ({
+                  category: { connect: { id: categoryId } },
+                })) || [],
+            },
           },
         });
         res.json(product);
@@ -195,7 +200,12 @@ storeRouter.post(
             description,
             price: parsedPrice,
             quantity: parsedQuantity,
-            categoryId,
+            categories: {
+              create:
+                categories?.map((categoryId) => ({
+                  category: { connect: { id: categoryId } },
+                })) || [],
+            },
           },
         });
         res.json(product);
@@ -213,6 +223,11 @@ storeRouter.get("/:storeId/products/:id", async (req, res) => {
     const product = await prisma.product.findFirst({
       where: {
         id: productId,
+      },
+      include: {
+        categories: {
+          include: { category: true },
+        },
       },
     });
     res.json(product);
@@ -241,10 +256,12 @@ storeRouter.put(
   async (req, res) => {
     const productId = req.params.id;
     const storeId = req.params.storeId;
-    let { name, description, price, quantity, categoryId, imageUrl, userId } =
+    let { name, description, price, quantity, categories, imageUrl, userId } =
       req.body;
     const parsedPrice = parseFloat(price);
     const parsedQuantity = parseInt(quantity, 10);
+
+    categories = JSON.parse(categories);
 
     if (isNaN(parsedPrice) || isNaN(parsedQuantity)) {
       return res.status(400).json({ error: "Invalid price or quantity" });
@@ -279,14 +296,21 @@ storeRouter.put(
       const product = await prisma.product.update({
         where: { id: productId },
         data: {
-          storeId,
-          userId,
           name,
           description,
           price: parsedPrice,
           quantity: parsedQuantity,
-          imageUrl,
-          categoryId,
+          imageUrl: imageUrl,
+          storeId,
+          userId,
+
+          categories: {
+            deleteMany: {},
+            create:
+              categories?.map((categoryId) => ({
+                category: { connect: { id: categoryId } },
+              })) || [],
+          },
         },
       });
 

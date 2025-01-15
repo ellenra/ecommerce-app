@@ -12,4 +12,13 @@ productRouter.get("/", async (req, res) => {
   }
 });
 
+productRouter.get("/categories", async (req, res) => {
+  try {
+    const categories = await prisma.productCategory.findMany();
+    res.json(categories);
+  } catch (error) {
+    res.status(500).json({ error: "Error fetching categories" });
+  }
+});
+
 export default productRouter;

@@ -11,6 +11,16 @@ const getProducts = async () => {
   }
 };
 
+const getProductCategories = async () => {
+  try {
+    const response = await axios.get(`${baseUrl}/categories`);
+    return response.data;
+  } catch (error) {
+    console.error("Error getting categories", error.message);
+  }
+};
+
 export default {
   getProducts,
+  getProductCategories,
 };
