@@ -1,27 +1,49 @@
 import { Button, Card, CardBody, Image } from "@nextui-org/react";
 import { useLocation, useNavigate } from "react-router-dom";
 import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
+import orderservice from "../services/orderservice";
 
-const OrderPage = () => {
+const StoreOwnerOrderPage = () => {
   const location = useLocation();
-  const { order } = location.state || {};
+  const { order, storeId } = location.state || {};
   const navigate = useNavigate();
 
   if (!order) {
     return <>Loading...</>;
   }
 
+  const handleStatusChange = async (orderId) => {
+    try {
+      const response = await orderservice.changeOrderStatus(orderId, {
+        status: "SHIPPED",
+      });
+      const updatedOrder = response.data;
+    } catch (error) {
+      console.error("Error updating order status", error);
+    }
+  };
   return (
     <>
       <Button
-        onClick={() => navigate("/profile/orders")}
+        onClick={() => navigate(`/stores/${storeId}/orders`)}
         className="ml-10 rounded px-4 py-2 hover:bg-gray-100 text-sm"
       >
         {" "}
         <KeyboardBackspaceIcon />
       </Button>
-      <div className="py-10">
+      <div className="py-6">
         <div className="max-w-3xl mx-auto">
+          <Button
+            onClick={() => handleStatusChange(order.id)}
+            disabled={order.status === "SHIPPED"}
+            className={`mb-6 border border-zinc-200 rounded-lg ${
+              order.status === "SHIPPED"
+                ? "bg-zinc-100"
+                : "hover:bg-zinc-100 hover:border-zinc-300"
+            }`}
+          >
+            {order.status === "SHIPPED" ? "SHIPPED" : "Change Status: SHIPPED"}
+          </Button>
           <h1 className="text-xl font-bold text-center mb-10">
             Order Number: {order.id}
           </h1>
@@ -103,4 +125,4 @@ const OrderPage = () => {
   );
 };
 
-export default OrderPage;
+export default StoreOwnerOrderPage;

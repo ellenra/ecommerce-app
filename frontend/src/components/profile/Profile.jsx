@@ -60,40 +60,30 @@ const Profile = () => {
   return (
     <div className="flex">
       <div className="mt-10 w-1/4 mr-10">
-        <div>
-          <Button
-            onClick={() => handleViewChange("account")}
-            className={`w-full p-6 ${
-              selectedView === "account" ? "bg-zinc-100" : "hover:bg-zinc-100"
-            }`}
-          >
-            My Account
-          </Button>
-          <Button
-            onClick={() => handleViewChange("favorites")}
-            className={`w-full p-6 ${
-              selectedView === "favorites" ? "bg-zinc-100" : "hover:bg-zinc-100"
-            }`}
-          >
-            Favorites
-          </Button>
-          <Button
-            onClick={() => handleViewChange("orders")}
-            className={`w-full p-6 ${
-              selectedView === "orders" ? "bg-zinc-100" : "hover:bg-zinc-100"
-            }`}
-          >
-            Orders
-          </Button>
-          <Button
-            onClick={() => handleViewChange("store")}
-            className={`w-full p-6 ${
-              selectedView === "store" ? "bg-zinc-100" : "hover:bg-zinc-100"
-            }`}
-          >
-            My Store
-          </Button>
-        </div>
+        <Button
+          onClick={() => handleViewChange("account")}
+          className={`w-full p-6 ${
+            selectedView === "account" ? "bg-zinc-100" : "hover:bg-zinc-100"
+          }`}
+        >
+          My Account
+        </Button>
+        <Button
+          onClick={() => handleViewChange("favorites")}
+          className={`w-full p-6 ${
+            selectedView === "favorites" ? "bg-zinc-100" : "hover:bg-zinc-100"
+          }`}
+        >
+          Favorites
+        </Button>
+        <Button
+          onClick={() => handleViewChange("orders")}
+          className={`w-full p-6 ${
+            selectedView === "orders" ? "bg-zinc-100" : "hover:bg-zinc-100"
+          }`}
+        >
+          Orders
+        </Button>
       </div>
 
       <div className="p-10 flex-grow">
@@ -162,13 +152,6 @@ const Profile = () => {
           <div>
             <h2 className="text-2xl font-semibold mb-6">Orders</h2>
             <OrdersPage />
-          </div>
-        )}
-
-        {selectedView === "store" && (
-          <div>
-            <h2 className="text-2xl font-semibold mb-6">My Store</h2>
-            <p>owners store view here</p>
           </div>
         )}
       </div>

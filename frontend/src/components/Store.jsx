@@ -55,67 +55,64 @@ const Store = () => {
 
   return (
     <div>
-      <div className=" py-6 text-center">
-        <h1 className="text-3xl font-bold">{store.name}</h1>
-        <p className="text-lg mt-2">{store.description}</p>
-      </div>
-      <div className="grid md:grid-cols-4 lg:grid-cols-8 gap-6 p-6">
-        {store.products.map((product, index) => (
-          <Card
-            key={index}
-            className="min-w-[200px] shadow-md rounded-lg hover:shadow-xl"
-          >
-            <CardBody
-              className="p-0 hover:cursor-pointer"
-              onClick={() =>
-                navigate(`/stores/${product.storeId}/products/${product.id}`)
-              }
-            >
-              <Image
-                src={product.imageUrl}
-                alt={product.name}
-                width="200px"
-                height="200px"
-              />
-            </CardBody>
-            <CardFooter
-              className="flex flex-row justify-between hover:cursor-pointer"
-              onClick={() =>
-                navigate(`/stores/${product.storeId}/products/${product.id}`)
-              }
-            >
-              <p>{product.name}</p>
-              <p>{product.price} €</p>
-            </CardFooter>
-            <div className="flex justify-end -mr-3">
-              {isFavorite(product.id) ? (
-                <Button onClick={() => deleteFavorite(product.id)}>
-                  <FavoriteIcon />
-                </Button>
-              ) : (
-                <Button onClick={() => addFavorite(product.id)}>
-                  <FavoriteBorderIcon />
-                </Button>
-              )}
-            </div>
-          </Card>
-        ))}
-      </div>
-
       {isOwner && (
-        <div className="flex justify-between gap-4 p-8">
-          <Link to={`/stores/${storeId}/products/new`}>
-            <Button className="border border-zinc-200 text-sm rounded-lg hover:bg-zinc-100 hover:border-zinc-300">
-              List new product
-            </Button>
-          </Link>
-          <Link to={`/stores/${storeId}/edit`}>
-            <Button className="border border-zinc-200 text-sm rounded-lg hover:bg-zinc-100 hover:border-zinc-300">
-              Manage Your Store
-            </Button>
-          </Link>
-        </div>
+        <Button
+          className="border border-zinc-200 rounded-lg hover:bg-zinc-100 hover:border-zinc-300"
+          onClick={() => {
+            navigate(`/stores/${storeId}/dashboard`);
+          }}
+        >
+          Manage Store
+        </Button>
       )}
+      <>
+        <div className=" py-6 text-center">
+          <h1 className="text-3xl font-bold">{store.name}</h1>
+          <p className="text-lg mt-2">{store.description}</p>
+        </div>
+        <div className="grid md:grid-cols-4 lg:grid-cols-8 gap-6 p-6">
+          {store.products.map((product, index) => (
+            <Card
+              key={index}
+              className="min-w-[200px] shadow-md rounded-lg hover:shadow-xl"
+            >
+              <CardBody
+                className="p-0 hover:cursor-pointer"
+                onClick={() =>
+                  navigate(`/stores/${product.storeId}/products/${product.id}`)
+                }
+              >
+                <Image
+                  src={product.imageUrl}
+                  alt={product.name}
+                  width="200px"
+                  height="200px"
+                />
+              </CardBody>
+              <CardFooter
+                className="flex flex-row justify-between hover:cursor-pointer"
+                onClick={() =>
+                  navigate(`/stores/${product.storeId}/products/${product.id}`)
+                }
+              >
+                <p>{product.name}</p>
+                <p>{product.price} €</p>
+              </CardFooter>
+              <div className="flex justify-end -mr-3">
+                {isFavorite(product.id) ? (
+                  <Button onClick={() => deleteFavorite(product.id)}>
+                    <FavoriteIcon />
+                  </Button>
+                ) : (
+                  <Button onClick={() => addFavorite(product.id)}>
+                    <FavoriteBorderIcon />
+                  </Button>
+                )}
+              </div>
+            </Card>
+          ))}
+        </div>
+      </>
     </div>
   );
 };

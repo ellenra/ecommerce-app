@@ -35,7 +35,12 @@ orderRouter.get("/", async (req, res) => {
       where: { userId: userId },
       include: {
         user: true,
-        orderItems: true,
+        orderItems: {
+          include: {
+            product: true,
+          },
+        },
+        shippingAddress: true,
       },
       orderBy: {
         createdAt: "desc",
@@ -49,6 +54,47 @@ orderRouter.get("/", async (req, res) => {
     }
   } catch (error) {
     res.status(500).json({ message: "Error fetching orders" });
+  }
+});
+
+orderRouter.get("/", async (req, res) => {
+  const { storeId } = req.body;
+  try {
+    const orders = await prisma.order.findMany({
+      where: { storeId: storeId },
+      include: {
+        orderItems: {
+          include: {
+            product: true,
+          },
+        },
+        shippingAddress: true,
+      },
+    });
+
+    if (orders) {
+      res.json(orders);
+    } else {
+      res.status(404).json({ message: "Orders not found" });
+    }
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching orders" });
+  }
+});
+
+orderRouter.put("/:orderId", async (req, res) => {
+  const { orderId } = req.params;
+  const { status } = req.body;
+
+  try {
+    const updatedOrder = await prisma.order.update({
+      where: { id: orderId },
+      data: { status },
+    });
+
+    res.json(updatedOrder);
+  } catch (error) {
+    res.status(500).json({ message: "Error changing status" });
   }
 });
 

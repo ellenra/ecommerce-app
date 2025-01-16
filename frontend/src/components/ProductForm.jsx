@@ -280,7 +280,7 @@ const ProductForm = () => {
           {errors.file && <p className="text-red-500">{errors.file.message}</p>}
         </div>
         <Link
-          href={`/stores/${storeId}`}
+          href={`/stores/${storeId}/dashboard`}
           className="mr-2 border border-gray-200 rounded px-4 py-2 hover:bg-gray-100 text-sm"
         >
           Cancel

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useAuth } from "../../hooks/AuthContext";
-import orderservice from "../../services/orderservice";
+import { useAuth } from "../hooks/AuthContext";
 import {
   Table,
   TableBody,
@@ -10,8 +9,9 @@ import {
   TableRow,
 } from "@nextui-org/react";
 import { useNavigate } from "react-router-dom";
+import orderservice from "../services/orderservice";
 
-const OrdersPage = () => {
+const StoreOwnerOrdersPage = ({ store }) => {
   const session = useAuth();
   const [orders, setOrders] = useState(null);
   const navigate = useNavigate();
@@ -21,7 +21,7 @@ const OrdersPage = () => {
       if (!session.user) return;
 
       try {
-        const response = await orderservice.getOrdersByUserId(session.user.id);
+        const response = await orderservice.getOrdersByStoreId(store.id);
         setOrders(response);
       } catch (error) {
         console.error("Error fetching orders", error);
@@ -29,14 +29,14 @@ const OrdersPage = () => {
     };
 
     fetchOrders();
-  }, [session]);
+  }, [store.id]);
 
   if (!orders) {
     return <div>Loading...</div>;
   }
 
   return (
-    <div className="flex flex-col">
+    <div className="">
       <Table>
         <TableHeader>
           <TableColumn>Order Number</TableColumn>
@@ -45,18 +45,19 @@ const OrdersPage = () => {
           <TableColumn>Total</TableColumn>
         </TableHeader>
         <TableBody>
+          {" "}
           {orders.map((order) => (
             <TableRow
               key={order.id}
               onClick={() =>
-                navigate(`/orders/${order.id}`, { state: { order } })
+                navigate(`/stores/${store.id}/orders/${order.id}`, {
+                  state: { order, storeId: store.id },
+                })
               }
               className="hover:bg-zinc-100 cursor-pointer"
             >
               <TableCell>{order.id}</TableCell>
-              <TableCell>
-                {order.status === "PENDING" ? "PROCESSING" : order.status}
-              </TableCell>
+              <TableCell>{order.status}</TableCell>
               <TableCell>
                 {new Date(order.createdAt).toLocaleDateString()}
               </TableCell>
@@ -69,4 +70,4 @@ const OrdersPage = () => {
   );
 };
 
-export default OrdersPage;
+export default StoreOwnerOrdersPage;
