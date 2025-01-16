@@ -239,13 +239,21 @@ storeRouter.get("/:storeId/products/:id", async (req, res) => {
 storeRouter.delete("/:storeId/products/:id", async (req, res) => {
   const productId = req.params.id;
   try {
+    await prisma.categoriesOnProducts.deleteMany({
+      where: {
+        productId: productId,
+      },
+    });
+
     const deleteProduct = await prisma.product.delete({
       where: {
         id: productId,
       },
     });
+
     res.json(deleteProduct);
   } catch (error) {
+    console.log(error);
     res.status(500).json({ error: "Error deleting product" });
   }
 });
