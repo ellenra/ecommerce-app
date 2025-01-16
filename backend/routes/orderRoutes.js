@@ -89,7 +89,7 @@ orderRouter.put("/:orderId", async (req, res) => {
   try {
     const updatedOrder = await prisma.order.update({
       where: { id: orderId },
-      data: { status },
+      data: { status: status },
     });
 
     res.json(updatedOrder);

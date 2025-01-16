@@ -1,27 +1,67 @@
 import { Button, Card, CardBody, Image } from "@nextui-org/react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
 import orderservice from "../services/orderservice";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+
+const fetchOrderById = async (orderId) => {
+  const response = await orderservice.getOrder(orderId);
+  return response;
+};
+
+const updateOrderStatus = async ({ orderId, status }) => {
+  const response = await orderservice.updateOrderStatus(orderId, status);
+  return response;
+};
 
 const StoreOwnerOrderPage = () => {
-  const location = useLocation();
-  const { order, storeId } = location.state || {};
+  const { storeId, orderId } = useParams();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
-  if (!order) {
-    return <>Loading...</>;
+  const {
+    data: order,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["order", orderId],
+    queryFn: () => fetchOrderById(orderId),
+    enabled: !!orderId,
+  });
+
+  const mutation = useMutation({
+    mutationFn: updateOrderStatus,
+    onMutate: async (newStatus) => {
+      await queryClient.cancelQueries(["order", orderId]);
+      const previousOrder = queryClient.getQueryData(["order", orderId]);
+
+      queryClient.setQueryData(["order", orderId], (oldOrder) => ({
+        ...oldOrder,
+        status: newStatus.status,
+      }));
+
+      return { previousOrder };
+    },
+    onError: (context) => {
+      queryClient.setQueryData(["order", orderId], context.previousOrder);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(["order", orderId]);
+    },
+  });
+
+  const handleStatusChange = (newStatus) => {
+    mutation.mutate({ orderId, status: newStatus });
+  };
+
+  if (isLoading) {
+    return <div>Loading order...</div>;
   }
 
-  const handleStatusChange = async (orderId) => {
-    try {
-      const response = await orderservice.changeOrderStatus(orderId, {
-        status: "SHIPPED",
-      });
-      const updatedOrder = response.data;
-    } catch (error) {
-      console.error("Error updating order status", error);
-    }
-  };
+  if (error) {
+    return <div>Error loading order!</div>;
+  }
+
   return (
     <>
       <Button
@@ -34,7 +74,7 @@ const StoreOwnerOrderPage = () => {
       <div className="py-6">
         <div className="max-w-3xl mx-auto">
           <Button
-            onClick={() => handleStatusChange(order.id)}
+            onClick={() => handleStatusChange("SHIPPED")}
             disabled={order.status === "SHIPPED"}
             className={`mb-6 border border-zinc-200 rounded-lg ${
               order.status === "SHIPPED"
@@ -42,7 +82,11 @@ const StoreOwnerOrderPage = () => {
                 : "hover:bg-zinc-100 hover:border-zinc-300"
             }`}
           >
-            {order.status === "SHIPPED" ? "SHIPPED" : "Change Status: SHIPPED"}
+            {mutation.isLoading
+              ? "Updating..."
+              : order.status === "SHIPPED"
+              ? "SHIPPED"
+              : "Change Status: SHIPPED"}{" "}
           </Button>
           <h1 className="text-xl font-bold text-center mb-10">
             Order Number: {order.id}

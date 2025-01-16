@@ -29,9 +29,9 @@ const getOrdersByStoreId = async (storeId) => {
   }
 };
 
-const changeOrderStatus = async (orderId, status) => {
+const updateOrderStatus = async (orderId, status) => {
   try {
-    const response = await axios.put(`${baseUrl}/${orderId}`, status);
+    const response = await axios.put(`${baseUrl}/${orderId}`, { status });
     return response.data;
   } catch (error) {
     console.error("Error changing status", error.message);
@@ -42,5 +42,5 @@ export default {
   getOrder,
   getOrdersByUserId,
   getOrdersByStoreId,
-  changeOrderStatus,
+  updateOrderStatus,
 };
