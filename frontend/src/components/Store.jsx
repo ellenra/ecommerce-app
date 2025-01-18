@@ -101,11 +101,11 @@ const Store = () => {
               <div className="flex justify-end -mr-3">
                 {isFavorite(product.id) ? (
                   <Button onClick={() => deleteFavorite(product.id)}>
-                    <FavoriteIcon />
+                    <FavoriteIcon fontSize="small" />
                   </Button>
                 ) : (
                   <Button onClick={() => addFavorite(product.id)}>
-                    <FavoriteBorderIcon />
+                    <FavoriteBorderIcon fontSize="small" />
                   </Button>
                 )}
               </div>
