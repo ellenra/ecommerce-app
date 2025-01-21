@@ -1,4 +1,4 @@
-import { useNavigate, Navigate } from "react-router-dom";
+import { useNavigate, Navigate, useLocation } from "react-router-dom";
 import { Button, Input } from "@nextui-org/react";
 import supabase from "../supabaseClient";
 import { useForm } from "react-hook-form";
@@ -15,6 +15,8 @@ const loginSchema = z.object({
 const Login = () => {
   const session = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const from = location.state?.from || "/";
 
   const {
     register,
@@ -23,7 +25,7 @@ const Login = () => {
   } = useForm({ resolver: zodResolver(loginSchema) });
 
   if (session.user) {
-    return <Navigate to="/" />;
+    return <Navigate to={from} />;
   }
 
   const onSubmit = async (data) => {
@@ -73,7 +75,7 @@ const Login = () => {
         <p className="mb-4">Don't have an account?</p>
         <Button
           onClick={() => {
-            navigate("/register");
+            navigate("/register", { state: { from: from } });
           }}
           className="border border-zinc-200 rounded-lg hover:bg-zinc-100 hover:border-zinc-300"
         >

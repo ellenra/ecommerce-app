@@ -1,4 +1,4 @@
-import { useNavigate, Navigate } from "react-router-dom";
+import { useNavigate, Navigate, useLocation } from "react-router-dom";
 import userService from "../services/userservice";
 import { Input, Button } from "@nextui-org/react";
 import supabase from "../supabaseClient";
@@ -20,6 +20,8 @@ const registerSchema = z.object({
 const Register = () => {
   const session = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const from = location.state?.from || "/";
 
   const {
     register,
@@ -30,7 +32,7 @@ const Register = () => {
   });
 
   if (session.user) {
-    return <Navigate to="/" />;
+    return <Navigate to={from} />;
   }
 
   const onSubmit = async (data) => {
@@ -50,7 +52,7 @@ const Register = () => {
         email,
         userId,
       });
-      navigate("/");
+      navigate(from);
     } catch (exception) {
       console.log("error in registration", exception.message);
       toast.error(`Failed to register! Reason: ${exception.message}`);

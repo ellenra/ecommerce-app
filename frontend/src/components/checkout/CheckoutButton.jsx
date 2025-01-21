@@ -2,12 +2,14 @@ import axios from "axios";
 import { Button } from "@nextui-org/react";
 import { useAuth } from "../../hooks/AuthContext";
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 const baseUrl = "http://localhost:5000/api";
 
 const CheckoutButton = ({ cartItems }) => {
   const session = useAuth();
   const [userFetched, setUserFetched] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (session === null) {
@@ -36,7 +38,16 @@ const CheckoutButton = ({ cartItems }) => {
 
   return (
     <>
-      <Button onClick={() => handleCheckout()}>Check out</Button>
+      {session.user ? (
+        <Button onClick={() => handleCheckout()}>Check out</Button>
+      ) : (
+        <Button
+          onClick={() => navigate("/login", { state: { from: "/cart" } })}
+          className="border border-zinc-200 rounded-lg hover:bg-zinc-100 hover:border-zinc-300"
+        >
+          Log in to checkout
+        </Button>
+      )}
     </>
   );
 };
