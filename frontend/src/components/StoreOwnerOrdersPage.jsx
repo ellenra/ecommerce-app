@@ -16,10 +16,12 @@ const StoreOwnerOrdersPage = ({ store }) => {
   const [orders, setOrders] = useState(null);
   const navigate = useNavigate();
 
+  if (!session) {
+    navigate("/");
+  }
+
   useEffect(() => {
     const fetchOrders = async () => {
-      if (!session.user) return;
-
       try {
         const response = await orderservice.getOrdersByStoreId(store.id);
         setOrders(response);
@@ -32,7 +34,7 @@ const StoreOwnerOrdersPage = ({ store }) => {
   }, [store.id]);
 
   if (!orders) {
-    return <div>Loading...</div>;
+    return <div>No orders found.</div>;
   }
 
   return (

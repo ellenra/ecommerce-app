@@ -21,15 +21,6 @@ const profileFormSchema = z.object({
 
 const ProfileForm = () => {
   const session = useAuth();
-  const [sessionReady, setSessionReady] = useState(false);
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (session === null) {
-      return;
-    }
-    setSessionReady(true);
-  }, [session]);
 
   const {
     handleSubmit,
@@ -51,25 +42,21 @@ const ProfileForm = () => {
 
   useEffect(() => {
     const fetchUserData = async () => {
-      if (sessionReady && session.user) {
-        try {
-          const userData = await userService.getUser(session.user.id);
-          setValue("firstName", userData.firstName);
-          setValue("lastName", userData.lastName);
-          setValue("email", userData.email);
-          setValue("address", userData.address || "");
-          setValue("postalCode", userData.postalCode || undefined);
-          setValue("city", userData.city || "");
-          setValue("country", userData.country || "");
-        } catch (error) {
-          console.error("Error fetching user data:", error.message);
-        }
-      } else if (sessionReady && !session.user) {
-        navigate("/");
+      try {
+        const userData = await userService.getUser(session.user.id);
+        setValue("firstName", userData.firstName);
+        setValue("lastName", userData.lastName);
+        setValue("email", userData.email);
+        setValue("address", userData.address || "");
+        setValue("postalCode", userData.postalCode || undefined);
+        setValue("city", userData.city || "");
+        setValue("country", userData.country || "");
+      } catch (error) {
+        console.error("Error fetching user data:", error.message);
       }
     };
     fetchUserData();
-  }, [sessionReady, session]);
+  }, [session]);
 
   const onSubmit = async (data) => {
     try {
@@ -92,10 +79,6 @@ const ProfileForm = () => {
       toast.error("Failed to update profile.");
     }
   };
-
-  if (!sessionReady) {
-    return <div>Loading...</div>;
-  }
 
   return (
     <div className="w-1/3 mt-10">

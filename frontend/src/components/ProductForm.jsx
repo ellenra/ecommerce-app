@@ -42,13 +42,15 @@ const productSchema = z.object({
 });
 
 const ProductForm = () => {
-  const session = useAuth();
+  const { session, loading } = useAuth();
   const { storeId, productId } = useParams();
   const [viewProductPicture, setViewProductPicture] = useState(null);
   const [categoryList, setCategoryList] = useState([]);
   const navigate = useNavigate();
 
-  if (!session) return;
+  if (!session) {
+    navigate("/");
+  }
 
   const {
     handleSubmit,
@@ -72,8 +74,6 @@ const ProductForm = () => {
   const file = watch("file");
 
   useEffect(() => {
-    if (!session.user) return;
-
     const fetchCategories = async () => {
       try {
         const categories = await productservice.getProductCategories();
@@ -92,7 +92,6 @@ const ProductForm = () => {
           const productData = await storeservice.getProduct(productId);
           if (session.user.id !== productData.userId) {
             navigate("/");
-            return;
           }
           setValue("name", productData.name);
           setValue("description", productData.description);
@@ -111,7 +110,7 @@ const ProductForm = () => {
 
       fetchProductData();
     }
-  }, [productId, session.user]);
+  }, [session, loading, productId]);
 
   const handleImageUpload = (event) => {
     const file = event.target.files[0];

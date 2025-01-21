@@ -2,21 +2,30 @@ import React, { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { Button } from "@nextui-org/react";
 import StoreOwnerOrdersPage from "./StoreOwnerOrdersPage";
-import axios from "axios";
+import { useAuth } from "../hooks/AuthContext";
+import storeservice from "../services/storeservice";
 
 const StoreOwnerPage = () => {
+  const { session, loading } = useAuth();
   const { storeId } = useParams();
   const [store, setStore] = useState(null);
-
   const [selectedView, setSelectedView] = useState("dashboard");
   const location = useLocation();
   const navigate = useNavigate();
 
+  if (!session) {
+    navigate("/");
+  }
+
   useEffect(() => {
     const fetchStore = async () => {
       try {
-        const response = await axios.get(`/api/stores/${storeId}`);
-        setStore(response.data);
+        const response = await storeservice.getStore(storeId);
+        if (session.user.id !== response.userId) {
+          navigate("/");
+          return;
+        }
+        setStore(response);
       } catch (error) {
         console.error("Error fetching store data:", error);
       }
@@ -36,7 +45,7 @@ const StoreOwnerPage = () => {
   };
 
   if (!store) {
-    return <div>Loading...</div>;
+    return <div>No store found.</div>;
   }
   return (
     <div className="flex">

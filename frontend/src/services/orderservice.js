@@ -13,7 +13,7 @@ const getOrder = async (orderId) => {
 
 const getOrdersByUserId = async (userId) => {
   try {
-    const response = await axios.get(`${baseUrl}`, userId);
+    const response = await axios.get(`${baseUrl}`, { params: { userId } });
     return response.data;
   } catch (error) {
     console.error("Error getting orders:", error.message);
@@ -22,7 +22,7 @@ const getOrdersByUserId = async (userId) => {
 
 const getOrdersByStoreId = async (storeId) => {
   try {
-    const response = await axios.get(baseUrl, storeId);
+    const response = await axios.get(baseUrl, { params: { storeId } });
     return response.data;
   } catch (error) {
     console.error("Error getting orders", error.message);

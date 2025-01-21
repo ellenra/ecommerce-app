@@ -42,10 +42,10 @@ const listProduct = async (data) => {
   }
 };
 
-const getProduct = async (productId, storeId) => {
+const getProduct = async (productId) => {
   try {
     const response = await axios.get(
-      `${baseUrl}${storeId}/products/${productId}`,
+      `${baseUrl}/:storeId/products/${productId}`,
       productId
     );
     return response.data;

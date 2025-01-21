@@ -20,17 +20,13 @@ const storeSchema = z.object({
 const StoreForm = () => {
   const { storeId } = useParams();
   const session = useAuth();
-  const [sessionReady, setSessionReady] = useState(false);
   const [user, setUser] = useState(null);
   const [viewProfilePicture, setViewProfilePicture] = useState(null);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (session === null) {
-      return;
-    }
-    setSessionReady(true);
-  }, [session]);
+  if (!session) {
+    navigate("/");
+  }
 
   const {
     register,
@@ -53,22 +49,17 @@ const StoreForm = () => {
 
   useEffect(() => {
     const fetchUserData = async () => {
-      if (sessionReady && session.user) {
-        try {
-          const userData = await userService.getUser(session.user.id);
-          setUser(userData);
-        } catch (error) {
-          console.error("Error fetching user data:", error.message);
-        }
-      } else if (sessionReady && !session.user) {
-        navigate("/");
+      try {
+        const userData = await userService.getUser(session.user.id);
+        setUser(userData);
+      } catch (error) {
+        console.error("Error fetching user data:", error.message);
       }
     };
     fetchUserData();
-  }, [sessionReady, session]);
+  }, [session]);
 
   useEffect(() => {
-    if (!session.user) return;
     if (storeId) {
       const fetchStoreData = async () => {
         try {
@@ -89,7 +80,7 @@ const StoreForm = () => {
 
       fetchStoreData();
     }
-  }, [session, sessionReady, storeId]);
+  }, [session, storeId]);
 
   const handleImageUpload = (event) => {
     const file = event.target.files[0];
@@ -136,10 +127,6 @@ const StoreForm = () => {
       }
     }
   };
-
-  if (!sessionReady) {
-    return <div>Loading...</div>;
-  }
 
   return (
     <div className="flex justify-center">

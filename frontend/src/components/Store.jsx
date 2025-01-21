@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams, Link, useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useAuth } from "../hooks/AuthContext";
 import userservice from "../services/userservice";
@@ -21,7 +21,7 @@ const Store = () => {
 
   useEffect(() => {
     const fetchUserData = async () => {
-      if (!session.user) return;
+      if (!session) return;
 
       try {
         const fetchedUser = await userservice.getUser(session.user.id);
@@ -32,7 +32,7 @@ const Store = () => {
     };
 
     fetchUserData();
-  }, [session.user]);
+  }, [session]);
 
   useEffect(() => {
     const fetchStore = async () => {
@@ -48,7 +48,7 @@ const Store = () => {
   }, [storeId]);
 
   if (!store) {
-    return <div>Loading...</div>;
+    return <div>No store found.</div>;
   }
 
   const isOwner = session.user && session.user.id === store.userId;

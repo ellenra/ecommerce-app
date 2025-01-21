@@ -32,7 +32,7 @@ const OrdersPage = () => {
   }, [session]);
 
   if (!orders) {
-    return <div>Loading...</div>;
+    return;
   }
 
   return (

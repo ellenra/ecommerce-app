@@ -11,7 +11,6 @@ import OrdersPage from "./OrdersPage";
 
 const Profile = () => {
   const session = useAuth();
-  const [sessionReady, setSessionReady] = useState(false);
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
   const [hoveredProductId, setHoveredProductId] = useState(null);
@@ -19,29 +18,22 @@ const Profile = () => {
   const [selectedView, setSelectedView] = useState("account");
   const location = useLocation();
 
-  useEffect(() => {
-    if (session === null) {
-      return;
-    }
-    setSessionReady(true);
-  }, [session]);
+  if (!session) {
+    navigate("/");
+  }
 
   useEffect(() => {
     const fetchUserData = async () => {
-      if (sessionReady && session.user) {
-        try {
-          const fetchedUser = await userservice.getUser(session.user.id);
-          setUser(fetchedUser);
-        } catch (error) {
-          console.error("Error fetching user data:", error);
-        }
-      } else if (sessionReady && !session.user) {
-        navigate("/login");
+      try {
+        const fetchedUser = await userservice.getUser(session.user.id);
+        setUser(fetchedUser);
+      } catch (error) {
+        console.error("Error fetching user data:", error);
       }
     };
 
     fetchUserData();
-  }, [sessionReady, session]);
+  }, [session]);
 
   useEffect(() => {
     const path = location.pathname.split("/").pop();
@@ -52,10 +44,6 @@ const Profile = () => {
     setSelectedView(view);
     navigate(`/profile/${view}`);
   };
-
-  if (!sessionReady || !user) {
-    return <div>Loading...</div>;
-  }
 
   return (
     <div className="flex">

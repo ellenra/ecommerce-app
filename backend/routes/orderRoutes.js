@@ -29,48 +29,40 @@ orderRouter.get("/:orderId", async (req, res) => {
 });
 
 orderRouter.get("/", async (req, res) => {
-  const userId = req.body.userId;
+  const { userId, storeId } = req.query;
   try {
-    const orders = await prisma.order.findMany({
-      where: { userId: userId },
-      include: {
-        user: true,
-        orderItems: {
-          include: {
-            product: true,
+    let orders;
+    if (userId) {
+      orders = await prisma.order.findMany({
+        where: { userId: userId },
+        include: {
+          user: true,
+          orderItems: {
+            include: {
+              product: true,
+            },
           },
+          shippingAddress: true,
         },
-        shippingAddress: true,
-      },
-      orderBy: {
-        createdAt: "desc",
-      },
-    });
-
-    if (orders) {
-      res.json(orders);
+        orderBy: {
+          createdAt: "desc",
+        },
+      });
+    } else if (storeId) {
+      orders = await prisma.order.findMany({
+        where: { storeId: storeId },
+        include: {
+          orderItems: {
+            include: {
+              product: true,
+            },
+          },
+          shippingAddress: true,
+        },
+      });
     } else {
-      res.status(404).json({ message: "Orders not found" });
+      return res.status(400).json({ message: "Missing userId or storeId" });
     }
-  } catch (error) {
-    res.status(500).json({ message: "Error fetching orders" });
-  }
-});
-
-orderRouter.get("/", async (req, res) => {
-  const { storeId } = req.body;
-  try {
-    const orders = await prisma.order.findMany({
-      where: { storeId: storeId },
-      include: {
-        orderItems: {
-          include: {
-            product: true,
-          },
-        },
-        shippingAddress: true,
-      },
-    });
 
     if (orders) {
       res.json(orders);
