@@ -41,7 +41,7 @@ const Home = () => {
     const fetchProducts = async () => {
       try {
         const response = await productservice.getProducts();
-        setProducts(response);
+        setProducts(response.products);
       } catch (error) {
         console.error("Error fetching products:", error.message);
       }
@@ -70,7 +70,7 @@ const Home = () => {
         </Button>
       </div>
 
-      <div className="px-10 flex justify-center items-center">
+      <div className="px-10">
         <h2 className="mb-4">Top Products</h2>
         <div className="flex overflow-x-scroll scrollbar-thin scrollbar-thumb-zinc-100 scrollbar-track-transparent gap-6 pb-4">
           {products.map((product, index) => (

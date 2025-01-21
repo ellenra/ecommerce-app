@@ -9,7 +9,7 @@ const Search = ({ setSearch }) => {
       placeholder="Search Products"
       onChange={({ currentTarget: input }) => setSearch(input.value)}
       startContent={<SearchIcon />}
-      className="border rounded-lg mb-4 max-w-xs"
+      className="border rounded-lg max-w-xs"
     />
   );
 };

@@ -10,25 +10,17 @@ productRouter.get("/", async (req, res) => {
 
     const categories = await prisma.productCategory.findMany();
 
-    console.log(categories);
-
-    const filterCategory = category ? category.split(",") : [];
-
-    console.log("filcat", filterCategory);
-
     const products = await prisma.product.findMany({
       where: {
         AND: [
           { name: { contains: search, mode: "insensitive" } },
-          ...(filterCategory.length > 0
+          ...(category.length > 0
             ? [
                 {
                   categories: {
                     some: {
                       category: {
-                        id: {
-                          in: filterCategory,
-                        },
+                        id: category,
                       },
                     },
                   },

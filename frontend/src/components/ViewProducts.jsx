@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
-import { Button, Card, CardBody, CardFooter, Image } from "@nextui-org/react";
 import axios from "axios";
+import { useEffect, useState } from "react";
+import Select from "react-select";
+import { Button, Card, CardBody, CardFooter, Image } from "@nextui-org/react";
 import { useNavigate } from "react-router-dom";
 import { useFavorites } from "../hooks/favoriteProducts";
 import userservice from "../services/userservice";
@@ -15,7 +16,10 @@ const ViewProducts = () => {
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [search, setSearch] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState({
+    label: "All Categories",
+    value: "",
+  });
   const navigate = useNavigate();
   const { addFavorite, deleteFavorite, isFavorite } = useFavorites(
     user,
@@ -40,10 +44,15 @@ const ViewProducts = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const url = `http://localhost:5000/api/products?category=${selectedCategory.toString()}&search=${search}`;
+        const url = `http://localhost:5000/api/products?category=${selectedCategory.value}&search=${search}`;
         const response = await axios.get(url);
         setProducts(response.data.products);
-        setCategories(response.data.categories);
+        setCategories(
+          response.data.categories.map((category) => ({
+            label: category.name,
+            value: category.id,
+          }))
+        );
       } catch (error) {
         console.error("Error fetching products:", error.message);
       }
@@ -54,7 +63,16 @@ const ViewProducts = () => {
 
   return (
     <>
-      <div>
+      <div className="flex items-center m-2 space-x-2">
+        <Select
+          value={selectedCategory}
+          onChange={setSelectedCategory}
+          options={[{ label: "All Categories", value: "" }, ...categories]}
+          className="w-64"
+          placeholder="Select a category"
+          menuPortalTarget={document.body}
+          styles={{ menuPortal: (base) => ({ ...base, zIndex: 9999 }) }}
+        />
         <Search setSearch={(search) => setSearch(search)} />
       </div>
       <div className="grid grid-cols-4 lg:grid-cols-8 gap-6">
