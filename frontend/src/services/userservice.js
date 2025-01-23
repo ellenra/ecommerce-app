@@ -15,12 +15,23 @@ const register = async (data) => {
   }
 };
 
-const getUser = async (userId) => {
+const getUser = async (userId, accessToken) => {
   try {
-    const response = await axios.get(`${baseUrl}/${userId}`);
-    return response.data;
+    if (accessToken) {
+      const config = {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      };
+
+      const response = await axios.get(`${baseUrl}/${userId}`, config, {
+        withCredentials: true,
+      });
+      return response.data;
+    }
   } catch (error) {
     console.error("Error in fetching user:", error.message);
+    throw Error;
   }
 };
 

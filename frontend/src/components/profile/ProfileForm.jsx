@@ -1,11 +1,9 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { z } from "zod";
 import { toast } from "react-toastify";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button, Input } from "@nextui-org/react";
-import userService from "../../services/userservice";
 import { useAuth } from "../../hooks/AuthContext";
 import userservice from "../../services/userservice";
 
@@ -19,7 +17,7 @@ const profileFormSchema = z.object({
   country: z.string(),
 });
 
-const ProfileForm = () => {
+const ProfileForm = ({ user }) => {
   const session = useAuth();
 
   const {
@@ -41,22 +39,16 @@ const ProfileForm = () => {
   });
 
   useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const userData = await userService.getUser(session.user.id);
-        setValue("firstName", userData.firstName);
-        setValue("lastName", userData.lastName);
-        setValue("email", userData.email);
-        setValue("address", userData.address || "");
-        setValue("postalCode", userData.postalCode || undefined);
-        setValue("city", userData.city || "");
-        setValue("country", userData.country || "");
-      } catch (error) {
-        console.error("Error fetching user data:", error.message);
-      }
-    };
-    fetchUserData();
-  }, [session]);
+    if (user) {
+      setValue("firstName", user.firstName);
+      setValue("lastName", user.lastName);
+      setValue("email", user.email);
+      setValue("address", user.address || "");
+      setValue("postalCode", user.postalCode || undefined);
+      setValue("city", user.city || "");
+      setValue("country", user.country || "");
+    }
+  }, [user]);
 
   const onSubmit = async (data) => {
     try {

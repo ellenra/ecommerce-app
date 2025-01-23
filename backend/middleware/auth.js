@@ -1,21 +1,30 @@
-import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
+import supabase from "../services/supabaseClient.js";
 
 dotenv.config();
 
 const jwt_secret = process.env.SUPABASE_JWT_SECRET;
 
-export function authMiddleware(req, res, next) {
-  const token = req.headers["authorization"];
-  if (!token) {
-    return res.status(401).json({ error: "Unauthorized" });
+const authMiddleware = async (req, res, next) => {
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader) {
+    return res.status(401).json({ error: "Missing token" });
   }
-  try {
-    const decoded = jwt.verify(token, jwt_secret);
-    req.user = decoded;
-    next();
-  } catch (error) {
-    console.error("Error parsing token");
-    res.status(401).json({ error: "Unauthorized" });
+
+  if (!jwt_secret) {
+    return res.status(500).json({ error: "JWT Secret not configured" });
   }
-}
+
+  const token = authHeader.split(" ")[1];
+
+  const { data: user, error } = await supabase.auth.getUser(token);
+
+  if (error || !user) {
+    return res.status(401).json({ message: "Invalid or expired token" });
+  }
+  req.user = user;
+  next();
+};
+
+export { authMiddleware };

@@ -2,7 +2,6 @@ import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import router from "./routes/authRoutes.js";
-import { authMiddleware } from "./middleware/auth.js";
 import userRouter from "./routes/userRoutes.js";
 import storeRouter from "./routes/storeRoutes.js";
 import productRouter from "./routes/productRoutes.js";
@@ -36,11 +35,6 @@ app.use("/api/orders", orderRouter);
 app.use("/api/stripe", stripe);
 
 app.get("/", (req, res) => res.send("Server running"));
-
-app.post("/secret", authMiddleware, (req, res) => {
-  const email = req.user.email;
-  res.status(200).json({ email });
-});
 
 app.listen(
   PORT,

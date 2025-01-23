@@ -1,10 +1,16 @@
 import prisma from "../lib/prismaClient.js";
 import express from "express";
+import { authMiddleware } from "../middleware/auth.js";
 
 const userRouter = express.Router();
 
-userRouter.get("/:id", async (req, res) => {
+userRouter.get("/:id", authMiddleware, async (req, res) => {
   const userId = req.params.id;
+
+  if (!userId) {
+    return res.status(400).json({ message: "User ID missing" });
+  }
+
   try {
     const user = await prisma.user.findUnique({
       where: {
@@ -15,14 +21,13 @@ userRouter.get("/:id", async (req, res) => {
         favorites: true,
       },
     });
-
     if (user) {
       res.json(user);
     } else {
       res.status(404).json({ error: "User not found" });
     }
   } catch (error) {
-    console.log(error.message);
+    console.log(error);
   }
 });
 

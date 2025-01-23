@@ -8,6 +8,7 @@ import { useAuth } from "../../hooks/AuthContext";
 import { useFavorites } from "../../hooks/favoriteProducts";
 import ProfileForm from "./ProfileForm";
 import OrdersPage from "./OrdersPage";
+import { toast } from "react-toastify";
 
 const Profile = () => {
   const session = useAuth();
@@ -25,9 +26,17 @@ const Profile = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const fetchedUser = await userservice.getUser(session.user.id);
+        const fetchedUser = await userservice.getUser(
+          session.user.id,
+          session.session.access_token
+        );
         setUser(fetchedUser);
       } catch (error) {
+        if (error.response && error.response.status === 401) {
+          toast.error("Session has expired. Please log in again.");
+        } else {
+          toast.error("Something went wrong. Please try again later.");
+        }
         console.error("Error fetching user data:", error);
       }
     };
@@ -45,6 +54,7 @@ const Profile = () => {
     navigate(`/profile/${view}`);
   };
 
+  console.log(user);
   return (
     <div className="flex">
       <div className="mt-10 w-1/4 mr-10">
@@ -78,7 +88,7 @@ const Profile = () => {
         {selectedView === "account" && (
           <div>
             <h2 className="text-2xl font-semibold mb-6">My Account</h2>
-            <ProfileForm />
+            <ProfileForm user={user} />
           </div>
         )}
 
