@@ -13,7 +13,7 @@ const loginSchema = z.object({
 });
 
 const Login = () => {
-  const session = useAuth();
+  const { session } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const from = location.state?.from || "/";
@@ -24,7 +24,7 @@ const Login = () => {
     formState: { errors },
   } = useForm({ resolver: zodResolver(loginSchema) });
 
-  if (session.user) {
+  if (session) {
     return <Navigate to={from} />;
   }
 

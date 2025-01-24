@@ -10,7 +10,7 @@ import { Button, Card, CardBody, CardFooter, Image } from "@nextui-org/react";
 
 const Store = () => {
   const { storeId } = useParams();
-  const session = useAuth();
+  const { session } = useAuth();
   const [user, setUser] = useState(null);
   const [store, setStore] = useState(null);
   const { addFavorite, deleteFavorite, isFavorite } = useFavorites(
@@ -24,7 +24,10 @@ const Store = () => {
       if (!session) return;
 
       try {
-        const fetchedUser = await userservice.getUser(session.user.id);
+        const fetchedUser = await userservice.getUser(
+          session.user.id,
+          session.access_token
+        );
         setUser(fetchedUser);
       } catch (error) {
         console.error("Error fetching user data:", error);
@@ -100,11 +103,19 @@ const Store = () => {
               </CardFooter>
               <div className="flex justify-end -mr-3">
                 {isFavorite(product.id) ? (
-                  <Button onClick={() => deleteFavorite(product.id)}>
+                  <Button
+                    onClick={() =>
+                      deleteFavorite(product.id, session.access_token)
+                    }
+                  >
                     <FavoriteIcon fontSize="small" />
                   </Button>
                 ) : (
-                  <Button onClick={() => addFavorite(product.id)}>
+                  <Button
+                    onClick={() =>
+                      addFavorite(product.id, session.access_token)
+                    }
+                  >
                     <FavoriteBorderIcon fontSize="small" />
                   </Button>
                 )}

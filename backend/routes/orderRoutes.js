@@ -1,9 +1,10 @@
 import prisma from "../lib/prismaClient.js";
 import express from "express";
+import { authMiddleware } from "../middleware/auth.js";
 
 const orderRouter = express.Router();
 
-orderRouter.get("/:orderId", async (req, res) => {
+orderRouter.get("/:orderId", authMiddleware, async (req, res) => {
   const { orderId } = req.params;
   try {
     const order = await prisma.order.findUnique({
@@ -28,7 +29,7 @@ orderRouter.get("/:orderId", async (req, res) => {
   }
 });
 
-orderRouter.get("/", async (req, res) => {
+orderRouter.get("/", authMiddleware, async (req, res) => {
   const { userId, storeId } = req.query;
   try {
     let orders;
@@ -50,7 +51,15 @@ orderRouter.get("/", async (req, res) => {
       });
     } else if (storeId) {
       orders = await prisma.order.findMany({
-        where: { storeId: storeId },
+        where: {
+          orderItems: {
+            some: {
+              product: {
+                storeId: storeId,
+              },
+            },
+          },
+        },
         include: {
           orderItems: {
             include: {
@@ -74,7 +83,7 @@ orderRouter.get("/", async (req, res) => {
   }
 });
 
-orderRouter.put("/:orderId", async (req, res) => {
+orderRouter.put("/:orderId", authMiddleware, async (req, res) => {
   const { orderId } = req.params;
   const { status } = req.body;
 

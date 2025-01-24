@@ -12,13 +12,16 @@ const profileFormSchema = z.object({
   lastName: z.string().min(1, { message: "Last name is required" }),
   email: z.string().email({ message: "Invalid email address" }),
   address: z.string(),
-  postalCode: z.number().optional(),
+  postalCode: z
+    .string()
+    .regex(/^\d+$/, { message: "Invalid postal code" })
+    .optional(),
   city: z.string(),
   country: z.string(),
 });
 
 const ProfileForm = ({ user }) => {
-  const session = useAuth();
+  const { session } = useAuth();
 
   const {
     handleSubmit,
@@ -64,7 +67,7 @@ const ProfileForm = ({ user }) => {
       formData.append("city", city);
       formData.append("country", country);
 
-      await userservice.updateUser(session.user.id, data);
+      await userservice.updateUser(session.user.id, data, session.access_token);
       toast.success("Profile updated successfully!");
     } catch (exception) {
       console.log("error in profile form", exception.message);

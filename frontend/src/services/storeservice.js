@@ -2,9 +2,13 @@ import axios from "axios";
 
 const baseUrl = "http://localhost:5000/api/stores/";
 
-const createStore = async (data) => {
+const createStore = async (data, accessToken) => {
   try {
-    const response = await axios.post(baseUrl, data);
+    const response = await axios.post(baseUrl, data, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
     return response.data;
   } catch (error) {
     console.error("Error creating store", error.message);
@@ -20,21 +24,29 @@ const getStore = async (id) => {
   }
 };
 
-const updateStore = async (storeId, data) => {
+const updateStore = async (storeId, data, accessToken) => {
   try {
-    console.log("data", data);
-    const response = await axios.put(`${baseUrl}${storeId}`, data);
+    const response = await axios.put(`${baseUrl}${storeId}`, data, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
     return response.data;
   } catch (error) {
     console.error("Error updating store", error.message);
   }
 };
 
-const listProduct = async (data) => {
+const listProduct = async (data, accessToken) => {
   try {
     const response = await axios.post(
       `${baseUrl}${data.get("storeId")}/products`,
-      data
+      data,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
     );
     return response.data;
   } catch (error) {
@@ -54,10 +66,15 @@ const getProduct = async (productId) => {
   }
 };
 
-const deleteProduct = async (productId, storeId) => {
+const deleteProduct = async (productId, storeId, accessToken) => {
   try {
     const response = await axios.delete(
-      `${baseUrl}${storeId}/products/${productId}`
+      `${baseUrl}${storeId}/products/${productId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
     );
     return response.data;
   } catch (error) {
@@ -65,11 +82,16 @@ const deleteProduct = async (productId, storeId) => {
   }
 };
 
-const updateProduct = async (data) => {
+const updateProduct = async (data, accessToken) => {
   try {
     const response = await axios.put(
       `${baseUrl}${data.get("storeId")}/products/${data.get("productId")}`,
-      data
+      data,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
     );
     return response.data;
   } catch (error) {

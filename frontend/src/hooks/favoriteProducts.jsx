@@ -4,11 +4,15 @@ import userservice from "../services/userservice";
 export const useFavorites = (user, setUser) => {
   const navigate = useNavigate();
 
-  const addFavorite = async (productId) => {
+  const addFavorite = async (productId, accessToken) => {
     if (user) {
       try {
-        await userservice.addProductToFavorites(productId, user.id);
-        const fetchedUser = await userservice.getUser(user.id);
+        await userservice.addProductToFavorites(
+          productId,
+          user.id,
+          accessToken
+        );
+        const fetchedUser = await userservice.getUser(user.id, accessToken);
         setUser(fetchedUser);
       } catch (error) {
         console.error("Error adding product to favorites", error.message);
@@ -18,10 +22,14 @@ export const useFavorites = (user, setUser) => {
     }
   };
 
-  const deleteFavorite = async (productId) => {
+  const deleteFavorite = async (productId, accessToken) => {
     try {
-      await userservice.deleteProductFromFavorites(productId, user.id);
-      const fetchedUser = await userservice.getUser(user.id);
+      await userservice.deleteProductFromFavorites(
+        productId,
+        user.id,
+        accessToken
+      );
+      const fetchedUser = await userservice.getUser(user.id, accessToken);
       setUser(fetchedUser);
     } catch (error) {
       console.error("Error deleting product from favs", error.message);

@@ -11,7 +11,7 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 import Search from "./Search";
 
 const ViewProducts = () => {
-  const session = useAuth();
+  const { session } = useAuth();
   const [user, setUser] = useState(null);
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -31,7 +31,10 @@ const ViewProducts = () => {
       if (!session.user) return;
 
       try {
-        const fetchedUser = await userservice.getUser(session.user.id);
+        const fetchedUser = await userservice.getUser(
+          session.user.id,
+          session.access_token
+        );
         setUser(fetchedUser);
       } catch (error) {
         console.error("Error fetching user data:", error);
@@ -39,7 +42,7 @@ const ViewProducts = () => {
     };
 
     fetchUserData();
-  }, [session.user]);
+  }, [session]);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -107,7 +110,9 @@ const ViewProducts = () => {
                     <Button
                       size="sm"
                       isIconOnly
-                      onClick={() => deleteFavorite(product.id)}
+                      onClick={() =>
+                        deleteFavorite(product.id, session.access_token)
+                      }
                     >
                       <FavoriteIcon fontSize="small" />
                     </Button>
@@ -115,7 +120,9 @@ const ViewProducts = () => {
                     <Button
                       size="sm"
                       isIconOnly
-                      onClick={() => addFavorite(product.id)}
+                      onClick={() =>
+                        addFavorite(product.id, session.access_token)
+                      }
                     >
                       <FavoriteBorderIcon fontSize="small" />
                     </Button>

@@ -19,7 +19,7 @@ import { toast } from "react-toastify";
 
 const Product = () => {
   const { storeId, productId } = useParams();
-  const session = useAuth();
+  const { session } = useAuth();
   const [product, setProduct] = useState(null);
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const { addToCart } = useCart();
@@ -47,7 +47,11 @@ const Product = () => {
 
   const handleDeleteProduct = async (productId) => {
     try {
-      await storeservice.deleteProduct(productId, storeId);
+      await storeservice.deleteProduct(
+        productId,
+        storeId,
+        session.access_token
+      );
       onOpenChange(false);
       toast.success("Product deleted successfully!");
       navigate(`/stores/${storeId}`);

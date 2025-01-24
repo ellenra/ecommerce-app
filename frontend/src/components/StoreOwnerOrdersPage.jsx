@@ -12,7 +12,7 @@ import { useNavigate } from "react-router-dom";
 import orderservice from "../services/orderservice";
 
 const StoreOwnerOrdersPage = ({ store }) => {
-  const session = useAuth();
+  const { session } = useAuth();
   const [orders, setOrders] = useState(null);
   const navigate = useNavigate();
 
@@ -23,7 +23,10 @@ const StoreOwnerOrdersPage = ({ store }) => {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const response = await orderservice.getOrdersByStoreId(store.id);
+        const response = await orderservice.getOrdersByStoreId(
+          store.id,
+          session.access_token
+        );
         setOrders(response);
       } catch (error) {
         console.error("Error fetching orders", error);
@@ -53,7 +56,7 @@ const StoreOwnerOrdersPage = ({ store }) => {
               key={order.id}
               onClick={() =>
                 navigate(`/stores/${store.id}/orders/${order.id}`, {
-                  state: { order, storeId: store.id },
+                  state: { session },
                 })
               }
               className="hover:bg-zinc-100 cursor-pointer"

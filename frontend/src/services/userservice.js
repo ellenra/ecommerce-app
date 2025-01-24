@@ -17,39 +17,47 @@ const register = async (data) => {
 
 const getUser = async (userId, accessToken) => {
   try {
-    if (accessToken) {
-      const config = {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      };
+    const response = await axios.get(`${baseUrl}/${userId}`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
 
-      const response = await axios.get(`${baseUrl}/${userId}`, config, {
-        withCredentials: true,
-      });
-      return response.data;
-    }
+    return response.data;
   } catch (error) {
     console.error("Error in fetching user:", error.message);
     throw Error;
   }
 };
 
-const addProductToFavorites = async (productId, userId) => {
+const addProductToFavorites = async (productId, userId, accessToken) => {
   try {
-    const response = await axios.post(`${baseUrl}/${userId}/favorites`, {
-      productId,
-    });
+    const response = await axios.post(
+      `${baseUrl}/${userId}/favorites`,
+      {
+        productId,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
     return response;
   } catch (error) {
     console.error("Error adding to favorites", error.message);
   }
 };
 
-const deleteProductFromFavorites = async (productId, userId) => {
+const deleteProductFromFavorites = async (productId, userId, accessToken) => {
   try {
     const response = await axios.delete(
-      `${baseUrl}/${userId}/favorites/${productId}`
+      `${baseUrl}/${userId}/favorites/${productId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
     );
     return response;
   } catch (error) {
@@ -57,9 +65,13 @@ const deleteProductFromFavorites = async (productId, userId) => {
   }
 };
 
-const updateUser = async (userId, data) => {
+const updateUser = async (userId, data, accessToken) => {
   try {
-    const response = await axios.put(`${baseUrl}/${userId}`, data);
+    const response = await axios.put(`${baseUrl}/${userId}`, data, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
     return response.data;
   } catch (error) {
     console.error("Error updating profile", error.message);

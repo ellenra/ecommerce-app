@@ -6,7 +6,6 @@ import { toast } from "react-toastify";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button, Input, Image, Link } from "@nextui-org/react";
 import storeCategories from "../utils/storeCategories.json";
-import userService from "../services/userservice";
 import storeservice from "../services/storeservice";
 import { useAuth } from "../hooks/AuthContext";
 
@@ -19,8 +18,7 @@ const storeSchema = z.object({
 
 const StoreForm = () => {
   const { storeId } = useParams();
-  const session = useAuth();
-  const [user, setUser] = useState(null);
+  const { session, user } = useAuth();
   const [viewProfilePicture, setViewProfilePicture] = useState(null);
   const navigate = useNavigate();
 
@@ -48,23 +46,11 @@ const StoreForm = () => {
   const file = watch("file");
 
   useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const userData = await userService.getUser(session.user.id);
-        setUser(userData);
-      } catch (error) {
-        console.error("Error fetching user data:", error.message);
-      }
-    };
-    fetchUserData();
-  }, [session]);
-
-  useEffect(() => {
     if (storeId) {
       const fetchStoreData = async () => {
         try {
           const storeData = await storeservice.getStore(storeId);
-          if (session.user.id !== storeData.userId) {
+          if (user.id !== storeData.userId) {
             navigate("/");
             return;
           }
@@ -110,11 +96,14 @@ const StoreForm = () => {
       }
 
       if (storeId) {
-        await storeservice.updateStore(storeId, formData);
+        await storeservice.updateStore(storeId, formData, session.access_token);
         toast.success("Store updated successfully!");
         navigate(`/stores/${storeId}`);
       } else {
-        const newStore = await storeservice.createStore(formData);
+        const newStore = await storeservice.createStore(
+          formData,
+          session.access_token
+        );
         toast.success("Store created!");
         navigate(`/stores/${newStore.id}`);
       }

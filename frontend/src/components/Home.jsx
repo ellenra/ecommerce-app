@@ -10,7 +10,7 @@ import { useAuth } from "../hooks/AuthContext";
 import { useFavorites } from "../hooks/favoriteProducts";
 
 const Home = () => {
-  const session = useAuth();
+  const { session } = useAuth();
   const [user, setUser] = useState(null);
   const [products, setProducts] = useState([]);
   const [stores, setStores] = useState([]);
@@ -20,14 +20,15 @@ const Home = () => {
   );
   const navigate = useNavigate();
 
-  console.log(session);
-
   useEffect(() => {
     const fetchUserData = async () => {
       if (!session.user) return;
 
       try {
-        const fetchedUser = await userservice.getUser(session.user.id);
+        const fetchedUser = await userservice.getUser(
+          session.user.id,
+          session.access_token
+        );
         setUser(fetchedUser);
       } catch (error) {
         console.error("Error fetching user data:", error);
@@ -35,7 +36,7 @@ const Home = () => {
     };
 
     fetchUserData();
-  }, [session.user]);
+  }, [session]);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -102,11 +103,19 @@ const Home = () => {
               </CardFooter>
               <div className="flex justify-end -mr-3">
                 {isFavorite(product.id) ? (
-                  <Button onClick={() => deleteFavorite(product.id)}>
+                  <Button
+                    onClick={() =>
+                      deleteFavorite(product.id, session.access_token)
+                    }
+                  >
                     <FavoriteIcon />
                   </Button>
                 ) : (
-                  <Button onClick={() => addFavorite(product.id)}>
+                  <Button
+                    onClick={() =>
+                      addFavorite(product.id, session.access_token)
+                    }
+                  >
                     <FavoriteBorderIcon />
                   </Button>
                 )}

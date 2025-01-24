@@ -3,6 +3,7 @@ import express from "express";
 import multer from "multer";
 import supabase from "../services/supabaseClient.js";
 import { decode } from "base64-arraybuffer";
+import { authMiddleware } from "../middleware/auth.js";
 
 const storeRouter = express.Router();
 
@@ -39,109 +40,120 @@ storeRouter.get("/:id", async (req, res) => {
   }
 });
 
-storeRouter.post("/", upload.single("file"), async (req, res) => {
-  const { userId, name, description, categoryId, bannerUrl } = req.body;
+storeRouter.post(
+  "/",
+  authMiddleware,
+  upload.single("file"),
+  async (req, res) => {
+    const { userId, name, description, categoryId, bannerUrl } = req.body;
 
-  try {
-    if (req.file) {
-      const file = req.file;
-      const fileBase64 = decode(file.buffer.toString("base64"));
+    try {
+      if (req.file) {
+        const file = req.file;
+        const fileBase64 = decode(file.buffer.toString("base64"));
 
-      const { data, error } = await supabase.storage
-        .from("store-images")
-        .upload(file.originalname, fileBase64, {
-          contentType: "image/png",
+        const { data, error } = await supabase.storage
+          .from("store-images")
+          .upload(file.originalname, fileBase64, {
+            contentType: "image/png",
+          });
+
+        if (error) {
+          throw error;
+        }
+
+        const { data: image } = supabase.storage
+          .from("store-images")
+          .getPublicUrl(data.path);
+
+        const store = await prisma.store.create({
+          data: {
+            userId,
+            name,
+            description,
+            categoryId,
+            profileUrl: image.publicUrl,
+            bannerUrl,
+          },
         });
+        res.status(201).json(store);
+      } else {
+        const store = await prisma.store.create({
+          data: {
+            userId,
+            name,
+            description,
+            categoryId,
+            bannerUrl,
+          },
+        });
+        res.status(201).json(store);
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
+  }
+);
 
-      if (error) {
-        throw error;
+storeRouter.put(
+  "/:storeId",
+  authMiddleware,
+  upload.single("file"),
+  async (req, res) => {
+    const { storeId } = req.params;
+    let { userId, name, description, categoryId, profileUrl, bannerUrl } =
+      req.body;
+
+    try {
+      if (req.file) {
+        const file = req.file;
+        //TODO: Edit so that if image exists, use that, don't upload new
+        const uniqueFileName = `${Date.now()}-${file.name}`;
+        const fileBase64 = decode(file.buffer.toString("base64"));
+
+        const { data, error } = await supabase.storage
+          .from("store-images")
+          .upload(uniqueFileName, fileBase64, {
+            contentType: "image/png",
+          });
+
+        if (error) {
+          throw error;
+        }
+
+        const { data: image } = supabase.storage
+          .from("store-images")
+          .getPublicUrl(data.path);
+
+        if (!image) {
+          throw new Error("Failed to generate public URL for uploaded image.");
+        }
+
+        profileUrl = image.publicUrl;
       }
 
-      const { data: image } = supabase.storage
-        .from("store-images")
-        .getPublicUrl(data.path);
-
-      const store = await prisma.store.create({
+      const store = await prisma.store.update({
+        where: { id: storeId },
         data: {
           userId,
           name,
           description,
           categoryId,
-          profileUrl: image.publicUrl,
+          profileUrl,
           bannerUrl,
         },
       });
+
       res.status(201).json(store);
-    } else {
-      const store = await prisma.store.create({
-        data: {
-          userId,
-          name,
-          description,
-          categoryId,
-          bannerUrl,
-        },
-      });
-      res.status(201).json(store);
+    } catch (error) {
+      console.log(error.message);
     }
-  } catch (error) {
-    console.log(error.message);
   }
-});
-
-storeRouter.put("/:storeId", upload.single("file"), async (req, res) => {
-  const { storeId } = req.params;
-  let { userId, name, description, categoryId, profileUrl, bannerUrl } =
-    req.body;
-
-  try {
-    if (req.file) {
-      const file = req.file;
-      //TODO: Edit so that if image exists, use that, don't upload new
-      const uniqueFileName = `${Date.now()}-${file.name}`;
-      const fileBase64 = decode(file.buffer.toString("base64"));
-
-      const { data, error } = await supabase.storage
-        .from("store-images")
-        .upload(uniqueFileName, fileBase64, {
-          contentType: "image/png",
-        });
-
-      if (error) {
-        throw error;
-      }
-
-      const { data: image } = supabase.storage
-        .from("store-images")
-        .getPublicUrl(data.path);
-
-      if (!image) {
-        throw new Error("Failed to generate public URL for uploaded image.");
-      }
-
-      profileUrl = image.publicUrl;
-    }
-
-    const store = await prisma.store.update({
-      where: { id: storeId },
-      data: {
-        userId,
-        name,
-        description,
-        categoryId,
-        profileUrl,
-        bannerUrl,
-      },
-    });
-
-    res.status(201).json(store);
-  } catch (error) {
-    console.log(error.message);
-  }
-});
+);
 
 storeRouter.post(
   "/:storeId/products",
+  authMiddleware,
   upload.single("file"),
   async (req, res) => {
     const storeId = req.params.storeId;
@@ -236,30 +248,35 @@ storeRouter.get("/:storeId/products/:id", async (req, res) => {
   }
 });
 
-storeRouter.delete("/:storeId/products/:id", async (req, res) => {
-  const productId = req.params.id;
-  try {
-    await prisma.categoriesOnProducts.deleteMany({
-      where: {
-        productId: productId,
-      },
-    });
+storeRouter.delete(
+  "/:storeId/products/:id",
+  authMiddleware,
+  async (req, res) => {
+    const productId = req.params.id;
+    try {
+      await prisma.categoriesOnProducts.deleteMany({
+        where: {
+          productId: productId,
+        },
+      });
 
-    const deleteProduct = await prisma.product.delete({
-      where: {
-        id: productId,
-      },
-    });
+      const deleteProduct = await prisma.product.delete({
+        where: {
+          id: productId,
+        },
+      });
 
-    res.json(deleteProduct);
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ error: "Error deleting product" });
+      res.json(deleteProduct);
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ error: "Error deleting product" });
+    }
   }
-});
+);
 
 storeRouter.put(
   "/:storeId/products/:id",
+  authMiddleware,
   upload.single("file"),
   async (req, res) => {
     const productId = req.params.id;

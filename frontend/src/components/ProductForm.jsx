@@ -42,7 +42,7 @@ const productSchema = z.object({
 });
 
 const ProductForm = () => {
-  const { session, loading } = useAuth();
+  const { session, loading, user } = useAuth();
   const { storeId, productId } = useParams();
   const [viewProductPicture, setViewProductPicture] = useState(null);
   const [categoryList, setCategoryList] = useState([]);
@@ -142,11 +142,11 @@ const ProductForm = () => {
         formData.append("imageUrl", viewProductPicture);
       }
       if (productId) {
-        await storeservice.updateProduct(formData);
+        await storeservice.updateProduct(formData, session.access_token);
         toast.success("Product updated successfully!");
         navigate(`/stores/${storeId}/products/${productId}`);
       } else {
-        await storeservice.listProduct(formData);
+        await storeservice.listProduct(formData, session.access_token);
         toast.success("Product created!");
         navigate(`/stores/${storeId}`);
       }

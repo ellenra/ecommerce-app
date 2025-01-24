@@ -11,7 +11,7 @@ import OrdersPage from "./OrdersPage";
 import { toast } from "react-toastify";
 
 const Profile = () => {
-  const session = useAuth();
+  const { session } = useAuth();
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
   const [hoveredProductId, setHoveredProductId] = useState(null);
@@ -28,7 +28,7 @@ const Profile = () => {
       try {
         const fetchedUser = await userservice.getUser(
           session.user.id,
-          session.session.access_token
+          session.access_token
         );
         setUser(fetchedUser);
       } catch (error) {
@@ -54,7 +54,6 @@ const Profile = () => {
     navigate(`/profile/${view}`);
   };
 
-  console.log(user);
   return (
     <div className="flex">
       <div className="mt-10 w-1/4 mr-10">

@@ -1,22 +1,28 @@
 import { Button, Card, CardBody, Image } from "@nextui-org/react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
 import orderservice from "../services/orderservice";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
-const fetchOrderById = async (orderId) => {
-  const response = await orderservice.getOrder(orderId);
+const fetchOrderById = async (orderId, accessToken) => {
+  const response = await orderservice.getOrder(orderId, accessToken);
   return response;
 };
 
-const updateOrderStatus = async ({ orderId, status }) => {
-  const response = await orderservice.updateOrderStatus(orderId, status);
+const updateOrderStatus = async ({ orderId, status, accessToken }) => {
+  const response = await orderservice.updateOrderStatus(
+    orderId,
+    status,
+    accessToken
+  );
   return response;
 };
 
 const StoreOwnerOrderPage = () => {
   const { storeId, orderId } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
+  const { session } = location.state;
   const queryClient = useQueryClient();
 
   const {
@@ -25,7 +31,7 @@ const StoreOwnerOrderPage = () => {
     error,
   } = useQuery({
     queryKey: ["order", orderId],
-    queryFn: () => fetchOrderById(orderId),
+    queryFn: () => fetchOrderById(orderId, session.access_token),
     enabled: !!orderId,
   });
 
@@ -51,7 +57,11 @@ const StoreOwnerOrderPage = () => {
   });
 
   const handleStatusChange = (newStatus) => {
-    mutation.mutate({ orderId, status: newStatus });
+    mutation.mutate({
+      orderId,
+      status: newStatus,
+      accessToken: session.access_token,
+    });
   };
 
   if (isLoading) {
