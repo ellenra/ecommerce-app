@@ -6,9 +6,10 @@ const userRouter = express.Router();
 
 userRouter.get("/:id", authMiddleware, async (req, res) => {
   const userId = req.params.id;
+  const userIdFromToken = req.user.user.id;
 
-  if (!userId) {
-    return res.status(400).json({ message: "User ID missing" });
+  if (userId !== userIdFromToken) {
+    return res.status(403).json({ message: "Unauthorized request" });
   }
 
   try {
@@ -31,9 +32,45 @@ userRouter.get("/:id", authMiddleware, async (req, res) => {
   }
 });
 
+userRouter.put("/:userId", authMiddleware, async (req, res) => {
+  const { userId } = req.params;
+  const userIdFromToken = req.user.user.id;
+
+  const { firstName, lastName, email, address, postalCode, city, country } =
+    req.body;
+
+  if (userId !== userIdFromToken) {
+    return res.status(403).json({ message: "Unauthorized request" });
+  }
+
+  try {
+    const user = await prisma.user.update({
+      where: { id: userId },
+      data: {
+        firstName,
+        lastName,
+        email,
+        address,
+        postalCode,
+        city,
+        country,
+      },
+    });
+    res.status(201).json(user);
+  } catch (error) {
+    console.log(error.message);
+  }
+});
+
 userRouter.post("/:id/favorites", authMiddleware, async (req, res) => {
   const userId = req.params.id;
+  const userIdFromToken = req.user.user.id;
   const { productId } = req.body;
+
+  if (userId !== userIdFromToken) {
+    return res.status(403).json({ message: "Unauthorized request" });
+  }
+
   try {
     const user = await prisma.user.findUnique({
       where: {
@@ -74,6 +111,12 @@ userRouter.delete(
   authMiddleware,
   async (req, res) => {
     const { id: userId, productId } = req.params;
+    const userIdFromToken = req.user.user.id;
+
+    if (userId !== userIdFromToken) {
+      return res.status(403).json({ message: "Unauthorized request" });
+    }
+
     try {
       const user = await prisma.user.findUnique({
         where: {
@@ -109,28 +152,5 @@ userRouter.delete(
     }
   }
 );
-
-userRouter.put("/:userId", authMiddleware, async (req, res) => {
-  const { userId } = req.params;
-  const { firstName, lastName, email, address, postalCode, city, country } =
-    req.body;
-  try {
-    const user = await prisma.user.update({
-      where: { id: userId },
-      data: {
-        firstName,
-        lastName,
-        email,
-        address,
-        postalCode,
-        city,
-        country,
-      },
-    });
-    res.status(201).json(user);
-  } catch (error) {
-    console.log(error.message);
-  }
-});
 
 export default userRouter;

@@ -101,10 +101,24 @@ storeRouter.put(
   upload.single("file"),
   async (req, res) => {
     const { storeId } = req.params;
+    const userIdFromToken = req.user.user.id;
+
     let { userId, name, description, categoryId, profileUrl, bannerUrl } =
       req.body;
 
     try {
+      const storeToEdit = await prisma.store.findUnique({
+        where: { id: storeId },
+      });
+
+      if (!storeToEdit) {
+        return res.status(404).json({ message: "Store not found" });
+      }
+
+      if (storeToEdit.userId !== userIdFromToken) {
+        return res.status(403).json({ message: "Unauthorized request" });
+      }
+
       if (req.file) {
         const file = req.file;
         //TODO: Edit so that if image exists, use that, don't upload new
@@ -118,7 +132,9 @@ storeRouter.put(
           });
 
         if (error) {
-          throw error;
+          return res
+            .status(500)
+            .json({ message: "Image upload failed", error });
         }
 
         const { data: image } = supabase.storage
@@ -126,7 +142,7 @@ storeRouter.put(
           .getPublicUrl(data.path);
 
         if (!image) {
-          throw new Error("Failed to generate public URL for uploaded image.");
+          throw new Error("Failed to generate URL for uploaded image.");
         }
 
         profileUrl = image.publicUrl;
@@ -144,9 +160,10 @@ storeRouter.put(
         },
       });
 
-      res.status(201).json(store);
+      res.status(200).json(store);
     } catch (error) {
       console.log(error.message);
+      res.status(500).json({ message: "Internal server error" });
     }
   }
 );
@@ -157,9 +174,23 @@ storeRouter.post(
   upload.single("file"),
   async (req, res) => {
     const storeId = req.params.storeId;
+    const userIdFromToken = req.user.user.id;
+
     let { name, description, price, quantity, categories, userId } = req.body;
 
     try {
+      const storeToEdit = await prisma.store.findUnique({
+        where: { id: storeId },
+      });
+
+      if (!storeToEdit) {
+        return res.status(404).json({ message: "Store not found" });
+      }
+
+      if (storeToEdit.userId !== userIdFromToken) {
+        return res.status(403).json({ message: "Unauthorized request" });
+      }
+
       categories = JSON.parse(categories);
       const parsedPrice = parseFloat(price);
       const parsedQuantity = parseInt(quantity, 10);
@@ -231,6 +262,7 @@ storeRouter.post(
 
 storeRouter.get("/:storeId/products/:id", async (req, res) => {
   const productId = req.params.id;
+
   try {
     const product = await prisma.product.findFirst({
       where: {
@@ -253,7 +285,21 @@ storeRouter.delete(
   authMiddleware,
   async (req, res) => {
     const productId = req.params.id;
+    const userIdFromToken = req.user.user.id;
+
     try {
+      const productToDelete = await prisma.product.findUnique({
+        where: { id: productId },
+      });
+
+      if (!productToDelete) {
+        return res.status(404).json({ message: "Product not found" });
+      }
+
+      if (productToDelete.userId !== userIdFromToken) {
+        return res.status(403).json({ message: "Unauthorized request" });
+      }
+
       await prisma.categoriesOnProducts.deleteMany({
         where: {
           productId: productId,
@@ -281,8 +327,11 @@ storeRouter.put(
   async (req, res) => {
     const productId = req.params.id;
     const storeId = req.params.storeId;
+    const userIdFromToken = req.user.user.id;
+
     let { name, description, price, quantity, categories, imageUrl, userId } =
       req.body;
+
     const parsedPrice = parseFloat(price);
     const parsedQuantity = parseInt(quantity, 10);
 
@@ -293,6 +342,18 @@ storeRouter.put(
     }
 
     try {
+      const productToEdit = await prisma.product.findUnique({
+        where: { id: productId },
+      });
+
+      if (!productToEdit) {
+        return res.status(404).json({ message: "Product not found" });
+      }
+
+      if (productToEdit.userId !== userIdFromToken) {
+        return res.status(403).json({ message: "Unauthorized request" });
+      }
+
       if (req.file) {
         const file = req.file;
         const uniqueFileName = `${Date.now()}-${file.name}`;
@@ -339,7 +400,7 @@ storeRouter.put(
         },
       });
 
-      res.status(201).json(product);
+      res.status(200).json(product);
     } catch (error) {
       console.log(error.message);
     }

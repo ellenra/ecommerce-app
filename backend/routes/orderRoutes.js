@@ -6,6 +6,9 @@ const orderRouter = express.Router();
 
 orderRouter.get("/:orderId", authMiddleware, async (req, res) => {
   const { orderId } = req.params;
+
+  //TODO: Add check if user is owner of the products being ordered
+
   try {
     const order = await prisma.order.findUnique({
       where: { id: orderId },
@@ -31,9 +34,16 @@ orderRouter.get("/:orderId", authMiddleware, async (req, res) => {
 
 orderRouter.get("/", authMiddleware, async (req, res) => {
   const { userId, storeId } = req.query;
+  const userIdFromToken = req.user.user.id;
+
   try {
     let orders;
+
     if (userId) {
+      if (userId !== userIdFromToken) {
+        return res.status(403).json({ message: "Unauthorized request" });
+      }
+
       orders = await prisma.order.findMany({
         where: { userId: userId },
         include: {
@@ -50,6 +60,18 @@ orderRouter.get("/", authMiddleware, async (req, res) => {
         },
       });
     } else if (storeId) {
+      const store = await prisma.store.findUnique({
+        where: { id: storeId },
+      });
+
+      if (!store) {
+        return res.status(404).json({ message: "Store not found" });
+      }
+
+      if (store.userId !== userIdFromToken) {
+        return res.status(403).json({ message: "Unauthorized request" });
+      }
+
       orders = await prisma.order.findMany({
         where: {
           orderItems: {
@@ -86,6 +108,8 @@ orderRouter.get("/", authMiddleware, async (req, res) => {
 orderRouter.put("/:orderId", authMiddleware, async (req, res) => {
   const { orderId } = req.params;
   const { status } = req.body;
+
+  //TODO: Add check if user is owner of the products being ordered
 
   try {
     const updatedOrder = await prisma.order.update({
