@@ -2,24 +2,25 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import Select from "react-select";
 import { Button, Card, CardBody, CardFooter, Image } from "@nextui-org/react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useFavorites } from "../hooks/favoriteProducts";
 import userservice from "../services/userservice";
 import { useAuth } from "../hooks/AuthContext";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import FavoriteIcon from "@mui/icons-material/Favorite";
-import Search from "./Search";
 
 const ViewProducts = () => {
   const { session } = useAuth();
   const [user, setUser] = useState(null);
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
-  const [search, setSearch] = useState("");
   const [selectedCategory, setSelectedCategory] = useState({
     label: "All Categories",
     value: "",
   });
+  const location = useLocation();
+  const searchQuery = new URLSearchParams(location.search).get("search");
+
   const navigate = useNavigate();
   const { addFavorite, deleteFavorite, isFavorite } = useFavorites(
     user,
@@ -28,7 +29,7 @@ const ViewProducts = () => {
 
   useEffect(() => {
     const fetchUserData = async () => {
-      if (!session.user) return;
+      if (!session) return;
 
       try {
         const fetchedUser = await userservice.getUser(
@@ -47,7 +48,9 @@ const ViewProducts = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const url = `http://localhost:5000/api/products?category=${selectedCategory.value}&search=${search}`;
+        const url = `http://localhost:5000/api/products?category=${
+          selectedCategory.value
+        }&search=${searchQuery || ""}`;
         const response = await axios.get(url);
         setProducts(response.data.products);
         setCategories(
@@ -62,7 +65,7 @@ const ViewProducts = () => {
     };
 
     fetchProducts();
-  }, [selectedCategory, search]);
+  }, [selectedCategory, searchQuery]);
 
   return (
     <>
@@ -71,12 +74,11 @@ const ViewProducts = () => {
           value={selectedCategory}
           onChange={setSelectedCategory}
           options={[{ label: "All Categories", value: "" }, ...categories]}
-          className="w-64"
+          className="w-64 mb-4"
           placeholder="Select a category"
           menuPortalTarget={document.body}
           styles={{ menuPortal: (base) => ({ ...base, zIndex: 9999 }) }}
         />
-        <Search setSearch={(search) => setSearch(search)} />
       </div>
       <div className="grid grid-cols-4 lg:grid-cols-8 gap-6">
         {products.length === 0 ? (
@@ -92,7 +94,7 @@ const ViewProducts = () => {
                 onClick={() =>
                   navigate(`/stores/${product.storeId}/products/${product.id}`)
                 }
-                className="p-0"
+                className="p-0 hover:cursor-pointer"
               >
                 <Image
                   alt={product.name}
@@ -102,7 +104,12 @@ const ViewProducts = () => {
                   className="object-cover"
                 />
               </CardBody>
-              <CardFooter className="text-small justify-between">
+              <CardFooter
+                className="text-small justify-between hover:cursor-pointer"
+                onClick={() =>
+                  navigate(`/stores/${product.storeId}/products/${product.id}`)
+                }
+              >
                 <b>{product.name}</b>
                 <div className="flex items-center">
                   <p>{product.price} $</p>

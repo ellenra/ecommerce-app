@@ -7,15 +7,21 @@ import {
   Link,
   Button,
 } from "@nextui-org/react";
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
+import StorefrontIcon from "@mui/icons-material/Storefront";
+import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import supabase from "../supabaseClient";
 import { useCart } from "../hooks/CartContext";
 import { useAuth } from "../hooks/AuthContext";
+import Search from "./Search";
 
 const Layout = () => {
   const session = useAuth();
+  const navigate = useNavigate();
+
   const { cartItems } = useCart();
 
   const handleLogout = async () => {
@@ -25,41 +31,56 @@ const Layout = () => {
     }
   };
   return (
-    <div className="flex flex-col min-h-screen">
+    <div>
       <ToastContainer position="top-right" autoClose={3000} hideProgressBar />
       <div className="bg-zinc-50">
-        <Navbar>
-          <NavbarBrand>
-            <p className="font-bold text-inherit">STORE</p>
+        <Navbar maxWidth="full" className="p-4">
+          <NavbarBrand
+            onClick={() => navigate("/")}
+            className="hover:cursor-pointer"
+          >
+            <p className="font-bold text-inherit">ECOMMERCE APP</p>
           </NavbarBrand>
 
-          <NavbarContent className="gap-4">
-            <NavbarItem>
-              <Link color="foreground" href="/stores">
-                Stores
-              </Link>
-            </NavbarItem>
+          <NavbarContent>
             <NavbarItem isActive>
-              <Link href="/" aria-current="page">
-                Home
-              </Link>
+              <Search
+                onSearch={(search) => navigate(`/products?search=${search}`)}
+              />
             </NavbarItem>
             <NavbarItem>
               <Link color="foreground" href="/products">
                 Products
               </Link>
             </NavbarItem>
+            <NavbarItem>
+              <Link color="foreground" href="/stores">
+                Stores
+              </Link>
+            </NavbarItem>
           </NavbarContent>
 
-          <NavbarContent className="gap-4">
+          <NavbarContent>
             <NavbarItem>
-              <Link href="/cart">Cart: {cartItems.length}</Link>
+              <Link href="/cart" className="flex items-center">
+                <ShoppingCartIcon />{" "}
+                <p className="text-xs font-bold absolute top-0 right-0 transform translate-x-2 -translate-y-2">
+                  {cartItems.length}
+                </p>
+              </Link>
+            </NavbarItem>
+            <NavbarItem>
+              <Link href="/stores/create" className="flex items-center">
+                <StorefrontIcon />
+              </Link>
+            </NavbarItem>
+            <NavbarItem>
+              <Link href="/profile/account" className="flex items-center">
+                <PersonOutlineIcon />
+              </Link>
             </NavbarItem>
             {session.user ? (
               <>
-                <NavbarItem>
-                  <Link href="/profile/account">Profile</Link>
-                </NavbarItem>
                 <NavbarItem>
                   <Button onClick={handleLogout}>Log out</Button>
                 </NavbarItem>

@@ -3,7 +3,7 @@ import express from "express";
 import multer from "multer";
 import supabase from "../services/supabaseClient.js";
 import { decode } from "base64-arraybuffer";
-import { authMiddleware } from "../middleware/auth.js";
+import { authMiddleware, optionalAuthMiddleware } from "../middleware/auth.js";
 
 const storeRouter = express.Router();
 
@@ -23,7 +23,7 @@ storeRouter.get("/", async (req, res) => {
   }
 });
 
-storeRouter.get("/:id", async (req, res) => {
+storeRouter.get("/:id", optionalAuthMiddleware, async (req, res) => {
   const storeId = req.params.id;
   try {
     const store = await prisma.store.findFirst({
@@ -31,10 +31,40 @@ storeRouter.get("/:id", async (req, res) => {
         id: storeId,
       },
       include: {
-        products: true,
+        products: {
+          select: {
+            id: true,
+            name: true,
+            description: true,
+            price: true,
+            quantity: true,
+            storeId: true,
+            imageUrl: true,
+          },
+        },
       },
     });
-    res.json(store);
+
+    const publicData = {
+      id: store.id,
+      userId: store.userId,
+      name: store.name,
+      description: store.description,
+      products: store.products,
+    };
+
+    if (req.user && store.userId === req.user.user.id) {
+      const fullStoreData = await prisma.store.findFirst({
+        where: {
+          id: storeId,
+        },
+        include: {
+          products: true,
+        },
+      });
+      return res.json(fullStoreData);
+    }
+    res.json(publicData);
   } catch (error) {
     res.status(500).json({ error: "Error fetching store" });
   }

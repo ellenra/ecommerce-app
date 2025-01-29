@@ -23,7 +23,7 @@ const StoreForm = () => {
   const navigate = useNavigate();
 
   if (!session) {
-    navigate("/");
+    navigate("/login");
   }
 
   const {
@@ -49,7 +49,10 @@ const StoreForm = () => {
     if (storeId) {
       const fetchStoreData = async () => {
         try {
-          const storeData = await storeservice.getStore(storeId);
+          const storeData = await storeservice.getStore(
+            storeId,
+            session?.access_token || null
+          );
           if (user.id !== storeData.userId) {
             navigate("/");
             return;
@@ -63,7 +66,6 @@ const StoreForm = () => {
           console.error("Error fetching store data:", error.message);
         }
       };
-
       fetchStoreData();
     }
   }, [session, storeId]);

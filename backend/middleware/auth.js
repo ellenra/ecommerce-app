@@ -27,4 +27,22 @@ const authMiddleware = async (req, res, next) => {
   next();
 };
 
-export { authMiddleware };
+//For endpoints where different data is fetched for unauthorized and authorized users
+const optionalAuthMiddleware = async (req, res, next) => {
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader || !jwt_secret) {
+    return next();
+  }
+
+  const token = authHeader.split(" ")[1];
+
+  const { data: user, error } = await supabase.auth.getUser(token);
+
+  if (!error && user) {
+    req.user = user;
+  }
+  next();
+};
+
+export { authMiddleware, optionalAuthMiddleware };

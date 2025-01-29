@@ -15,9 +15,15 @@ const createStore = async (data, accessToken) => {
   }
 };
 
-const getStore = async (id) => {
+const getStore = async (storeId, accessToken = null) => {
   try {
-    const response = await axios.get(`${baseUrl}${id}`);
+    const config = {
+      headers: {},
+    };
+    if (accessToken) {
+      config.headers.Authorization = `Bearer ${accessToken}`;
+    }
+    const response = await axios.get(`${baseUrl}${storeId}`, config);
     return response.data;
   } catch (error) {
     console.error("Error in fetching store:", error.message);

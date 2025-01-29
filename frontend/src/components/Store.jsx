@@ -1,18 +1,19 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import axios from "axios";
 import { useAuth } from "../hooks/AuthContext";
 import userservice from "../services/userservice";
 import { useFavorites } from "../hooks/favoriteProducts";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import { Button, Card, CardBody, CardFooter, Image } from "@nextui-org/react";
+import storeservice from "../services/storeservice";
 
 const Store = () => {
   const { storeId } = useParams();
   const { session } = useAuth();
   const [user, setUser] = useState(null);
   const [store, setStore] = useState(null);
+  const [isOwner, setIsOwner] = useState(false);
   const { addFavorite, deleteFavorite, isFavorite } = useFavorites(
     user,
     setUser
@@ -40,8 +41,14 @@ const Store = () => {
   useEffect(() => {
     const fetchStore = async () => {
       try {
-        const response = await axios.get(`/api/stores/${storeId}`);
-        setStore(response.data);
+        const response = await storeservice.getStore(
+          storeId,
+          session?.access_token || null
+        );
+        setStore(response);
+        if (session && response) {
+          setIsOwner(session.user.id === response.userId);
+        }
       } catch (error) {
         console.error("Error fetching store data:", error);
       }
@@ -53,8 +60,6 @@ const Store = () => {
   if (!store) {
     return <div>No store found.</div>;
   }
-
-  const isOwner = session.user && session.user.id === store.userId;
 
   return (
     <div>

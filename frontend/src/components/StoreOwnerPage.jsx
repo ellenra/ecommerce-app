@@ -6,7 +6,7 @@ import { useAuth } from "../hooks/AuthContext";
 import storeservice from "../services/storeservice";
 
 const StoreOwnerPage = () => {
-  const { session, loading } = useAuth();
+  const { session } = useAuth();
   const { storeId } = useParams();
   const [store, setStore] = useState(null);
   const [selectedView, setSelectedView] = useState("dashboard");
@@ -20,7 +20,10 @@ const StoreOwnerPage = () => {
   useEffect(() => {
     const fetchStore = async () => {
       try {
-        const response = await storeservice.getStore(storeId);
+        const response = await storeservice.getStore(
+          storeId,
+          session?.access_token || null
+        );
         if (session.user.id !== response.userId) {
           navigate("/");
           return;

@@ -20,7 +20,8 @@ const Profile = () => {
   const location = useLocation();
 
   if (!session) {
-    navigate("/");
+    navigate("/login");
+    return;
   }
 
   useEffect(() => {

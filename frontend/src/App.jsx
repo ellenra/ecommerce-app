@@ -21,16 +21,16 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<Layout />}>
-          <Route path="/" element={<Home />} />
+          <Route index element={<Home />} />
           <Route path="register" element={<Register />} />
           <Route path="login" element={<Login />} />
           <Route path="stores" element={<ViewStores />} />
           <Route path="products" element={<ViewProducts />} />
           <Route path="stores/create" element={<StoreForm />} />
-          <Route path="/stores/:storeId" element={<Store />} />
-          <Route path="/stores/:storeId/:view" element={<StoreOwnerPage />} />
+          <Route path="stores/:storeId" element={<Store />} />
+          <Route path="stores/:storeId/:view" element={<StoreOwnerPage />} />
           <Route
-            path="/stores/:storeId/orders/:orderId"
+            path="stores/:storeId/orders/:orderId"
             element={<StoreOwnerOrderPage />}
           />
           <Route path="stores/:storeId/edit" element={<StoreForm />} />

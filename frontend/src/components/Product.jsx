@@ -23,6 +23,7 @@ const Product = () => {
   const [product, setProduct] = useState(null);
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const { addToCart } = useCart();
+  const [isOwner, setIsOwner] = useState(false);
 
   const navigate = useNavigate();
 
@@ -31,19 +32,20 @@ const Product = () => {
       try {
         const response = await storeservice.getProduct(productId, storeId);
         setProduct(response);
+        if (session && response) {
+          setIsOwner(session.user.id === response.userId);
+        }
       } catch (error) {
         console.error("Error fetching product:", error);
       }
     };
 
     fetchProduct();
-  }, [productId]);
+  }, [productId, session]);
 
   if (!product) {
     return <div>Loading...</div>;
   }
-
-  const isOwner = session.user && session.user.id === product.userId;
 
   const handleDeleteProduct = async (productId) => {
     try {
