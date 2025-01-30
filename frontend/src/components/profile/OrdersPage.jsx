@@ -12,7 +12,7 @@ import {
 import { useNavigate } from "react-router-dom";
 
 const OrdersPage = () => {
-  const session = useAuth();
+  const { session } = useAuth();
   const [orders, setOrders] = useState(null);
   const navigate = useNavigate();
 
@@ -21,7 +21,10 @@ const OrdersPage = () => {
       if (!session.user) return;
 
       try {
-        const response = await orderservice.getOrdersByUserId(session.user.id);
+        const response = await orderservice.getOrdersByUserId(
+          session.user.id,
+          session.access_token
+        );
         setOrders(response);
       } catch (error) {
         console.error("Error fetching orders", error);

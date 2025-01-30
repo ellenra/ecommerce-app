@@ -28,10 +28,13 @@ const Layout = () => {
     const { error } = await supabase.auth.signOut();
     if (error) {
       console.error("Logout failed:", error.message);
+    } else {
+      navigate("/", { replace: true });
     }
   };
+
   return (
-    <div>
+    <div className="flex flex-col min-h-screen">
       <ToastContainer position="top-right" autoClose={3000} hideProgressBar />
       <div className="bg-zinc-50">
         <Navbar maxWidth="full" className="p-4">
@@ -60,7 +63,7 @@ const Layout = () => {
             </NavbarItem>
           </NavbarContent>
 
-          <NavbarContent>
+          <NavbarContent justify="end">
             <NavbarItem>
               <Link href="/cart" className="flex items-center">
                 <ShoppingCartIcon />{" "}
@@ -88,10 +91,7 @@ const Layout = () => {
             ) : (
               <>
                 <NavbarItem>
-                  <Link href="/login">Login</Link>
-                </NavbarItem>
-                <NavbarItem>
-                  <Link href="/register">Sign up</Link>
+                  <Link href="/login">Sign in</Link>
                 </NavbarItem>
               </>
             )}

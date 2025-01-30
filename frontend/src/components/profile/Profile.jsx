@@ -19,12 +19,12 @@ const Profile = () => {
   const [selectedView, setSelectedView] = useState("account");
   const location = useLocation();
 
-  if (!session) {
-    navigate("/login");
-    return;
-  }
-
   useEffect(() => {
+    if (!session) {
+      navigate("/login");
+      return;
+    }
+
     const fetchUserData = async () => {
       try {
         const fetchedUser = await userservice.getUser(
@@ -54,6 +54,10 @@ const Profile = () => {
     setSelectedView(view);
     navigate(`/profile/${view}`);
   };
+
+  if (!session) {
+    return null;
+  }
 
   return (
     <div className="flex">

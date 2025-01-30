@@ -118,7 +118,7 @@ const Store = () => {
                 ) : (
                   <Button
                     onClick={() =>
-                      addFavorite(product.id, session.access_token)
+                      addFavorite(product.id, session?.access_token)
                     }
                   >
                     <FavoriteBorderIcon fontSize="small" />

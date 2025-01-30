@@ -1,10 +1,10 @@
 import { useNavigate, Navigate, useLocation } from "react-router-dom";
 import { Button, Input } from "@nextui-org/react";
-import supabase from "../supabaseClient";
+import supabase from "../../supabaseClient";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useAuth } from "../hooks/AuthContext";
+import { useAuth } from "../../hooks/AuthContext";
 import { toast } from "react-toastify";
 
 const loginSchema = z.object({
@@ -43,7 +43,7 @@ const Login = () => {
   };
 
   return (
-    <div>
+    <div className="flex flex-col items-center">
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="w-full max-w-3xl space-y-6 p-10"

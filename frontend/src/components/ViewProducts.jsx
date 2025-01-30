@@ -128,7 +128,7 @@ const ViewProducts = () => {
                       size="sm"
                       isIconOnly
                       onClick={() =>
-                        addFavorite(product.id, session.access_token)
+                        addFavorite(product.id, session?.access_token)
                       }
                     >
                       <FavoriteBorderIcon fontSize="small" />

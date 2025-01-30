@@ -22,7 +22,7 @@ const Home = () => {
 
   useEffect(() => {
     const fetchUserData = async () => {
-      if (!session.user) return;
+      if (!session) return;
 
       try {
         const fetchedUser = await userservice.getUser(
@@ -113,7 +113,7 @@ const Home = () => {
                 ) : (
                   <Button
                     onClick={() =>
-                      addFavorite(product.id, session.access_token)
+                      addFavorite(product.id, session?.access_token)
                     }
                   >
                     <FavoriteBorderIcon />

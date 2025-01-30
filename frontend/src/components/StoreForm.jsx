@@ -22,10 +22,6 @@ const StoreForm = () => {
   const [viewProfilePicture, setViewProfilePicture] = useState(null);
   const navigate = useNavigate();
 
-  if (!session) {
-    navigate("/login");
-  }
-
   const {
     register,
     handleSubmit,
@@ -46,6 +42,11 @@ const StoreForm = () => {
   const file = watch("file");
 
   useEffect(() => {
+    if (!session) {
+      navigate("/login");
+      return;
+    }
+
     if (storeId) {
       const fetchStoreData = async () => {
         try {
@@ -118,6 +119,10 @@ const StoreForm = () => {
       }
     }
   };
+
+  if (!session) {
+    return null;
+  }
 
   return (
     <div className="flex justify-center">

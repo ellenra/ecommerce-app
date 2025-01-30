@@ -48,10 +48,6 @@ const ProductForm = () => {
   const [categoryList, setCategoryList] = useState([]);
   const navigate = useNavigate();
 
-  if (!session) {
-    navigate("/");
-  }
-
   const {
     handleSubmit,
     setValue,
@@ -74,6 +70,11 @@ const ProductForm = () => {
   const file = watch("file");
 
   useEffect(() => {
+    if (!session) {
+      navigate("/");
+      return;
+    }
+
     const fetchCategories = async () => {
       try {
         const categories = await productservice.getProductCategories();
@@ -159,6 +160,10 @@ const ProductForm = () => {
       }
     }
   };
+
+  if (!session) {
+    return null;
+  }
 
   return (
     <div className="flex justify-center">

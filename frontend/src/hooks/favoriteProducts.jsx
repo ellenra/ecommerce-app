@@ -4,8 +4,8 @@ import userservice from "../services/userservice";
 export const useFavorites = (user, setUser) => {
   const navigate = useNavigate();
 
-  const addFavorite = async (productId, accessToken) => {
-    if (user) {
+  const addFavorite = async (productId, accessToken = null) => {
+    if (accessToken) {
       try {
         await userservice.addProductToFavorites(
           productId,

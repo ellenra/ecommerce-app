@@ -13,11 +13,12 @@ const StoreOwnerPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  if (!session) {
-    navigate("/");
-  }
-
   useEffect(() => {
+    if (!session) {
+      navigate("/");
+      return;
+    }
+
     const fetchStore = async () => {
       try {
         const response = await storeservice.getStore(
@@ -47,9 +48,14 @@ const StoreOwnerPage = () => {
     navigate(`/stores/${storeId}/${view}`);
   };
 
+  if (!session) {
+    return null;
+  }
+
   if (!store) {
     return <div>No store found.</div>;
   }
+
   return (
     <div className="flex">
       <div className="mt-10 w-1/4 mr-10">
