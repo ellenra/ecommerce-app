@@ -23,6 +23,21 @@ storeRouter.get("/", async (req, res) => {
   }
 });
 
+storeRouter.get("/user/:userId", async (req, res) => {
+  const { userId } = req.params;
+
+  try {
+    const store = await prisma.store.findUnique({
+      where: { userId: userId },
+      select: { id: true },
+    });
+
+    res.json(store);
+  } catch (error) {
+    res.status(500).json({ error: "Error finding user's store" });
+  }
+});
+
 storeRouter.get("/:id", optionalAuthMiddleware, async (req, res) => {
   const storeId = req.params.id;
   try {

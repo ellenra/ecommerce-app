@@ -15,6 +15,7 @@ import ViewProducts from "./components/ViewProducts";
 import OrderPage from "./components/profile/OrderPage";
 import StoreOwnerPage from "./components/StoreOwnerPage";
 import StoreOwnerOrderPage from "./components/StoreOwnerOrderPage";
+import StoreAdPage from "./components/StoreAdPage";
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
           <Route path="stores" element={<ViewStores />} />
           <Route path="products" element={<ViewProducts />} />
           <Route path="stores/create" element={<StoreForm />} />
+          <Route path="stores/ad" element={<StoreAdPage />} />
           <Route path="stores/:storeId" element={<Store />} />
           <Route path="stores/:storeId/:view" element={<StoreOwnerPage />} />
           <Route

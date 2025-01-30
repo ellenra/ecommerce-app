@@ -30,6 +30,19 @@ const getStore = async (storeId, accessToken = null) => {
   }
 };
 
+const getUserStore = async (userId, accessToken) => {
+  try {
+    const response = await axios.get(`${baseUrl}/user/${userId}`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error in fetching store:", error.message);
+  }
+};
+
 const updateStore = async (storeId, data, accessToken) => {
   try {
     const response = await axios.put(`${baseUrl}${storeId}`, data, {
@@ -108,6 +121,7 @@ const updateProduct = async (data, accessToken) => {
 export default {
   createStore,
   getStore,
+  getUserStore,
   updateStore,
   listProduct,
   getProduct,

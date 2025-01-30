@@ -19,7 +19,7 @@ import { useAuth } from "../hooks/AuthContext";
 import Search from "./Search";
 
 const Layout = () => {
-  const session = useAuth();
+  const { session } = useAuth();
   const navigate = useNavigate();
 
   const { cartItems } = useCart();
@@ -48,7 +48,7 @@ const Layout = () => {
           <NavbarContent>
             <NavbarItem isActive>
               <Search
-                onSearch={(search) => navigate(`/products?search=${search}`)}
+                setSearch={(search) => navigate(`/products?search=${search}`)}
               />
             </NavbarItem>
             <NavbarItem>
@@ -73,7 +73,7 @@ const Layout = () => {
               </Link>
             </NavbarItem>
             <NavbarItem>
-              <Link href="/stores/create" className="flex items-center">
+              <Link href="/stores/ad" className="flex items-center">
                 <StorefrontIcon />
               </Link>
             </NavbarItem>
@@ -82,7 +82,7 @@ const Layout = () => {
                 <PersonOutlineIcon />
               </Link>
             </NavbarItem>
-            {session.user ? (
+            {session ? (
               <>
                 <NavbarItem>
                   <Button onClick={handleLogout}>Log out</Button>
