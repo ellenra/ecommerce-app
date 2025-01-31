@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Navbar,
   NavbarBrand,
@@ -7,7 +7,8 @@ import {
   Link,
   Button,
 } from "@nextui-org/react";
-import { Outlet, useNavigate } from "react-router-dom";
+import Select from "react-select";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import StorefrontIcon from "@mui/icons-material/Storefront";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
@@ -17,12 +18,46 @@ import supabase from "../supabaseClient";
 import { useCart } from "../hooks/CartContext";
 import { useAuth } from "../hooks/AuthContext";
 import Search from "./Search";
+import productservice from "../services/productservice";
+import MenuIcon from "@mui/icons-material/Menu";
 
 const Layout = () => {
   const { session } = useAuth();
   const navigate = useNavigate();
+  const [categories, setCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState();
+
+  const location = useLocation();
 
   const { cartItems } = useCart();
+
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const category = searchParams.get("category") || "";
+    setSelectedCategory(
+      categories.find((cat) => cat.value === category) || null
+    );
+  }, [location.search, selectedCategory]);
+
+  useEffect(() => {
+    if (!location.pathname.startsWith("/products")) {
+      setSelectedCategory(null);
+    }
+  }, [location]);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const categories = await productservice.getProductCategories();
+        setCategories(
+          categories.map((cat) => ({ value: cat.id, label: cat.name }))
+        );
+      } catch (error) {
+        console.error("Error fetching categories", error.message);
+      }
+    };
+    fetchCategories();
+  }, [session]);
 
   const handleLogout = async () => {
     const { error } = await supabase.auth.signOut();
@@ -30,6 +65,14 @@ const Layout = () => {
       console.error("Logout failed:", error.message);
     } else {
       navigate("/", { replace: true });
+    }
+  };
+
+  const handleCategoryChange = (selectedOption) => {
+    setSelectedCategory(selectedOption);
+
+    if (selectedOption && selectedOption.value) {
+      navigate(`/products?category=${selectedOption.value}`);
     }
   };
 
@@ -46,20 +89,51 @@ const Layout = () => {
           </NavbarBrand>
 
           <NavbarContent>
+            <NavbarItem className="mt-4">
+              <Select
+                value={selectedCategory}
+                onChange={handleCategoryChange}
+                options={categories}
+                className="w-36 mb-4"
+                placeholder="Categories"
+                menuPortalTarget={document.body}
+                styles={{
+                  menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+                  indicatorSeparator: () => null,
+                  control: (base, state) => ({
+                    ...base,
+                    borderColor: "e2e2e2",
+                    borderRadius: "6px",
+                    padding: "2px",
+                  }),
+                }}
+                components={{
+                  DropdownIndicator: () => <MenuIcon className="mr-2" />,
+                }}
+              />
+            </NavbarItem>
             <NavbarItem isActive>
               <Search
-                setSearch={(search) => navigate(`/products?search=${search}`)}
+                setSearch={(search) => {
+                  navigate(
+                    `/products?category=${selectedCategory.value}&search=${search}`
+                  );
+                }}
               />
             </NavbarItem>
             <NavbarItem>
-              <Link color="foreground" href="/products">
-                Products
-              </Link>
+              <Button className="border border-zinc-200 rounded-lg hover:bg-zinc-100 hover:border-zinc-300">
+                <Link color="foreground" href="/products">
+                  Products
+                </Link>
+              </Button>
             </NavbarItem>
             <NavbarItem>
-              <Link color="foreground" href="/stores">
-                Stores
-              </Link>
+              <Button className="border border-zinc-200 rounded-lg hover:bg-zinc-100 hover:border-zinc-300">
+                <Link color="foreground" href="/stores">
+                  Stores
+                </Link>
+              </Button>
             </NavbarItem>
           </NavbarContent>
 
@@ -99,12 +173,12 @@ const Layout = () => {
         </Navbar>
       </div>
 
-      <main className="flex-grow p-4">
+      <main className="flex-grow">
         <Outlet />{" "}
       </main>
       <div>
         <footer className="p-4 text-center bg-zinc-50">
-          <p>best app</p>
+          <p>Ecommerce App</p>
         </footer>
       </div>
     </div>

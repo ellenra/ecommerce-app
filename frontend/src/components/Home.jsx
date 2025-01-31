@@ -1,5 +1,13 @@
 import { useEffect, useState } from "react";
-import { Card, CardBody, CardFooter, Image, Button } from "@nextui-org/react";
+import {
+  Card,
+  CardBody,
+  CardFooter,
+  Image,
+  Button,
+  Input,
+} from "@nextui-org/react";
+import Select from "react-select";
 import axios from "axios";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import FavoriteIcon from "@mui/icons-material/Favorite";
@@ -14,6 +22,12 @@ const Home = () => {
   const [user, setUser] = useState(null);
   const [products, setProducts] = useState([]);
   const [stores, setStores] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState({
+    label: "All Categories",
+    value: "",
+  });
+  const [searchQuery, setSearchQuery] = useState("");
   const { addFavorite, deleteFavorite, isFavorite } = useFavorites(
     user,
     setUser
@@ -39,10 +53,21 @@ const Home = () => {
   }, [session]);
 
   useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const categories = await productservice.getProductCategories();
+        setCategories(
+          categories.map((cat) => ({ value: cat.id, label: cat.name }))
+        );
+      } catch (error) {
+        console.error("Error fetching categories", error.message);
+      }
+    };
+
     const fetchProducts = async () => {
       try {
         const response = await productservice.getProducts();
-        setProducts(response.products);
+        setProducts(response);
       } catch (error) {
         console.error("Error fetching products:", error.message);
       }
@@ -57,6 +82,7 @@ const Home = () => {
       }
     };
 
+    fetchCategories();
     fetchProducts();
     fetchStores();
   }, []);
@@ -64,15 +90,60 @@ const Home = () => {
   return (
     <div>
       <div className="text-center py-16">
-        <h1 className="text-4xl font-bold">lakdmlsfpoamd</h1>
-        <p className="mt-4 text-lg">Nice text</p>
-        <Button className="mt-6" onClick={() => navigate("/stores")}>
-          Shop Now
+        <h1 className="text-5xl font-bold">Discover Amazing Products</h1>
+        <p className="mt-4 text-lg mb-14">
+          Shop from many unique stores and sellers
+        </p>
+
+        <div className="max-w-2xl mx-auto flex gap-2">
+          <Select
+            value={selectedCategory}
+            onChange={setSelectedCategory}
+            options={[{ label: "All Categories", value: "" }, ...categories]}
+            className="w-64 mb-4"
+            placeholder="Select a category"
+            menuPortalTarget={document.body}
+            styles={{
+              menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+              indicatorSeparator: () => null,
+              control: (base, state) => ({
+                ...base,
+                borderColor: "e2e2e2",
+                borderRadius: "6px",
+                padding: "2px",
+              }),
+            }}
+          />
+          <Input
+            isClearable
+            type="text"
+            placeholder="Search Products"
+            value={searchQuery}
+            onChange={({ currentTarget: query }) => setSearchQuery(query.value)}
+            className="border rounded-lg w-[300px] lg:w-[400px] bg-white h-3/4"
+          />
+          <Button
+            className="border bg-white border-zinc-200 rounded-lg hover:bg-zinc-100 hover:border-zinc-300"
+            onClick={() => {
+              const query = searchQuery || "";
+              const category = selectedCategory?.value || "";
+              navigate(`/products?search=${query}&category=${category}`);
+            }}
+          >
+            Search
+          </Button>
+        </div>
+
+        <Button
+          className="mt-4 border bg-zinc-50 border-zinc-200 rounded-lg hover:bg-zinc-100 hover:border-zinc-300"
+          onClick={() => navigate("/products")}
+        >
+          Browse All Products
         </Button>
       </div>
 
-      <div className="px-10">
-        <h2 className="mb-4">Top Products</h2>
+      <div className="px-10 py-6">
+        <h2 className="mb-4 text-xl">Top Products</h2>
         <div className="flex overflow-x-scroll scrollbar-thin scrollbar-thumb-zinc-100 scrollbar-track-transparent gap-6 pb-4">
           {products.map((product, index) => (
             <Card
@@ -102,7 +173,7 @@ const Home = () => {
                 <p>{product.price} €</p>
               </CardFooter>
               <div className="flex justify-end -mr-3">
-                {isFavorite(product.id) ? (
+                {session && isFavorite(product.id) ? (
                   <Button
                     onClick={() =>
                       deleteFavorite(product.id, session.access_token)
@@ -125,8 +196,8 @@ const Home = () => {
         </div>
       </div>
 
-      <div className="mt-6 py-10 px-10 bg-zinc-100 rounded-lg mb-10">
-        <h2 className="mb-4">Top Stores</h2>
+      <div className="mt-6 py-10 px-10 bg-zinc-50 rounded-lg mb-10">
+        <h2 className="mb-4 text-xl">Top Stores</h2>
         <div className="grid grid-cols-3 gap-6 mb-6">
           {stores.map((store, index) => (
             <Card

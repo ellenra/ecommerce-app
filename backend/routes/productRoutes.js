@@ -8,8 +8,6 @@ productRouter.get("/", async (req, res) => {
     const search = req.query.search || "";
     let category = req.query.category || "";
 
-    const categories = await prisma.productCategory.findMany();
-
     const products = await prisma.product.findMany({
       where: {
         AND: [
@@ -30,7 +28,7 @@ productRouter.get("/", async (req, res) => {
         ],
       },
     });
-    res.json({ products, categories });
+    res.json(products);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Error fetching products" });

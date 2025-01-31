@@ -1,6 +1,5 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import Select from "react-select";
 import { Button, Card, CardBody, CardFooter, Image } from "@nextui-org/react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useFavorites } from "../hooks/favoriteProducts";
@@ -8,6 +7,7 @@ import userservice from "../services/userservice";
 import { useAuth } from "../hooks/AuthContext";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import FavoriteIcon from "@mui/icons-material/Favorite";
+import productservice from "../services/productservice";
 
 const ViewProducts = () => {
   const { session } = useAuth();
@@ -20,6 +20,7 @@ const ViewProducts = () => {
   });
   const location = useLocation();
   const searchQuery = new URLSearchParams(location.search).get("search");
+  const categoryQuery = new URLSearchParams(location.search).get("category");
 
   const navigate = useNavigate();
   const { addFavorite, deleteFavorite, isFavorite } = useFavorites(
@@ -42,44 +43,54 @@ const ViewProducts = () => {
       }
     };
 
+    const fetchCategories = async () => {
+      try {
+        const categories = await productservice.getProductCategories();
+        setCategories(
+          categories.map((cat) => ({ value: cat.id, label: cat.name }))
+        );
+      } catch (error) {
+        console.error("Error fetching categories", error.message);
+      }
+    };
+
+    fetchCategories();
     fetchUserData();
   }, [session]);
 
   useEffect(() => {
+    if (categoryQuery && selectedCategory.value !== categoryQuery) {
+      const category = categories.find((cat) => cat.value === categoryQuery);
+
+      if (category) {
+        setSelectedCategory(category);
+      }
+    }
+
     const fetchProducts = async () => {
       try {
         const url = `http://localhost:5000/api/products?category=${
           selectedCategory.value
         }&search=${searchQuery || ""}`;
         const response = await axios.get(url);
-        setProducts(response.data.products);
-        setCategories(
-          response.data.categories.map((category) => ({
-            label: category.name,
-            value: category.id,
-          }))
-        );
+        setProducts(response.data);
       } catch (error) {
         console.error("Error fetching products:", error.message);
       }
     };
 
     fetchProducts();
-  }, [selectedCategory, searchQuery]);
+  }, [selectedCategory, searchQuery, categoryQuery]);
 
   return (
-    <>
-      <div className="flex items-center m-2 space-x-2">
-        <Select
-          value={selectedCategory}
-          onChange={setSelectedCategory}
-          options={[{ label: "All Categories", value: "" }, ...categories]}
-          className="w-64 mb-4"
-          placeholder="Select a category"
-          menuPortalTarget={document.body}
-          styles={{ menuPortal: (base) => ({ ...base, zIndex: 9999 }) }}
-        />
-      </div>
+    <div className="p-8">
+      {categoryQuery && (
+        <p className="mb-10">
+          {`Categories / ${
+            categories.find((cat) => cat.value === categoryQuery)?.label
+          }`}
+        </p>
+      )}
       <div className="grid grid-cols-4 lg:grid-cols-8 gap-6">
         {products.length === 0 ? (
           <p>No products found.</p>
@@ -140,7 +151,7 @@ const ViewProducts = () => {
           ))
         )}
       </div>
-    </>
+    </div>
   );
 };
 

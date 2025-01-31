@@ -46,6 +46,19 @@ const StoreForm = () => {
       navigate("/login", { state: { from: "/stores/create" } });
       return;
     }
+    const checkStore = async () => {
+      try {
+        const userStore = await storeservice.getUserStore(
+          session.user.id,
+          session.access_token
+        );
+        if (userStore?.id) {
+          navigate(`/stores/${userStore.id}/dashboard`);
+        }
+      } catch (error) {
+        console.error("Error checking store", error);
+      }
+    };
 
     if (storeId) {
       const fetchStoreData = async () => {
@@ -69,6 +82,7 @@ const StoreForm = () => {
       };
       fetchStoreData();
     }
+    checkStore();
   }, [session, storeId]);
 
   const handleImageUpload = (event) => {

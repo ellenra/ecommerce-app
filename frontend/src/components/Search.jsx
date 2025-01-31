@@ -19,15 +19,11 @@ const Search = ({ setSearch }) => {
         value={searchQuery}
         onChange={({ currentTarget: query }) => setSearchQuery(query.value)}
         startContent={
-          <button
-            type="button"
-            onClick={handleSubmit}
-            className="focus:outline-none"
-          >
+          <button type="button" onClick={handleSubmit}>
             <SearchIcon className="cursor-pointer" />
           </button>
         }
-        className="border rounded-lg w-[300px] lg:w-[400px]"
+        className="border rounded-lg w-[300px] lg:w-[400px] bg-white"
       />
     </form>
   );
