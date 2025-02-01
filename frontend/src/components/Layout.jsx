@@ -147,7 +147,7 @@ const Layout = () => {
               </Link>
             </NavbarItem>
             <NavbarItem>
-              <Link href="/stores/ad" className="flex items-center">
+              <Link href="/stores/create" className="flex items-center">
                 <StorefrontIcon />
               </Link>
             </NavbarItem>

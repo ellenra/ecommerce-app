@@ -4,6 +4,7 @@ import { Button } from "@nextui-org/react";
 import StoreOwnerOrdersPage from "./StoreOwnerOrdersPage";
 import { useAuth } from "../hooks/AuthContext";
 import storeservice from "../services/storeservice";
+import StoreOwnerProductsPage from "./StoreOwnerProductsPage";
 
 const StoreOwnerPage = () => {
   const { session } = useAuth();
@@ -87,7 +88,7 @@ const StoreOwnerPage = () => {
         </div>
       </div>
       {selectedView === "dashboard" && (
-        <>
+        <div className="mt-10">
           <Link to={`/stores/${storeId}/products/new`}>
             <Button className="border border-zinc-200 text-sm rounded-lg hover:bg-zinc-100 hover:border-zinc-300 mr-4">
               List new product
@@ -98,9 +99,10 @@ const StoreOwnerPage = () => {
               Edit Store Info
             </Button>
           </Link>
-        </>
+        </div>
       )}
       {selectedView === "orders" && <StoreOwnerOrdersPage store={store} />}
+      {selectedView === "products" && <StoreOwnerProductsPage store={store} />}
     </div>
   );
 };

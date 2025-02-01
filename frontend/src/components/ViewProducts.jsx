@@ -103,7 +103,12 @@ const ViewProducts = () => {
             >
               <CardBody
                 onClick={() =>
-                  navigate(`/stores/${product.storeId}/products/${product.id}`)
+                  navigate(
+                    `/stores/${product.storeId}/products/${product.id}`,
+                    {
+                      state: { from: "/products" },
+                    }
+                  )
                 }
                 className="p-0 hover:cursor-pointer"
               >
@@ -118,7 +123,12 @@ const ViewProducts = () => {
               <CardFooter
                 className="text-small justify-between hover:cursor-pointer"
                 onClick={() =>
-                  navigate(`/stores/${product.storeId}/products/${product.id}`)
+                  navigate(
+                    `/stores/${product.storeId}/products/${product.id}`,
+                    {
+                      state: { from: "/products" },
+                    }
+                  )
                 }
               >
                 <b>{product.name}</b>

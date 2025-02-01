@@ -65,7 +65,7 @@ const Store = () => {
     <div>
       {isOwner && (
         <Button
-          className="border border-zinc-200 rounded-lg hover:bg-zinc-100 hover:border-zinc-300"
+          className="ml-6 mt-6 border border-zinc-200 rounded-lg hover:bg-zinc-100 hover:border-zinc-300"
           onClick={() => {
             navigate(`/stores/${storeId}/dashboard`);
           }}
@@ -74,7 +74,7 @@ const Store = () => {
         </Button>
       )}
       <>
-        <div className=" py-6 text-center">
+        <div className="py-6 text-center">
           <h1 className="text-3xl font-bold">{store.name}</h1>
           <p className="text-lg mt-2">{store.description}</p>
         </div>
@@ -87,7 +87,12 @@ const Store = () => {
               <CardBody
                 className="p-0 hover:cursor-pointer"
                 onClick={() =>
-                  navigate(`/stores/${product.storeId}/products/${product.id}`)
+                  navigate(
+                    `/stores/${product.storeId}/products/${product.id}`,
+                    {
+                      state: { from: `/stores/${product.storeId}` },
+                    }
+                  )
                 }
               >
                 <Image
@@ -100,7 +105,12 @@ const Store = () => {
               <CardFooter
                 className="flex flex-row justify-between hover:cursor-pointer"
                 onClick={() =>
-                  navigate(`/stores/${product.storeId}/products/${product.id}`)
+                  navigate(
+                    `/stores/${product.storeId}/products/${product.id}`,
+                    {
+                      state: { from: `/stores/${product.storeId}` },
+                    }
+                  )
                 }
               >
                 <p>{product.name}</p>

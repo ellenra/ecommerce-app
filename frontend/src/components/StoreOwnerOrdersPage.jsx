@@ -16,10 +16,6 @@ const StoreOwnerOrdersPage = ({ store }) => {
   const [orders, setOrders] = useState(null);
   const navigate = useNavigate();
 
-  if (!session) {
-    navigate("/");
-  }
-
   useEffect(() => {
     const fetchOrders = async () => {
       try {
@@ -41,7 +37,7 @@ const StoreOwnerOrdersPage = ({ store }) => {
   }
 
   return (
-    <div className="">
+    <div className="mt-5">
       <Table>
         <TableHeader>
           <TableColumn>Order Number</TableColumn>

@@ -43,7 +43,7 @@ const StoreForm = () => {
 
   useEffect(() => {
     if (!session) {
-      navigate("/login", { state: { from: "/stores/create" } });
+      navigate("/stores/ad");
       return;
     }
     const checkStore = async () => {

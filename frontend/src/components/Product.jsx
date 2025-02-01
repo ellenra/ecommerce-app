@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import {
   Button,
   Image,
@@ -24,6 +24,8 @@ const Product = () => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const { addToCart } = useCart();
   const [isOwner, setIsOwner] = useState(false);
+  const location = useLocation();
+  const from = location.state?.from || "/";
 
   const navigate = useNavigate();
 
@@ -63,14 +65,16 @@ const Product = () => {
     }
   };
 
+  console.log(from);
+
   return (
     <>
-      <Link
-        href={`/stores/${storeId}`}
-        className="ml-10 rounded px-4 py-2 hover:bg-gray-100 text-sm"
+      <Button
+        onClick={() => navigate(from)}
+        className="ml-6 mt-6 border border-zinc-200 text-sm rounded-lg hover:bg-zinc-100"
       >
         <KeyboardBackspaceIcon />
-      </Link>
+      </Button>
       <div className="flex justify-center items-center flex-row p-10 space-x-10">
         <div>
           <Image

@@ -10,7 +10,7 @@ const StoreAdPage = () => {
       <p className="text-2xl text-center mb-6">Ready to become a seller?</p>
       <Button
         onClick={() => {
-          navigate("/stores/create");
+          navigate("/login", { state: { from: "/stores/create" } });
         }}
         className="border border-zinc-200 rounded-lg hover:bg-zinc-100 hover:border-zinc-300"
       >
@@ -19,7 +19,7 @@ const StoreAdPage = () => {
       <p className="text-l text-center mt-10 mb-4">Already have a store?</p>
       <Button
         onClick={() => {
-          navigate("/stores/create");
+          navigate("/login", { state: { from: "/stores/create" } });
         }}
         className="border border-zinc-200 rounded-lg hover:bg-zinc-100 hover:border-zinc-300"
       >
