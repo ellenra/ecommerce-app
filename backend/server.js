@@ -7,6 +7,7 @@ import storeRouter from "./routes/storeRoutes.js";
 import productRouter from "./routes/productRoutes.js";
 import stripe from "./routes/stripe.js";
 import orderRouter from "./routes/orderRoutes.js";
+import adminRouter from "./routes/adminRoutes.js";
 
 dotenv.config({ path: "./.env" });
 
@@ -33,6 +34,7 @@ app.use("/api/stores", storeRouter);
 app.use("/api/products", productRouter);
 app.use("/api/orders", orderRouter);
 app.use("/api/stripe", stripe);
+app.use("/api/admin", adminRouter);
 
 app.get("/", (req, res) => res.send("Server running"));
 

@@ -16,6 +16,7 @@ import OrderPage from "./components/profile/OrderPage";
 import StoreOwnerPage from "./components/StoreOwnerPage";
 import StoreOwnerOrderPage from "./components/StoreOwnerOrderPage";
 import StoreAdPage from "./components/StoreAdPage";
+import AdminDashboard from "./components/AdminDashboard";
 
 function App() {
   return (
@@ -53,6 +54,7 @@ function App() {
           <Route path="cart" element={<Cart />} />
           <Route path="checkout-success" element={<CheckoutSuccess />} />
         </Route>{" "}
+        <Route path="/admin" element={<AdminDashboard />} />
       </Routes>
     </Router>
   );

@@ -14,8 +14,10 @@ const Profile = () => {
   const { session } = useAuth();
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
-  const [hoveredProductId, setHoveredProductId] = useState(null);
-  const { deleteFavorite } = useFavorites(user, setUser);
+  const { addFavorite, deleteFavorite, isFavorite } = useFavorites(
+    user,
+    setUser
+  );
   const [selectedView, setSelectedView] = useState("account");
   const location = useLocation();
 
@@ -120,6 +122,27 @@ const Profile = () => {
                       height="200px"
                     />
                   </CardBody>
+                  <div className="absolute top-2 right-0 z-20">
+                    {isFavorite(product.id) ? (
+                      <Button
+                        size="sm"
+                        onClick={() =>
+                          deleteFavorite(product.id, session.access_token)
+                        }
+                      >
+                        <FavoriteIcon />
+                      </Button>
+                    ) : (
+                      <Button
+                        size="sm"
+                        onClick={() =>
+                          addFavorite(product.id, session?.access_token)
+                        }
+                      >
+                        <FavoriteBorderIcon />
+                      </Button>
+                    )}
+                  </div>
                   <CardFooter
                     className="flex flex-row justify-between hover:cursor-pointer"
                     onClick={() =>
@@ -131,19 +154,6 @@ const Profile = () => {
                     <p>{product.name}</p>
                     <p>{product.price} €</p>
                   </CardFooter>
-                  <div className="flex justify-end -mr-3 -mt-4">
-                    <Button
-                      onClick={() => deleteFavorite(product.id)}
-                      onMouseEnter={() => setHoveredProductId(product.id)}
-                      onMouseLeave={() => setHoveredProductId(null)}
-                    >
-                      {hoveredProductId === product.id ? (
-                        <FavoriteBorderIcon />
-                      ) : (
-                        <FavoriteIcon />
-                      )}
-                    </Button>
-                  </div>
                 </Card>
               ))}
             </div>

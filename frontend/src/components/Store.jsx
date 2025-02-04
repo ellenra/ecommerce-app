@@ -102,6 +102,27 @@ const Store = () => {
                   height="200px"
                 />
               </CardBody>
+              <div className="absolute top-2 right-0 z-20">
+                {session && isFavorite(product.id) ? (
+                  <Button
+                    size="sm"
+                    onClick={() =>
+                      deleteFavorite(product.id, session.access_token)
+                    }
+                  >
+                    <FavoriteIcon />
+                  </Button>
+                ) : (
+                  <Button
+                    size="sm"
+                    onClick={() =>
+                      addFavorite(product.id, session?.access_token)
+                    }
+                  >
+                    <FavoriteBorderIcon />
+                  </Button>
+                )}
+              </div>
               <CardFooter
                 className="flex flex-row justify-between hover:cursor-pointer"
                 onClick={() =>
@@ -116,25 +137,6 @@ const Store = () => {
                 <p>{product.name}</p>
                 <p>{product.price} €</p>
               </CardFooter>
-              <div className="flex justify-end -mr-3">
-                {isFavorite(product.id) ? (
-                  <Button
-                    onClick={() =>
-                      deleteFavorite(product.id, session.access_token)
-                    }
-                  >
-                    <FavoriteIcon fontSize="small" />
-                  </Button>
-                ) : (
-                  <Button
-                    onClick={() =>
-                      addFavorite(product.id, session?.access_token)
-                    }
-                  >
-                    <FavoriteBorderIcon fontSize="small" />
-                  </Button>
-                )}
-              </div>
             </Card>
           ))}
         </div>

@@ -123,7 +123,7 @@ const Home = () => {
             className="border rounded-lg w-[300px] lg:w-[400px] bg-white h-3/4"
           />
           <Button
-            className="border bg-white border-zinc-200 rounded-lg hover:bg-zinc-100 hover:border-zinc-300"
+            className="border bg-zinc-50 border-zinc-200 rounded-lg hover:bg-zinc-100 hover:border-zinc-300"
             onClick={() => {
               const query = searchQuery || "";
               const category = selectedCategory?.value || "";
@@ -163,6 +163,27 @@ const Home = () => {
                   height="200px"
                 />
               </CardBody>
+              <div className="absolute top-2 right-0 z-20">
+                {session && isFavorite(product.id) ? (
+                  <Button
+                    size="sm"
+                    onClick={() =>
+                      deleteFavorite(product.id, session.access_token)
+                    }
+                  >
+                    <FavoriteIcon />
+                  </Button>
+                ) : (
+                  <Button
+                    size="sm"
+                    onClick={() =>
+                      addFavorite(product.id, session?.access_token)
+                    }
+                  >
+                    <FavoriteBorderIcon />
+                  </Button>
+                )}
+              </div>
               <CardFooter
                 className="flex flex-row justify-between hover:cursor-pointer"
                 onClick={() =>
@@ -172,25 +193,6 @@ const Home = () => {
                 <p>{product.name}</p>
                 <p>{product.price} €</p>
               </CardFooter>
-              <div className="flex justify-end -mr-3">
-                {session && isFavorite(product.id) ? (
-                  <Button
-                    onClick={() =>
-                      deleteFavorite(product.id, session.access_token)
-                    }
-                  >
-                    <FavoriteIcon />
-                  </Button>
-                ) : (
-                  <Button
-                    onClick={() =>
-                      addFavorite(product.id, session?.access_token)
-                    }
-                  >
-                    <FavoriteBorderIcon />
-                  </Button>
-                )}
-              </div>
             </Card>
           ))}
         </div>

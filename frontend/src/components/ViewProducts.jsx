@@ -120,6 +120,27 @@ const ViewProducts = () => {
                   className="object-cover"
                 />
               </CardBody>
+              <div className="absolute top-2 right-0 z-20">
+                {session && isFavorite(product.id) ? (
+                  <Button
+                    size="sm"
+                    onClick={() =>
+                      deleteFavorite(product.id, session.access_token)
+                    }
+                  >
+                    <FavoriteIcon />
+                  </Button>
+                ) : (
+                  <Button
+                    size="sm"
+                    onClick={() =>
+                      addFavorite(product.id, session?.access_token)
+                    }
+                  >
+                    <FavoriteBorderIcon />
+                  </Button>
+                )}
+              </div>
               <CardFooter
                 className="text-small justify-between hover:cursor-pointer"
                 onClick={() =>
@@ -134,27 +155,6 @@ const ViewProducts = () => {
                 <b>{product.name}</b>
                 <div className="flex items-center">
                   <p>{product.price} $</p>
-                  {isFavorite(product.id) ? (
-                    <Button
-                      size="sm"
-                      isIconOnly
-                      onClick={() =>
-                        deleteFavorite(product.id, session.access_token)
-                      }
-                    >
-                      <FavoriteIcon fontSize="small" />
-                    </Button>
-                  ) : (
-                    <Button
-                      size="sm"
-                      isIconOnly
-                      onClick={() =>
-                        addFavorite(product.id, session?.access_token)
-                      }
-                    >
-                      <FavoriteBorderIcon fontSize="small" />
-                    </Button>
-                  )}
                 </div>
               </CardFooter>
             </Card>

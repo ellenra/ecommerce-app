@@ -6,6 +6,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAuth } from "../../hooks/AuthContext";
 import { toast } from "react-toastify";
+import adminservice from "../../services/adminservice";
 
 const loginSchema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
@@ -31,14 +32,21 @@ const Login = () => {
   const onSubmit = async (data) => {
     try {
       const { email, password } = data;
-      const { user, error } = await supabase.auth.signInWithPassword({
+      const { data: user, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
       if (error) throw new Error(error.message);
+
+      const isAdmin = await adminservice.checkAdmin(user.user.id);
+      if (isAdmin) {
+        navigate("/admin");
+      } else {
+        navigate(from);
+      }
     } catch (exception) {
       console.log("error in login", exception);
-      toast.error(`Log in failed! Reason: ${exception.message}`);
+      toast.error(`Log in failed! ${exception.message}!`);
     }
   };
 
