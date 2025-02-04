@@ -2,7 +2,7 @@
 
 ## About
 
-This web application allows registered users to create their own online stores to sell products, or simply browse products and stores as a buyer and make purchases. The goal is to create a platform similar to Amazon.
+This web application allows registered users to create their own online stores to sell products, or simply browse products and stores as a buyer and make purchases.
 
 ## Built With
 
@@ -31,3 +31,20 @@ This web application allows registered users to create their own online stores t
 [supabase-url]: https://supabase.com/
 [stripe]: https://img.shields.io/badge/Stripe-008CDD?style=for-the-badge&logo=stripe&logoColor=white
 [stripe-url]: https://stripe.com/
+
+## Features now
+- As a user,
+  - I can browse products and stores
+  - I can search products by category and search query
+  - I can register, login and logout
+  - I can edit my profile info
+  - I can add and delete favorite products and view them on my profile
+  - I can add and delete items from my cart
+  - I can checkout my cart (using Stripe integration)
+  - I can view my orders and their statuses
+    
+- As a seller,
+  - I can create store and edit it
+  - I can add, edit and delete products to sell
+  - I can view orders and mark them as shipped
+ 
