@@ -85,6 +85,26 @@ const getProduct = async (productId) => {
   }
 };
 
+const changeProductStatus = async (productId, storeId, accessToken) => {
+  try {
+    const response = await axios.put(
+      `${baseUrl}${storeId}/products/${productId}/status`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    if (error.response && error.response.data) {
+      return { error: error.response.data.message };
+    }
+    console.error("Error changing product status", error.message);
+  }
+};
+
 const deleteProduct = async (productId, storeId, accessToken) => {
   try {
     const response = await axios.delete(
@@ -97,6 +117,9 @@ const deleteProduct = async (productId, storeId, accessToken) => {
     );
     return response.data;
   } catch (error) {
+    if (error.response && error.response.data) {
+      return { error: error.response.data.message };
+    }
     console.error("Error deleting product", error.message);
   }
 };
@@ -125,6 +148,7 @@ export default {
   updateStore,
   listProduct,
   getProduct,
+  changeProductStatus,
   deleteProduct,
   updateProduct,
 };

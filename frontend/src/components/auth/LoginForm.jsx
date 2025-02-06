@@ -38,8 +38,9 @@ const Login = () => {
       });
       if (error) throw new Error(error.message);
 
-      const isAdmin = await adminservice.checkAdmin(user.user.id);
-      if (isAdmin) {
+      const isAdminResponse = await adminservice.checkAdmin(user.user.id);
+
+      if (isAdminResponse && isAdminResponse.data.isAdmin) {
         navigate("/admin");
       } else {
         navigate(from);

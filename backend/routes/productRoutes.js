@@ -10,6 +10,7 @@ productRouter.get("/", async (req, res) => {
 
     const products = await prisma.product.findMany({
       where: {
+        isActive: true,
         AND: [
           { name: { contains: search, mode: "insensitive" } },
           ...(category.length > 0

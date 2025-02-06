@@ -122,14 +122,14 @@ const Layout = () => {
               />
             </NavbarItem>
             <NavbarItem>
-              <Button className="border border-zinc-200 rounded-lg hover:bg-zinc-100 hover:border-zinc-300">
+              <Button className="border rounded-lg bg-white hover:bg-zinc-100 hover:border-zinc-300">
                 <Link color="foreground" href="/products">
                   Products
                 </Link>
               </Button>
             </NavbarItem>
             <NavbarItem>
-              <Button className="border border-zinc-200 rounded-lg hover:bg-zinc-100 hover:border-zinc-300">
+              <Button className="border bg-white rounded-lg hover:bg-zinc-100 hover:border-zinc-300">
                 <Link color="foreground" href="/stores">
                   Stores
                 </Link>

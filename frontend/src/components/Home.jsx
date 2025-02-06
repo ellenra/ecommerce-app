@@ -123,7 +123,7 @@ const Home = () => {
             className="border rounded-lg w-[300px] lg:w-[400px] bg-white h-3/4"
           />
           <Button
-            className="border bg-zinc-50 border-zinc-200 rounded-lg hover:bg-zinc-100 hover:border-zinc-300"
+            className="border bg-black text-white border-zinc-200 rounded-lg hover:bg-zinc-100 hover:border-zinc-300"
             onClick={() => {
               const query = searchQuery || "";
               const category = selectedCategory?.value || "";
@@ -135,7 +135,7 @@ const Home = () => {
         </div>
 
         <Button
-          className="mt-4 border bg-zinc-50 border-zinc-200 rounded-lg hover:bg-zinc-100 hover:border-zinc-300"
+          className="mt-4 border bg-black text-white border-zinc-200 rounded-lg hover:bg-zinc-100 hover:border-zinc-300"
           onClick={() => navigate("/products")}
         >
           Browse All Products
@@ -185,12 +185,12 @@ const Home = () => {
                 )}
               </div>
               <CardFooter
-                className="flex flex-row justify-between hover:cursor-pointer"
+                className="flex flex-row justify-between hover:cursor-pointer whitespace-nowrap"
                 onClick={() =>
                   navigate(`/stores/${product.storeId}/products/${product.id}`)
                 }
               >
-                <p>{product.name}</p>
+                <p className="overflow-hidden text-ellipsis">{product.name}</p>
                 <p>{product.price} €</p>
               </CardFooter>
             </Card>

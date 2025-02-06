@@ -64,13 +64,9 @@ const StoreOwnerOrderPage = () => {
     });
   };
 
-  if (isLoading) {
-    return <div>Loading order...</div>;
-  }
+  if (isLoading) return <div>Loading order...</div>;
 
-  if (error) {
-    return <div>Error loading order!</div>;
-  }
+  if (error) return <div>Error loading order!</div>;
 
   return (
     <>

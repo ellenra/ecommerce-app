@@ -61,6 +61,9 @@ const Store = () => {
     return <div>No store found.</div>;
   }
 
+  //Show only listed products in store view for store owners too
+  const filteredProducts = store.products.filter((product) => product.isActive);
+
   return (
     <div>
       {isOwner && (
@@ -79,7 +82,7 @@ const Store = () => {
           <p className="text-lg mt-2">{store.description}</p>
         </div>
         <div className="grid md:grid-cols-4 lg:grid-cols-8 gap-6 p-6">
-          {store.products.map((product, index) => (
+          {filteredProducts.map((product, index) => (
             <Card
               key={index}
               className="min-w-[200px] shadow-md rounded-lg hover:shadow-xl"

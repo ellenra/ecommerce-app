@@ -248,7 +248,9 @@ const ProductForm = () => {
                         color: "#000000",
                       },
                     }),
+                    menuPortal: (base) => ({ ...base, zIndex: 9999 }),
                   }}
+                  menuPortalTarget={document.body}
                   value={categoryList.filter((c) => value?.includes(c.value))}
                   onChange={(e) => onChange(e.map((c) => c.value))}
                 />

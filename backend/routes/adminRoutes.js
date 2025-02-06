@@ -13,10 +13,10 @@ adminRouter.get("/:id", async (req, res) => {
     });
 
     if (!admin) {
-      return res.status(403).json({ message: "Access denied." });
+      return res.json({ isAdmin: false });
     }
 
-    res.json(admin);
+    res.json({ isAdmin: true });
   } catch (error) {
     console.error("Error checking admin", error);
     res.status(500).json({ error: "Error checking admin" });

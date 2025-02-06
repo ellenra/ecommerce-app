@@ -47,6 +47,9 @@ storeRouter.get("/:id", optionalAuthMiddleware, async (req, res) => {
       },
       include: {
         products: {
+          where: {
+            isActive: true,
+          },
           select: {
             id: true,
             name: true,
@@ -335,6 +338,7 @@ storeRouter.delete(
     try {
       const productToDelete = await prisma.product.findUnique({
         where: { id: productId },
+        include: { orders: true },
       });
 
       if (!productToDelete) {
@@ -343,6 +347,12 @@ storeRouter.delete(
 
       if (productToDelete.userId !== userIdFromToken) {
         return res.status(403).json({ message: "Unauthorized request" });
+      }
+
+      if (productToDelete.orders.length > 0) {
+        return res.status(400).json({
+          message: "Failed to delete product, it is part of an order.",
+        });
       }
 
       await prisma.categoriesOnProducts.deleteMany({
@@ -448,6 +458,40 @@ storeRouter.put(
       res.status(200).json(product);
     } catch (error) {
       console.log(error.message);
+    }
+  }
+);
+
+storeRouter.put(
+  "/:storeId/products/:id/status",
+  authMiddleware,
+  async (req, res) => {
+    const productId = req.params.id;
+    const userIdFromToken = req.user.user.id;
+
+    try {
+      const productToEdit = await prisma.product.findUnique({
+        where: { id: productId },
+      });
+
+      if (!productToEdit) {
+        return res.status(404).json({ message: "Product not found" });
+      }
+
+      if (productToEdit.userId !== userIdFromToken) {
+        return res.status(403).json({ message: "Unauthorized request" });
+      }
+
+      const updatedProduct = await prisma.product.update({
+        where: { id: productId },
+        data: { isActive: !productToEdit.isActive },
+      });
+
+      res.json(updatedProduct);
+    } catch (error) {
+      console.error("Error updating product status:", error);
+
+      res.status(500).json({ message: "Error changing activity status" });
     }
   }
 );
