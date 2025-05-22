@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { useAuth } from "../hooks/AuthContext";
 import { useNavigate } from "react-router-dom";
 import adminservice from "../services/adminservice";
+import { Button } from "@nextui-org/react";
+import supabase from "../supabaseClient";
 
 const AdminDashboard = () => {
   const { session } = useAuth();
@@ -25,9 +27,19 @@ const AdminDashboard = () => {
     checkAdmin();
   }, [session]);
 
+  const handleLogout = async () => {
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      console.error("Logout failed:", error.message);
+    } else {
+      navigate("/", { replace: true });
+    }
+  };
+
   return admin ? (
     <>
       <div>Admin Dashboard</div>
+      <Button onClick={handleLogout}>Log out</Button>
     </>
   ) : null;
 };
