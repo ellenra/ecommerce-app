@@ -104,8 +104,9 @@ model Product {
   description String
   price       Float
   salePrice   Float?
-  quantity    Int
+  quantity    Int?
   imageUrl    String  @default("")
+  productUrl String
   isActive    Boolean @default(true)
   ratings     Float   @default(0)
 

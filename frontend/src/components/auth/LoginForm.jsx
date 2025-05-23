@@ -68,7 +68,7 @@ const Login = () => {
         </div>
         <div>
           <label className="ml-3">Password:</label>
-          <Input type="text" {...register("password")} className="mt-4" />
+          <Input type="password" {...register("password")} className="mt-4" />
           {errors.password && (
             <p className="text-red-500">{errors.password.message}</p>
           )}

@@ -223,7 +223,7 @@ const StoreForm = () => {
         </div>
         <Link href={`/stores/${storeId}/dashboard`}>
           <Button className="mr-4 border border-zinc-200 text-sm rounded-lg hover:bg-zinc-100 hover:border-zinc-300">
-            Cancel
+            Return
           </Button>
         </Link>
         <Button

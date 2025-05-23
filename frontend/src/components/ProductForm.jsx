@@ -36,15 +36,20 @@ const productSchema = z.object({
     .instanceof(File, { message: "Image is required" })
     .optional()
     .nullable(),
+  productFile: z
+    .instanceof(File, { message: "Product file is required" })
+    .optional()
+    .nullable(),
   categories: z
     .array(z.string())
     .min(1, { message: "Select at least one category" }),
 });
 
 const ProductForm = () => {
-  const { session, loading, user } = useAuth();
+  const { session, loading } = useAuth();
   const { storeId, productId } = useParams();
   const [viewProductPicture, setViewProductPicture] = useState(null);
+  const [productUrl, setProductUrl] = useState(null);
   const [categoryList, setCategoryList] = useState([]);
   const navigate = useNavigate();
 
@@ -63,11 +68,13 @@ const ProductForm = () => {
       quantity: 0,
       imageUrl: "",
       file: null,
+      productFile: null,
       categories: [],
     },
   });
 
   const file = watch("file");
+  const productFile = watch("productFile");
 
   useEffect(() => {
     if (!session) {
@@ -103,6 +110,8 @@ const ProductForm = () => {
           const categoryIds = productData.categories.map(
             (category) => category.categoryId
           );
+          setValue("productUrl", productData.productUrl);
+          setProductUrl(productData.productUrl);
           setValue("categories", categoryIds);
         } catch (error) {
           console.error("Error fetching product data:", error.message);
@@ -119,6 +128,16 @@ const ProductForm = () => {
       setValue("file", file, { shouldValidate: true });
       const reader = new FileReader();
       reader.onloadend = () => setViewProductPicture(reader.result);
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleProductFileUpload = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      setValue("productFile", file, { shouldValidate: true });
+      const reader = new FileReader();
+      reader.onloadend = () => setProductUrl(reader.result);
       reader.readAsDataURL(file);
     }
   };
@@ -142,6 +161,13 @@ const ProductForm = () => {
       } else {
         formData.append("imageUrl", viewProductPicture);
       }
+
+      if (productFile instanceof File) {
+        formData.append("productFile", productFile);
+      } else {
+        formData.append("productFile", productUrl);
+      }
+
       if (productId) {
         await storeservice.updateProduct(formData, session.access_token);
         toast.success("Product updated successfully!");
@@ -263,7 +289,7 @@ const ProductForm = () => {
         </div>
 
         <div>
-          <label className="ml-3">Image:</label>
+          <label className="ml-3">Thumbnail Image:</label>
           {viewProductPicture && viewProductPicture !== "null" ? (
             <div>
               <Image
@@ -285,11 +311,52 @@ const ProductForm = () => {
           )}
           {errors.file && <p className="text-red-500">{errors.file.message}</p>}
         </div>
+
+        <div>
+          <label className="ml-2">Digital Product File:</label>
+          {productUrl && productUrl !== null ? (
+            <>
+              {productUrl && (
+                <p className="text-sm underline ml-2 mt-2">
+                  <a
+                    href={productUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Selected Product File
+                  </a>{" "}
+                </p>
+              )}
+              {productFile && (
+                <p className="text-sm ml-2">
+                  {" "}
+                  ({(productFile.size / 1024 / 1024).toFixed(2)} MB)
+                </p>
+              )}
+
+              <Button
+                onClick={() => {
+                  setValue("productFile", null);
+                  setProductUrl(null);
+                }}
+              >
+                Remove Product
+              </Button>
+            </>
+          ) : (
+            <Input type="file" onChange={handleProductFileUpload} />
+          )}
+
+          {errors.productFile && (
+            <p className="text-red-500">{errors.productFile.message}</p>
+          )}
+        </div>
+
         <Link
           href={`/stores/${storeId}/dashboard`}
           className="mr-2 border border-gray-200 rounded px-4 py-2 hover:bg-gray-100 text-sm"
         >
-          Cancel
+          Return
         </Link>
 
         <Button

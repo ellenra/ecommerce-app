@@ -219,7 +219,10 @@ storeRouter.put(
 storeRouter.post(
   "/:storeId/products",
   authMiddleware,
-  upload.single("file"),
+  upload.fields([
+    { name: "file", maxCount: 1 },
+    { name: "productFile", maxCount: 1 },
+  ]),
   async (req, res) => {
     const storeId = req.params.storeId;
     const userIdFromToken = req.user.user.id;
@@ -246,61 +249,70 @@ storeRouter.post(
       if (isNaN(parsedPrice) || isNaN(parsedQuantity)) {
         return res.status(400).json({ error: "Invalid price or quantity" });
       }
-      if (req.file) {
-        const file = req.file;
-        const uniqueFileName = `${Date.now()}-${file.name}`;
 
-        const { data, error } = await supabase.storage
-          .from("product-images")
-          .upload(uniqueFileName, file.buffer, {
-            contentType: file.mimetype,
-          });
-
-        if (error) {
-          throw error;
-        }
-
-        const { data: image } = supabase.storage
-          .from("product-images")
-          .getPublicUrl(data.path);
-
-        const product = await prisma.product.create({
-          data: {
-            storeId: storeId,
-            userId,
-            name,
-            description,
-            price: parsedPrice,
-            quantity: parsedQuantity,
-            imageUrl: image.publicUrl,
-            categories: {
-              create:
-                categories?.map((categoryId) => ({
-                  category: { connect: { id: categoryId } },
-                })) || [],
-            },
-          },
-        });
-        res.json(product);
-      } else {
-        const product = await prisma.product.create({
-          data: {
-            storeId: storeId,
-            userId,
-            name,
-            description,
-            price: parsedPrice,
-            quantity: parsedQuantity,
-            categories: {
-              create:
-                categories?.map((categoryId) => ({
-                  category: { connect: { id: categoryId } },
-                })) || [],
-            },
-          },
-        });
-        res.json(product);
+      if (!req.files.file?.[0]) {
+        return res
+          .status(400)
+          .json({ error: "Thumbnail picture is required!" });
       }
+
+      const file = req.files.file[0];
+      const uniqueFileName = `${Date.now()}-${file.name}`;
+
+      const { data, error } = await supabase.storage
+        .from("product-images")
+        .upload(uniqueFileName, file.buffer, {
+          contentType: file.mimetype,
+        });
+
+      if (error) {
+        throw error;
+      }
+
+      const { data: image } = supabase.storage
+        .from("product-images")
+        .getPublicUrl(data.path);
+
+      if (!req.files.productFile?.[0]) {
+        return res
+          .status(400)
+          .json({ error: "Digital product file is required!" });
+      }
+
+      const productFile = req.files.productFile[0];
+      const uniqueProductFileName = `${Date.now()}-${productFile.originalname}`;
+
+      const { data: productData, error: productError } = await supabase.storage
+        .from("digital-products")
+        .upload(uniqueProductFileName, productFile.buffer, {
+          contentType: productFile.mimetype,
+        });
+
+      if (productError) throw productError;
+
+      const { data: productFileUrl } = supabase.storage
+        .from("digital-products")
+        .getPublicUrl(productData.path);
+
+      const product = await prisma.product.create({
+        data: {
+          storeId: storeId,
+          userId,
+          name,
+          description,
+          price: parsedPrice,
+          quantity: parsedQuantity,
+          imageUrl: image.publicUrl,
+          productUrl: productFileUrl.publicUrl,
+          categories: {
+            create:
+              categories?.map((categoryId) => ({
+                category: { connect: { id: categoryId } },
+              })) || [],
+          },
+        },
+      });
+      res.json(product);
     } catch (error) {
       console.log("errorrr", error);
       res.status(500).json({ error: "Error listing product" });
@@ -378,14 +390,25 @@ storeRouter.delete(
 storeRouter.put(
   "/:storeId/products/:id",
   authMiddleware,
-  upload.single("file"),
+  upload.fields([
+    { name: "file", maxCount: 1 },
+    { name: "productFile", maxCount: 1 },
+  ]),
   async (req, res) => {
     const productId = req.params.id;
     const storeId = req.params.storeId;
     const userIdFromToken = req.user.user.id;
 
-    let { name, description, price, quantity, categories, imageUrl, userId } =
-      req.body;
+    let {
+      name,
+      description,
+      price,
+      quantity,
+      categories,
+      imageUrl,
+      productUrl,
+      userId,
+    } = req.body;
 
     const parsedPrice = parseFloat(price);
     const parsedQuantity = parseInt(quantity, 10);
@@ -409,14 +432,14 @@ storeRouter.put(
         return res.status(403).json({ message: "Unauthorized request" });
       }
 
-      if (req.file) {
-        const file = req.file;
-        const uniqueFileName = `${Date.now()}-${file.name}`;
+      if (req.files.file?.[0]) {
+        const imageFile = req.files.file[0];
+        const uniqueFileName = `${Date.now()}-${imageFile.name}`;
 
         const { data, error } = await supabase.storage
           .from("product-images")
-          .upload(uniqueFileName, file.buffer, {
-            contentType: file.mimetype,
+          .upload(uniqueFileName, imageFile.buffer, {
+            contentType: imageFile.mimetype,
           });
 
         if (error) {
@@ -434,6 +457,34 @@ storeRouter.put(
         imageUrl = image.publicUrl;
       }
 
+      if (req.files.productFile?.[0]) {
+        const productFile = req.files.productFile[0];
+        const uniqueProductFileName = `${Date.now()}-${productFile.name}`;
+
+        const { data: productData, error: productError } =
+          await supabase.storage
+            .from("digital-products")
+            .upload(uniqueProductFileName, productFile.buffer, {
+              contentType: productFile.mimetype,
+            });
+
+        if (productError) {
+          throw productError;
+        }
+
+        const { data: productFileUrl } = supabase.storage
+          .from("digital-products")
+          .getPublicUrl(productData.path);
+
+        if (!productFileUrl) {
+          throw new Error(
+            "Failed to generate public URL for uploaded product."
+          );
+        }
+
+        productUrl = productFileUrl.publicUrl;
+      }
+
       const product = await prisma.product.update({
         where: { id: productId },
         data: {
@@ -442,6 +493,7 @@ storeRouter.put(
           price: parsedPrice,
           quantity: parsedQuantity,
           imageUrl: imageUrl,
+          productUrl: productUrl,
           storeId,
           userId,
 
