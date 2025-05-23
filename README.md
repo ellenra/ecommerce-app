@@ -1,8 +1,8 @@
-# Ecommerce Marketplace
+# Ecommerce Marketplace For Digital Products
 
 ## About
 
-This web application allows registered users to create their own online stores to sell products, or simply browse products and stores as a buyer and make purchases.
+This web application allows registered users to create their own online stores to sell all kinds of digital products, or simply browse products and stores as a buyer and make purchases.
 
 ## Built With
 
@@ -35,6 +35,7 @@ This web application allows registered users to create their own online stores t
 Backend is built with Node.js and Express.js for practice, Supabase is used only for authentication and hosting the database.
 
 ## Features Now
+
 - As a user,
   - I can browse products and stores
   - I can search products by category and search query
@@ -44,13 +45,12 @@ Backend is built with Node.js and Express.js for practice, Supabase is used only
   - I can add and delete items from my cart
   - I can checkout my cart
   - I can view my orders and their statuses
-    
 - As a seller,
   - I can create store and edit it
   - I can add, edit and delete products to sell
   - I can view orders and mark them as shipped
 
- ## Screenshots
+## Screenshots
+
 ![Screenshot from 2025-02-05 14-51-46](https://github.com/user-attachments/assets/f0a646a3-0cee-4c62-997d-4bad21baad87)
 ![Screenshot from 2025-02-05 14-52-05](https://github.com/user-attachments/assets/45600631-d9e1-4a78-85ad-b9568e4fa3bc)
-

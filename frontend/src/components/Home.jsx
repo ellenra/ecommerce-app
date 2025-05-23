@@ -2,15 +2,13 @@ import { useEffect, useState } from "react";
 import {
   Card,
   CardBody,
-  CardFooter,
   Image,
   Button,
   Input,
+  CardHeader,
 } from "@nextui-org/react";
 import Select from "react-select";
 import axios from "axios";
-import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
-import FavoriteIcon from "@mui/icons-material/Favorite";
 import { useNavigate } from "react-router-dom";
 import productservice from "../services/productservice";
 import userservice from "../services/userservice";
@@ -88,25 +86,28 @@ const Home = () => {
   }, []);
 
   return (
-    <div>
-      <div className="text-center py-16">
-        <h1 className="text-5xl font-bold">Discover Amazing Products</h1>
-        <p className="mt-4 text-lg mb-14">
-          Shop from many unique stores and sellers
+    <>
+      <div className="container mx-auto text-center py-28 px-4">
+        <h1 className="text-4xl sm:text-5xl font-bold">
+          Discover, Buy and Sell Digital Products Effortlessly
+        </h1>
+        <p className="mt-4 text-lg text-gray-700">
+          Explore a wide variety of digital products from the best and most
+          trusted creators.
         </p>
 
-        <div className="max-w-2xl mx-auto flex gap-2">
+        <div className="mt-8 flex flex-col sm:flex-row justify-center items-center gap-4">
           <Select
             value={selectedCategory}
             onChange={setSelectedCategory}
             options={[{ label: "All Categories", value: "" }, ...categories]}
-            className="w-64 mb-4"
+            className="w-full sm:w-64"
             placeholder="Select a category"
             menuPortalTarget={document.body}
             styles={{
               menuPortal: (base) => ({ ...base, zIndex: 9999 }),
               indicatorSeparator: () => null,
-              control: (base, state) => ({
+              control: (base) => ({
                 ...base,
                 borderColor: "e2e2e2",
                 borderRadius: "6px",
@@ -120,10 +121,10 @@ const Home = () => {
             placeholder="Search Products"
             value={searchQuery}
             onChange={({ currentTarget: query }) => setSearchQuery(query.value)}
-            className="border rounded-lg w-[300px] lg:w-[400px] bg-white h-3/4"
+            className="border rounded-lg w-full sm:w-80"
           />
           <Button
-            className="border bg-black text-white border-zinc-200 rounded-lg hover:bg-zinc-100 hover:border-zinc-300"
+            className="w-full sm:w-auto bg-purple-600 hover:bg-purple-700 text-white rounded-lg px-8 py-3"
             onClick={() => {
               const query = searchQuery || "";
               const category = selectedCategory?.value || "";
@@ -135,71 +136,60 @@ const Home = () => {
         </div>
 
         <Button
-          className="mt-4 border bg-black text-white border-zinc-200 rounded-lg hover:bg-zinc-100 hover:border-zinc-300"
+          className="mt-6 text-purple-600 border-purple-600 hover:bg-purple-50 rounded-lg px-6 py-2"
           onClick={() => navigate("/products")}
         >
           Browse All Products
         </Button>
       </div>
 
-      <div className="px-10 py-6">
-        <h2 className="mb-4 text-xl">Top Products</h2>
-        <div className="flex overflow-x-scroll scrollbar-thin scrollbar-thumb-zinc-100 scrollbar-track-transparent gap-6 pb-4">
-          {products.map((product, index) => (
-            <Card
-              key={index}
-              className="min-w-[200px] shadow-md rounded-lg hover:shadow-xl"
+      <div className="container mx-auto">
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-2xl font-vold text-gray-900">
+            Popular Categories
+          </h2>
+          <Button
+            onClick={() => navigate("/products")}
+            className="text-purple-600 border-purple-600 hover:bg-purple-50 rounded-lg px-4 py-2"
+          >
+            View All
+          </Button>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {categories.slice(0, 8).map((category) => (
+            <div
+              key={category.value}
+              className="group relative bg-white rounded-xl shadow hover:shadow:lg overflow-hidden"
             >
-              <CardBody
-                className="p-0 hover:cursor-pointer"
-                onClick={() =>
-                  navigate(`/stores/${product.storeId}/products/${product.id}`)
-                }
-              >
-                <Image
-                  src={product.imageUrl}
-                  alt={product.name}
-                  width="200px"
-                  height="200px"
-                />
-              </CardBody>
-              <div className="absolute top-2 right-0 z-20">
-                {session && isFavorite(product.id) ? (
-                  <Button
-                    size="sm"
-                    onClick={() =>
-                      deleteFavorite(product.id, session.access_token)
-                    }
-                  >
-                    <FavoriteIcon />
-                  </Button>
-                ) : (
-                  <Button
-                    size="sm"
-                    onClick={() =>
-                      addFavorite(product.id, session?.access_token)
-                    }
-                  >
-                    <FavoriteBorderIcon />
-                  </Button>
-                )}
-              </div>
-              <CardFooter
-                className="flex flex-row justify-between hover:cursor-pointer whitespace-nowrap"
-                onClick={() =>
-                  navigate(`/stores/${product.storeId}/products/${product.id}`)
-                }
-              >
-                <p className="overflow-hidden text-ellipsis">{product.name}</p>
-                <p>{product.price} €</p>
-              </CardFooter>
-            </Card>
+              <Card className="bg-gray-50 hover:cursor-pointer">
+                <CardBody
+                  onClick={() =>
+                    navigate(`/products?category=${category.value}`)
+                  }
+                >
+                  <Image
+                    src={"../../mobile.png"}
+                    alt={category.label}
+                    className="object-cover rounded-xl"
+                  />
+                </CardBody>
+                <CardHeader
+                  onClick={() =>
+                    navigate(`/products?category=${category.value}`)
+                  }
+                >
+                  <p className="overflow-hidden text-ellipsis">
+                    {category.label}
+                  </p>
+                </CardHeader>
+              </Card>
+            </div>
           ))}
         </div>
       </div>
 
       <div className="mt-6 py-10 px-10 bg-zinc-50 rounded-lg mb-10">
-        <h2 className="mb-4 text-xl">Top Stores</h2>
+        <h2 className="mb-6 text-xl text-center">Top Stores</h2>
         <div className="grid grid-cols-3 gap-6 mb-6">
           {stores.map((store, index) => (
             <Card
@@ -216,7 +206,7 @@ const Home = () => {
           ))}
         </div>
       </div>
-    </div>
+    </>
   );
 };
 
