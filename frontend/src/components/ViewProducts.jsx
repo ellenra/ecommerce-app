@@ -59,16 +59,20 @@ const ViewProducts = () => {
   }, [session]);
 
   useEffect(() => {
-    if (categoryQuery && selectedCategory.value !== categoryQuery) {
-      const category = categories.find((cat) => cat.value === categoryQuery);
+    if (!categoryQuery || categories.length === 0) return;
 
+    if (selectedCategory.value !== categoryQuery) {
+      const category = categories.find((cat) => cat.value === categoryQuery);
       if (category) {
         setSelectedCategory(category);
       }
     }
+  }, [categories, categoryQuery]);
 
+  useEffect(() => {
     const fetchProducts = async () => {
       try {
+        console.log("url", selectedCategory);
         const url = `http://localhost:5000/api/products?category=${
           selectedCategory.value
         }&search=${searchQuery || ""}`;
@@ -80,7 +84,7 @@ const ViewProducts = () => {
     };
 
     fetchProducts();
-  }, [selectedCategory, searchQuery, categoryQuery]);
+  }, [selectedCategory, searchQuery]);
 
   return (
     <div className="p-8">

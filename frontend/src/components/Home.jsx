@@ -103,7 +103,7 @@ const Home = () => {
         </Button>
         <Button
           className="mt-8 ml-4 bg-white border border-black hover:bg-black hover:text-white rounded-lg px-6 py-2"
-          onClick={() => navigate("/products")}
+          onClick={() => navigate("/stores/create")}
         >
           Become a seller
         </Button>
