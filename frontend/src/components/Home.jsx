@@ -7,7 +7,6 @@ import {
   Input,
   CardHeader,
 } from "@nextui-org/react";
-import Select from "react-select";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import productservice from "../services/productservice";
@@ -88,7 +87,7 @@ const Home = () => {
   return (
     <>
       <div className="container mx-auto text-center py-28 px-4">
-        <h1 className="text-4xl sm:text-5xl font-bold">
+        <h1 className="text-5xl">
           Discover, Buy and Sell Digital Products Effortlessly
         </h1>
         <p className="mt-4 text-lg text-gray-700">
@@ -96,72 +95,47 @@ const Home = () => {
           trusted creators.
         </p>
 
-        <div className="mt-8 flex flex-col sm:flex-row justify-center items-center gap-4">
-          <Select
-            value={selectedCategory}
-            onChange={setSelectedCategory}
-            options={[{ label: "All Categories", value: "" }, ...categories]}
-            className="w-full sm:w-64"
-            placeholder="Select a category"
-            menuPortalTarget={document.body}
-            styles={{
-              menuPortal: (base) => ({ ...base, zIndex: 9999 }),
-              indicatorSeparator: () => null,
-              control: (base) => ({
-                ...base,
-                borderColor: "e2e2e2",
-                borderRadius: "6px",
-                padding: "2px",
-              }),
-            }}
-          />
-          <Input
-            isClearable
-            type="text"
-            placeholder="Search Products"
-            value={searchQuery}
-            onChange={({ currentTarget: query }) => setSearchQuery(query.value)}
-            className="border rounded-lg w-full sm:w-80"
-          />
-          <Button
-            className="w-full sm:w-auto bg-purple-600 hover:bg-purple-700 text-white rounded-lg px-8 py-3"
-            onClick={() => {
-              const query = searchQuery || "";
-              const category = selectedCategory?.value || "";
-              navigate(`/products?search=${query}&category=${category}`);
-            }}
-          >
-            Search
-          </Button>
-        </div>
-
         <Button
-          className="mt-6 text-purple-600 border-purple-600 hover:bg-purple-50 rounded-lg px-6 py-2"
+          className="mt-8 text-white bg-black hover:bg-white hover:text-black hover:border hover:border-black rounded-lg px-6 py-2"
           onClick={() => navigate("/products")}
         >
           Browse All Products
         </Button>
+        <Button
+          className="mt-8 ml-4 bg-white border border-black hover:bg-black hover:text-white rounded-lg px-6 py-2"
+          onClick={() => navigate("/products")}
+        >
+          Become a seller
+        </Button>
       </div>
 
-      <div className="container mx-auto">
+      <section className="container mx-auto">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-vold text-gray-900">
-            Popular Categories
-          </h2>
+          <h2 className="text-2xl">Popular Categories</h2>
           <Button
             onClick={() => navigate("/products")}
-            className="text-purple-600 border-purple-600 hover:bg-purple-50 rounded-lg px-4 py-2"
+            className="hover:bg-zinc-100 rounded-lg px-4 py-2"
           >
             View All
           </Button>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {categories.slice(0, 8).map((category) => (
+          {categories.slice(0, 4).map((category) => (
             <div
               key={category.value}
-              className="group relative bg-white rounded-xl shadow hover:shadow:lg overflow-hidden"
+              className="group bg-white rounded-xl shadow hover:shadow:lg overflow-hidden"
             >
               <Card className="bg-gray-50 hover:cursor-pointer">
+                <CardHeader
+                  onClick={() =>
+                    navigate(`/products?category=${category.value}`)
+                  }
+                  className="-mb-3 mt-1"
+                >
+                  <p className="overflow-hidden text-ellipsis text-lg">
+                    {category.label}
+                  </p>
+                </CardHeader>
                 <CardBody
                   onClick={() =>
                     navigate(`/products?category=${category.value}`)
@@ -173,39 +147,71 @@ const Home = () => {
                     className="object-cover rounded-xl"
                   />
                 </CardBody>
-                <CardHeader
-                  onClick={() =>
-                    navigate(`/products?category=${category.value}`)
-                  }
-                >
-                  <p className="overflow-hidden text-ellipsis">
-                    {category.label}
-                  </p>
-                </CardHeader>
               </Card>
             </div>
           ))}
         </div>
-      </div>
+      </section>
 
-      <div className="mt-6 py-10 px-10 bg-zinc-50 rounded-lg mb-10">
-        <h2 className="mb-6 text-xl text-center">Top Stores</h2>
-        <div className="grid grid-cols-3 gap-6 mb-6">
-          {stores.map((store, index) => (
+      <section className="container mx-auto mt-6 mb-10">
+        <h2 className="text-2xl pt-6 pb-4">Best Sellers</h2>
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6 mb-10 pb-10">
+          {products.map((product, index) => (
             <Card
               key={index}
               isPressable
               className="bg-white shadow-md rounded-lg"
-              onPress={() => navigate(`/stores/${store.id}`)}
+              onPress={() =>
+                navigate(`/stores/${product.storeId}/products/${product.id}`)
+              }
             >
-              <CardBody className="p-4">
-                <h3>{store.name}</h3>
-                <p className="text-sm text-gray-500">{store.description}</p>
+              <Image
+                src={"../../mobile.png"}
+                alt={product.name}
+                className="object-cover"
+              />
+              <CardBody>
+                <h3>{product.name}</h3>
+                <p className="text-sm">{product.price}€</p>
               </CardBody>
             </Card>
           ))}
         </div>
-      </div>
+      </section>
+
+      <section className="py-20 bg-zinc-100">
+        <div className="container mx-auto px-6 text-center">
+          <h2 className="text-3xl sm:text-4xl font-semibold mb-10">
+            What Is DIGITRA?
+          </h2>
+          <p>
+            DIGITAL is a global online marketplace where... Lorem ipsum dolor,
+            sit amet consectetur adipisicing elit. Accusamus facilis non ad
+            saepe rem id iure magnam, similique ullam, aspernatur error nisi
+            veritatis temporibus culpa ex asperiores, numquam maiores?
+            Dignissimos.
+          </p>
+        </div>
+      </section>
+
+      <section className="py-20 bg-black text-white text-center items-center">
+        <div className="container mx-auto">
+          <p className="mb-6 text-xl">
+            Be the first to find out about exclusive offers, new trends and top
+            creators.
+          </p>
+          <div className="flex flex-col sm:flex-row justify-center items-center gap-x-4">
+            <Input
+              type="email"
+              placeholder="Enter your email"
+              className="rounded-md w-80 text-white"
+            />
+            <Button className="bg-white text-black hover:bg-black hover:text-white hover:border hover:border-white font-semibold px-6 py-2 rounded-md">
+              Subscribe
+            </Button>
+          </div>
+        </div>
+      </section>
     </>
   );
 };
