@@ -20,15 +20,6 @@ const Home = () => {
   const [products, setProducts] = useState([]);
   const [stores, setStores] = useState([]);
   const [categories, setCategories] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState({
-    label: "All Categories",
-    value: "",
-  });
-  const [searchQuery, setSearchQuery] = useState("");
-  const { addFavorite, deleteFavorite, isFavorite } = useFavorites(
-    user,
-    setUser
-  );
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -156,11 +147,11 @@ const Home = () => {
       <section className="container mx-auto mt-6 mb-10">
         <h2 className="text-2xl pt-6 pb-4">Best Sellers</h2>
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6 mb-10 pb-10">
-          {products.map((product, index) => (
+          {products.map((product) => (
             <Card
-              key={index}
+              key={product.id}
               isPressable
-              className="bg-white shadow-md rounded-lg"
+              className="bg-white rounded-lg"
               onPress={() =>
                 navigate(`/stores/${product.storeId}/products/${product.id}`)
               }

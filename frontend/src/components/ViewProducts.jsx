@@ -95,7 +95,7 @@ const ViewProducts = () => {
           }`}
         </p>
       )}
-      <div className="grid grid-cols-4 lg:grid-cols-8 gap-6">
+      <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8">
         {products.length === 0 ? (
           <p>No products found.</p>
         ) : (
@@ -103,7 +103,7 @@ const ViewProducts = () => {
             <Card
               key={product.id}
               shadow="sm"
-              className="hover:shadow-lg rounded-lg bg-white"
+              className="bg-white hover:cursor-pointer"
             >
               <CardBody
                 onClick={() =>
@@ -114,7 +114,7 @@ const ViewProducts = () => {
                     }
                   )
                 }
-                className="p-0 hover:cursor-pointer"
+                className="p-0"
               >
                 <Image
                   alt={product.name}
@@ -124,7 +124,7 @@ const ViewProducts = () => {
                   className="object-cover"
                 />
               </CardBody>
-              <div className="absolute top-2 right-0 z-20">
+              <div className="absolute top-2 right-2 z-20">
                 {session && isFavorite(product.id) ? (
                   <Button
                     size="sm"
@@ -146,7 +146,7 @@ const ViewProducts = () => {
                 )}
               </div>
               <CardFooter
-                className="text-small justify-between hover:cursor-pointer"
+                className="text-small flex flex-col items-start -ml-2"
                 onClick={() =>
                   navigate(
                     `/stores/${product.storeId}/products/${product.id}`,
@@ -157,7 +157,7 @@ const ViewProducts = () => {
                 }
               >
                 <b>{product.name}</b>
-                <div className="flex items-center">
+                <div>
                   <p>{product.price} $</p>
                 </div>
               </CardFooter>

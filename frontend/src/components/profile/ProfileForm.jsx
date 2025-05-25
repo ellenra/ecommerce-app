@@ -20,7 +20,7 @@ const profileFormSchema = z.object({
   country: z.string(),
 });
 
-const ProfileForm = ({ user }) => {
+const ProfileForm = ({ user, onProfileUpdate }) => {
   const { session } = useAuth();
 
   const {
@@ -69,6 +69,10 @@ const ProfileForm = ({ user }) => {
 
       await userservice.updateUser(session.user.id, data, session.access_token);
       toast.success("Profile updated successfully!");
+
+      if (onProfileUpdate) {
+        onProfileUpdate();
+      }
     } catch (exception) {
       console.log("error in profile form", exception.message);
       toast.error("Failed to update profile.");
@@ -76,7 +80,7 @@ const ProfileForm = ({ user }) => {
   };
 
   return (
-    <div className="w-1/3 mt-10">
+    <div className="mt-10">
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         <div className="pb-2">
           <label className="ml-3">First Name:</label>

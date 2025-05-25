@@ -21,28 +21,28 @@ const Profile = () => {
   const [selectedView, setSelectedView] = useState("account");
   const location = useLocation();
 
+  const fetchUserData = async () => {
+    try {
+      const fetchedUser = await userservice.getUser(
+        session.user.id,
+        session.access_token
+      );
+      setUser(fetchedUser);
+    } catch (error) {
+      if (error.response && error.response.status === 401) {
+        toast.error("Session has expired. Please log in again.");
+      } else {
+        toast.error("Something went wrong. Please try again later.");
+      }
+      console.error("Error fetching user data:", error);
+    }
+  };
+
   useEffect(() => {
     if (!session) {
       navigate("/login");
       return;
     }
-
-    const fetchUserData = async () => {
-      try {
-        const fetchedUser = await userservice.getUser(
-          session.user.id,
-          session.access_token
-        );
-        setUser(fetchedUser);
-      } catch (error) {
-        if (error.response && error.response.status === 401) {
-          toast.error("Session has expired. Please log in again.");
-        } else {
-          toast.error("Something went wrong. Please try again later.");
-        }
-        console.error("Error fetching user data:", error);
-      }
-    };
 
     fetchUserData();
   }, [session]);
@@ -94,7 +94,7 @@ const Profile = () => {
         {selectedView === "account" && (
           <div>
             <h2 className="text-2xl font-semibold mb-6">My Account</h2>
-            <ProfileForm user={user} />
+            <ProfileForm user={user} onProfileUpdate={fetchUserData} />
           </div>
         )}
 

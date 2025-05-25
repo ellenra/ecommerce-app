@@ -1,12 +1,5 @@
-import React, { useEffect, useState } from "react";
-import {
-  Navbar,
-  NavbarBrand,
-  NavbarContent,
-  NavbarItem,
-  Link,
-  Button,
-} from "@nextui-org/react";
+import { useEffect, useState } from "react";
+import { Link, Button } from "@nextui-org/react";
 import Select from "react-select";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import StorefrontIcon from "@mui/icons-material/Storefront";
@@ -86,7 +79,7 @@ const Layout = () => {
   return (
     <div className="flex flex-col min-h-screen font-inter">
       <ToastContainer position="top-right" autoClose={3000} hideProgressBar />
-      <nav className="w-full flex items-center justify-between bg-zinc-50 px-4 py-4">
+      <nav className="w-full flex items-center justify-between bg-gray-50 px-4 py-4">
         <div className="flex items-center space-x-3 md:hidden">
           <Button
             className="rounded hover:bg-zinc-200"
@@ -117,7 +110,7 @@ const Layout = () => {
             styles={{
               menuPortal: (base) => ({ ...base, zIndex: 9999 }),
               indicatorSeparator: () => null,
-              control: (base, state) => ({
+              control: (base) => ({
                 ...base,
                 borderColor: "e2e2e2",
                 borderRadius: "6px",
@@ -132,7 +125,9 @@ const Layout = () => {
             <Search
               setSearch={(search) => {
                 navigate(
-                  `/products?category=${selectedCategory.value}&search=${search}`
+                  `/products?category=${
+                    selectedCategory?.value || ""
+                  }&search=${search}`
                 );
               }}
             />
@@ -142,11 +137,11 @@ const Layout = () => {
         <div className="flex items-center space-x-4">
           <Link href="/cart" className="hidden sm:flex items-center">
             <ShoppingCartIcon />{" "}
-            <p className="text-xs font-bold absolute top-0 right-0 transform translate-x-2 -translate-y-2">
+            <p className="text-xs font-bold absolute top-0 right-0 transform translate-x-1 -translate-y-2">
               {cartItems.length}
             </p>
           </Link>
-          <Link href="/stores/create" className="hidden sm:flex items-center">
+          <Link href="/stores/ad" className="hidden sm:flex items-center">
             <StorefrontIcon />
           </Link>
           <Link href="/profile/account" className="hidden sm:flex items-center">
@@ -197,12 +192,14 @@ const Layout = () => {
             className="w-full"
             setSearch={(search) => {
               navigate(
-                `/products?category=${selectedCategory.value}&search=${search}`
+                `/products?category=${
+                  selectedCategory?.value || ""
+                }&search=${search}`
               );
             }}
           />
 
-          <Link href="/stores/create" className="flex justify-center">
+          <Link href="/stores/ad" className="flex justify-center">
             <StorefrontIcon />
           </Link>
 

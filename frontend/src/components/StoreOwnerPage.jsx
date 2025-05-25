@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { Button } from "@nextui-org/react";
 import StoreOwnerOrdersPage from "./StoreOwnerOrdersPage";
@@ -70,20 +70,20 @@ const StoreOwnerPage = () => {
             Dashboard
           </Button>
           <Button
-            onClick={() => handleViewChange("orders")}
-            className={`w-full p-6 ${
-              selectedView === "orders" ? "bg-zinc-100" : "hover:bg-zinc-100"
-            }`}
-          >
-            Manage Orders
-          </Button>
-          <Button
             onClick={() => handleViewChange("products")}
             className={`w-full p-6 ${
               selectedView === "products" ? "bg-zinc-100" : "hover:bg-zinc-100"
             }`}
           >
             Manage Products
+          </Button>
+          <Button
+            onClick={() => handleViewChange("orders")}
+            className={`w-full p-6 ${
+              selectedView === "orders" ? "bg-zinc-100" : "hover:bg-zinc-100"
+            }`}
+          >
+            Manage Orders
           </Button>
         </div>
       </div>
