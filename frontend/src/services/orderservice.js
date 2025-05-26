@@ -60,9 +60,25 @@ const updateOrderStatus = async (orderId, status, accessToken) => {
   }
 };
 
+const checkIfPurchased = async (userId, productId, accessToken) => {
+  try {
+    const response = await axios.get(`${baseUrl}/order-item/${productId}`, {
+      params: { userId },
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error("Error checking purchase", error.message);
+  }
+};
+
 export default {
   getOrder,
   getOrdersByUserId,
   getOrdersByStoreId,
   updateOrderStatus,
+  checkIfPurchased,
 };

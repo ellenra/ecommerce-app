@@ -1,98 +1,82 @@
 [
   {
-    "key": "Fashion",
-    "label": "Fashion"
+    "key": "Ebooks",
+    "label": "E-books"
   },
   {
-    "key": "Electronics",
-    "label": "Electronics"
+    "key": "OnlineCourses",
+    "label": "Online Courses"
   },
   {
-    "key": "HomeAndGarden",
-    "label": "Home & Garden"
+    "key": "Software",
+    "label": "Software"
   },
   {
-    "key": "BeautyAndHealth",
-    "label": "Beauty & Health"
+    "key": "MobileApps",
+    "label": "Mobile Apps"
   },
   {
-    "key": "SportsAndOutdoors",
-    "label": "Sports & Outdoors"
+    "key": "MusicAndAudio",
+    "label": "Music & Audio"
   },
   {
-    "key": "ToysAndGames",
-    "label": "Toys & Games"
+    "key": "GraphicsAndDesign",
+    "label": "Graphics & Design"
   },
   {
-    "key": "Books",
-    "label": "Books"
+    "key": "Photography",
+    "label": "Photography"
   },
   {
-    "key": "Accessories",
-    "label": "Accessories"
+    "key": "VideoAndAnimation",
+    "label": "Video & Animation"
   },
   {
-    "key": "FoodAndBeverages",
-    "label": "Food & Beverages"
+    "key": "Printables",
+    "label": "Printables"
   },
   {
-    "key": "Art",
-    "label": "Art"
+    "key": "WebsiteTemplates",
+    "label": "Website Templates"
   },
   {
-    "key": "Handmade",
-    "label": "Handmade"
+    "key": "Fonts",
+    "label": "Fonts"
   },
   {
-    "key": "Automotive",
-    "label": "Automotive"
+    "key": "3DModels",
+    "label": "3D Models"
   },
   {
-    "key": "PetSupplies",
-    "label": "Pet Supplies"
+    "key": "GameAssets",
+    "label": "Game Assets"
   },
   {
-    "key": "BabyAndKids",
-    "label": "Baby & Kids"
+    "key": "CodeSnippets",
+    "label": "Code Snippets"
   },
   {
-    "key": "Music",
-    "label": "Music"
+    "key": "DigitalArt",
+    "label": "Digital Art"
   },
   {
-    "key": "Collectibles",
-    "label": "Collectibles"
+    "key": "DocumentsAndContracts",
+    "label": "Documents & Contracts"
   },
   {
-    "key": "OfficeSupplies",
-    "label": "Office Supplies"
+    "key": "MarketingAssets",
+    "label": "Marketing Assets"
   },
   {
-    "key": "Furniture",
-    "label": "Furniture"
+    "key": "GuidesAndTutorials",
+    "label": "Guides & Tutorials"
   },
   {
-    "key": "Travel",
-    "label": "Travel"
+    "key": "PlannersAndJournals",
+    "label": "Planners & Journals"
   },
   {
-    "key": "TechAndGadgets",
-    "label": "Tech & Gadgets"
-  },
-  {
-    "key": "GiftsAndNovelties",
-    "label": "Gifts & Novelties"
-  },
-  {
-    "key": "Vintage",
-    "label": "Vintage"
-  },
-  {
-    "key": "DIYAndCrafts",
-    "label": "DIY & Crafts"
-  },
-  {
-    "key": "HealthAndFitness",
-    "label": "Health & Fitness"
+    "key": "PresetsAndFilters",
+    "label": "Presets & Filters"
   }
 ]

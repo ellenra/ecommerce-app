@@ -79,89 +79,93 @@ const Layout = () => {
   return (
     <div className="flex flex-col min-h-screen font-inter">
       <ToastContainer position="top-right" autoClose={3000} hideProgressBar />
-      <nav className="w-full flex items-center justify-between bg-gray-50 px-4 py-4">
-        <div className="flex items-center space-x-3 md:hidden">
-          <Button
-            className="rounded hover:bg-zinc-200"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+      <nav className="border border-b-[#ececec]">
+        <div className="max-w-7xl mx-auto  flex items-center justify-between px-4 py-4">
+          <div className="flex items-center space-x-3 md:hidden">
+            <Button
+              className="rounded hover:bg-zinc-200"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            >
+              {mobileMenuOpen ? <CloseIcon /> : <MenuIcon />}
+            </Button>
+            <div onClick={() => navigate("/")} className="hover:cursor-pointer">
+              <p className="text-xl text-inherit">DIGITRA</p>
+            </div>
+          </div>
+
+          <div
+            onClick={() => navigate("/")}
+            className="hidden md:flex md:ml-8 hover:cursor-pointer"
           >
-            {mobileMenuOpen ? <CloseIcon /> : <MenuIcon />}
-          </Button>
-          <div onClick={() => navigate("/")} className="hover:cursor-pointer">
             <p className="text-xl text-inherit">DIGITRA</p>
           </div>
-        </div>
 
-        <div
-          onClick={() => navigate("/")}
-          className="hidden md:flex md:ml-8 hover:cursor-pointer"
-        >
-          <p className="text-xl text-inherit">DIGITRA</p>
-        </div>
-
-        <div className="hidden md:flex items-center gap-4 flex-1 mx-24">
-          <Select
-            value={selectedCategory}
-            onChange={handleCategoryChange}
-            options={categories}
-            className="w-44"
-            placeholder="Categories"
-            menuPortalTarget={document.body}
-            styles={{
-              menuPortal: (base) => ({ ...base, zIndex: 9999 }),
-              indicatorSeparator: () => null,
-              control: (base) => ({
-                ...base,
-                borderColor: "e2e2e2",
-                borderRadius: "6px",
-                padding: "2px",
-              }),
-            }}
-            components={{
-              DropdownIndicator: () => <MenuIcon className="mr-2" />,
-            }}
-          />
-          <div className="flex-1">
-            <Search
-              setSearch={(search) => {
-                navigate(
-                  `/products?category=${
-                    selectedCategory?.value || ""
-                  }&search=${search}`
-                );
+          <div className="hidden md:flex items-center gap-4 flex-1 mx-24">
+            <Select
+              value={selectedCategory}
+              onChange={handleCategoryChange}
+              options={categories}
+              className="w-44"
+              placeholder="Categories"
+              menuPortalTarget={document.body}
+              styles={{
+                menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+                indicatorSeparator: () => null,
+                control: (base) => ({
+                  ...base,
+                  borderColor: "e2e2e2",
+                  padding: "2px",
+                }),
+              }}
+              components={{
+                DropdownIndicator: () => <MenuIcon className="mr-2" />,
               }}
             />
+            <div className="flex-1">
+              <Search
+                setSearch={(search) => {
+                  navigate(
+                    `/products?category=${
+                      selectedCategory?.value || ""
+                    }&search=${search}`
+                  );
+                }}
+              />
+            </div>
           </div>
-        </div>
 
-        <div className="flex items-center space-x-4">
-          <Link href="/cart" className="hidden sm:flex items-center">
-            <ShoppingCartIcon />{" "}
-            <p className="text-xs font-bold absolute top-0 right-0 transform translate-x-1 -translate-y-2">
-              {cartItems.length}
-            </p>
-          </Link>
-          <Link href="/stores/ad" className="hidden sm:flex items-center">
-            <StorefrontIcon />
-          </Link>
-          <Link href="/profile/account" className="hidden sm:flex items-center">
-            <PersonOutlineIcon />
-          </Link>
-          <Link href="/cart" className="flex sm:hidden items-center">
-            <ShoppingCartIcon />{" "}
-            <p className="text-xs font-bold absolute top-0 right-0 transform translate-x-2 -translate-y-2">
-              {cartItems.length}
-            </p>
-          </Link>
-          {session ? (
-            <>
-              <Button onClick={handleLogout}>Log out</Button>
-            </>
-          ) : (
-            <>
-              <Link href="/login">Sign in</Link>
-            </>
-          )}
+          <div className="flex items-center space-x-4">
+            <Link href="/cart" className="hidden sm:flex items-center">
+              <ShoppingCartIcon />{" "}
+              <p className="text-xs font-bold absolute top-0 right-0 transform translate-x-1 -translate-y-2">
+                {cartItems.length}
+              </p>
+            </Link>
+            <Link href="/stores/ad" className="hidden sm:flex items-center">
+              <StorefrontIcon />
+            </Link>
+            <Link
+              href="/profile/account"
+              className="hidden sm:flex items-center"
+            >
+              <PersonOutlineIcon />
+            </Link>
+            <Link href="/cart" className="flex sm:hidden items-center">
+              <ShoppingCartIcon />{" "}
+              <p className="text-xs font-bold absolute top-0 right-0 transform translate-x-2 -translate-y-2">
+                {cartItems.length}
+              </p>
+            </Link>
+            {session ? (
+              <>
+                <Button onClick={handleLogout}>Log out</Button>
+              </>
+            ) : (
+              <>
+                <Link href="/login">Sign in</Link>
+              </>
+            )}
+          </div>
         </div>
       </nav>
 
@@ -213,7 +217,7 @@ const Layout = () => {
         <Outlet />{" "}
       </main>
       <div>
-        <footer className="p-6 text-center bg-zinc-50">
+        <footer className="p-6 text-center border border-b-[#ececec]">
           <p className="text-xl">DIGITRA</p>
         </footer>
       </div>

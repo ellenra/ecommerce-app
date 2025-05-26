@@ -16,14 +16,12 @@ model Admin {
 }
 
 model User {
-  id        String   @id
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now()) @updatedAt
-
-  firstName String
-  lastName  String
-  email     String @unique
-
+  id         String     @id
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @default(now()) @updatedAt
+  firstName  String
+  lastName   String
+  email      String     @unique
   address    String?
   postalCode String?
   city       String?
@@ -31,27 +29,18 @@ model User {
   mobile     String?
   imageUrl   String     @default("")
   status     UserStatus @default(ACTIVE)
-
-  favorites Product[] @relation("UserFavorites")
-  orders    Order[]
-  cart      Cart?
-  reviews   Review[]
-
-  seller Boolean @default(false)
-  store  Store?
-}
-
-enum UserStatus {
-  ACTIVE
-  SUSPENDED
-  DELETED
+  seller     Boolean    @default(false)
+  cart       Cart?
+  orders     Order[]
+  reviews    Review[]
+  store      Store?
+  favorites  Product[]  @relation("UserFavorites")
 }
 
 model Store {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now()) @updatedAt
-
+  id             String        @id @default(cuid())
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @default(now()) @updatedAt
   userId         String        @unique
   name           String        @unique
   description    String
@@ -59,19 +48,11 @@ model Store {
   bannerUrl      String?
   categoryId     String
   status         StoreStatus   @default(PENDING)
+  ratings        Float         @default(0)
+  products       Product[]
+  user           User          @relation(fields: [userId], references: [id])
   paymentDetails StorePayment?
-
-  ratings Float @default(0)
-
-  user     User          @relation(fields: [userId], references: [id])
-  products Product[]
-  reviews  StoreReview[]
-}
-
-enum StoreStatus {
-  PENDING
-  ACTIVE
-  SUSPENDED
+  reviews        StoreReview[]
 }
 
 model StorePayment {
@@ -80,8 +61,7 @@ model StorePayment {
   accountName   String
   accountNumber String
   bankName      String
-
-  store Store @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  store         Store  @relation(fields: [storeId], references: [id], onDelete: Cascade)
 }
 
 model StoreReview {
@@ -91,81 +71,72 @@ model StoreReview {
   userId    String
   rating    Int
   comment   String?
-
-  store Store @relation(fields: [storeId], references: [id])
+  store     Store    @relation(fields: [storeId], references: [id])
 }
 
 model Product {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now()) @updatedAt
-
+  id          String                 @id @default(cuid())
+  createdAt   DateTime               @default(now())
+  updatedAt   DateTime               @default(now()) @updatedAt
   name        String
   description String
   price       Float
   salePrice   Float?
   quantity    Int?
-  imageUrl    String  @default("")
-  productUrl String
-  isActive    Boolean @default(true)
-  ratings     Float   @default(0)
-
-  storeId String
-  userId  String
-
-  store Store  @relation(fields: [storeId], references: [id], onDelete: Cascade)
-  users User[] @relation("UserFavorites")
-
-  categories CategoriesOnProducts[]
-  orders     OrderItem[]
-  carts      CartItem[]
-  reviews    Review[]
+  imageUrl    String                 @default("")
+  productUrl  String
+  isActive    Boolean                @default(true)
+  ratings     Float                  @default(0)
+  storeId     String
+  userId      String
+  carts       CartItem[]
+  categories  CategoriesOnProducts[]
+  orders      OrderItem[]
+  store       Store                  @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  reviews     Review[]
+  users       User[]                 @relation("UserFavorites")
 }
 
 model Review {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
   rating    Int
   comment   String?
   userId    String
   productId String
-
-  user    User    @relation(fields: [userId], references: [id])
-  product Product @relation(fields: [productId], references: [id])
+  product   Product  @relation(fields: [productId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
 }
 
 model ProductCategory {
-  id       String                 @id @default(cuid())
-  name     String
-  parentId String? //for subcategoriess later on
-  products CategoriesOnProducts[]
+  id         String                 @id @default(cuid())
+  name       String
+  parentId   String?
+  pictureurl String?
+  products   CategoriesOnProducts[]
 }
 
 model CategoriesOnProducts {
   productId  String
-  product    Product         @relation(fields: [productId], references: [id])
   categoryId String
   category   ProductCategory @relation(fields: [categoryId], references: [id])
+  product    Product         @relation(fields: [productId], references: [id])
 
   @@id([productId, categoryId])
 }
 
 model Order {
-  id            String        @id @default(cuid())
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @default(now()) @updatedAt
-  userId        String
-  total         Float
-  status        OrderStatus   @default(PENDING)
-  paymentStatus PaymentStatus @default(PENDING)
-
-  user       User        @relation(fields: [userId], references: [id])
-  orderItems OrderItem[]
-
+  id                String           @id @default(cuid())
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @default(now()) @updatedAt
+  userId            String
+  total             Float
+  paymentStatus     PaymentStatus    @default(PENDING)
   shippingAddressId Int?
   shippingAddress   ShippingAddress? @relation(fields: [shippingAddressId], references: [id])
+  user              User             @relation(fields: [userId], references: [id])
+  orderItems        OrderItem[]
 }
 
 model ShippingAddress {
@@ -176,8 +147,7 @@ model ShippingAddress {
   state      String?
   postalCode String
   country    String
-
-  Order Order[]
+  Order      Order[]
 }
 
 model OrderItem {
@@ -187,25 +157,15 @@ model OrderItem {
   orderId   String
   productId String
   quantity  Int      @default(1)
-
-  order   Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  product Product @relation(fields: [productId], references: [id])
-}
-
-enum OrderStatus {
-  PENDING
-  SHIPPED
-  DELIVERED
-  CANCELLED
-  RETURNED
+  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product   Product  @relation(fields: [productId], references: [id])
 }
 
 model Cart {
-  id        String   @id @default(uuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now()) @updatedAt
-  userId    String   @unique
-
+  id        String     @id @default(uuid())
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @default(now()) @updatedAt
+  userId    String     @unique
   user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   cartItems CartItem[]
 }
@@ -217,9 +177,20 @@ model CartItem {
   quantity  Int      @default(1)
   productId String
   cartId    String
+  cart      Cart     @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  product   Product  @relation(fields: [productId], references: [id])
+}
 
-  product Product @relation(fields: [productId], references: [id])
-  cart    Cart    @relation(fields: [cartId], references: [id], onDelete: Cascade)
+enum UserStatus {
+  ACTIVE
+  SUSPENDED
+  DELETED
+}
+
+enum StoreStatus {
+  PENDING
+  ACTIVE
+  SUSPENDED
 }
 
 enum PaymentStatus {

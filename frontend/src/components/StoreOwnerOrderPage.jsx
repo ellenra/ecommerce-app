@@ -2,19 +2,10 @@ import { Button, Card, CardBody, Image } from "@nextui-org/react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
 import orderservice from "../services/orderservice";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 
 const fetchOrderById = async (orderId, accessToken) => {
   const response = await orderservice.getOrder(orderId, accessToken);
-  return response;
-};
-
-const updateOrderStatus = async ({ orderId, status, accessToken }) => {
-  const response = await orderservice.updateOrderStatus(
-    orderId,
-    status,
-    accessToken
-  );
   return response;
 };
 
@@ -23,7 +14,6 @@ const StoreOwnerOrderPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { session } = location.state;
-  const queryClient = useQueryClient();
 
   const {
     data: order,
@@ -35,35 +25,6 @@ const StoreOwnerOrderPage = () => {
     enabled: !!orderId,
   });
 
-  const mutation = useMutation({
-    mutationFn: updateOrderStatus,
-    onMutate: async (newStatus) => {
-      await queryClient.cancelQueries(["order", orderId]);
-      const previousOrder = queryClient.getQueryData(["order", orderId]);
-
-      queryClient.setQueryData(["order", orderId], (oldOrder) => ({
-        ...oldOrder,
-        status: newStatus.status,
-      }));
-
-      return { previousOrder };
-    },
-    onError: (context) => {
-      queryClient.setQueryData(["order", orderId], context.previousOrder);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries(["order", orderId]);
-    },
-  });
-
-  const handleStatusChange = (newStatus) => {
-    mutation.mutate({
-      orderId,
-      status: newStatus,
-      accessToken: session.access_token,
-    });
-  };
-
   if (isLoading) return <div>Loading order...</div>;
 
   if (error) return <div>Error loading order!</div>;
@@ -72,28 +33,13 @@ const StoreOwnerOrderPage = () => {
     <>
       <Button
         onClick={() => navigate(`/stores/${storeId}/orders`)}
-        className="ml-10 rounded px-4 py-2 hover:bg-gray-100 text-sm"
+        className="ml-10 mt-4 rounded text-sm"
       >
         {" "}
         <KeyboardBackspaceIcon />
       </Button>
       <div className="py-6">
         <div className="max-w-3xl mx-auto">
-          <Button
-            onClick={() => handleStatusChange("SHIPPED")}
-            disabled={order.status === "SHIPPED"}
-            className={`mb-6 border border-zinc-200 rounded-lg ${
-              order.status === "SHIPPED"
-                ? "bg-zinc-100"
-                : "hover:bg-zinc-100 hover:border-zinc-300"
-            }`}
-          >
-            {mutation.isLoading
-              ? "Updating..."
-              : order.status === "SHIPPED"
-              ? "SHIPPED"
-              : "Change Status: SHIPPED"}{" "}
-          </Button>
           <h1 className="text-xl font-bold text-center mb-10">
             Order Number: {order.id}
           </h1>
@@ -105,35 +51,15 @@ const StoreOwnerOrderPage = () => {
                 {new Date(order.createdAt).toLocaleDateString()}
               </p>
             </div>
+
             <div className="flex justify-between items-center border-b pb-4 mb-6">
-              <p className="text-sm">Status:</p>
-              {order.status === "PENDING" ? (
-                <p className="font-semibold">PROCESSING</p>
-              ) : (
-                <p className="font-semibold">{order.status}</p>
-              )}
+              <p className="text-sm">Payment Status:</p>
+              <p className="font-semibold">{order.paymentStatus}</p>
             </div>
+
             <div className="flex justify-between items-center border-b pb-4 mb-6">
               <p className="text-sm">Total:</p>
               <p className="font-semibold">${order.total.toFixed(2)}</p>
-            </div>
-
-            <div className="flex justify-between">
-              <p className="text-sm">Shipping Address:</p>
-              <p className="font-semibold">{order.shippingAddress.line1}</p>
-            </div>
-            {order.shippingAddress.line2 && (
-              <div className="flex justify-end">
-                <p className="font-semibold">{order.shippingAddress.line2}</p>
-              </div>
-            )}
-            <div className="flex justify-end">
-              <p className="font-semibold">
-                {order.shippingAddress.postalCode} {order.shippingAddress.city}
-              </p>
-            </div>
-            <div className="flex justify-end">
-              <p className="font-semibold">{order.shippingAddress.country}</p>
             </div>
 
             <ul>

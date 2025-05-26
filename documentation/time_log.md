@@ -36,6 +36,8 @@
 |  31.1.   | 5     | Improve home page, product filtering and database schema.                                                  |
 |  1.2.    | 3     | Improve navigation by adding state, add products page for sellers.                                         |
 |  4-5.2.  |  4    | Start building admin dashboard.                                                                            |
-|   6.2.   | 3     |  Add functionality for sellers to unlist/list products.                                                    |
+|   6.2.   | 3     | Add functionality for sellers to unlist/list products.                                                     |
+|  22.5.   | 4     | Improved UI and product functionality.                                                                     |
+|  23.5.   | 4     | Improved UI, tested all features and fixed stuff.                                                          |
 
-| yht | 120|
+| yht | 131 |

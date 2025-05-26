@@ -50,7 +50,7 @@ function App() {
             element={<ProductForm />}
           />
           <Route path="profile/:view" element={<Profile />} />
-          <Route path="orders/:orderId" element={<OrderPage />} />
+          <Route path="purchases/:orderId" element={<OrderPage />} />
           <Route path="cart" element={<Cart />} />
           <Route path="checkout-success" element={<CheckoutSuccess />} />
         </Route>{" "}

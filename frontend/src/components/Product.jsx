@@ -17,6 +17,7 @@ import storeservice from "../services/storeservice";
 import { useAuth } from "../hooks/AuthContext";
 import { toast } from "react-toastify";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import orderservice from "../services/orderservice";
 
 const fetchProductById = async (productId, storeId) => {
   const response = await storeservice.getProduct(productId, storeId);
@@ -30,6 +31,15 @@ const updateProductStatus = async ({ productId, storeId, accessToken }) => {
     accessToken
   );
   return response;
+};
+
+const checkIfPurchased = async (userId, productId, accessToken) => {
+  const response = await orderservice.checkIfPurchased(
+    userId,
+    productId,
+    accessToken
+  );
+  return response.hasPurchased;
 };
 
 const Product = () => {
@@ -64,11 +74,20 @@ const Product = () => {
     enabled: !!productId,
   });
 
+  const { data: hasPurchased, isLoading: isCheckingPurchase } = useQuery({
+    queryKey: ["hasPurchased", session?.user.id, productId],
+    queryFn: () =>
+      checkIfPurchased(session.user.id, productId, session.access_token),
+    enabled: !!session?.user.id && !!productId,
+  });
+
   useEffect(() => {
     if (session && product) {
       setIsOwner(session.user.id === product.userId);
     }
   }, [session, product]);
+
+  useEffect(() => {});
 
   const mutation = useMutation({
     mutationFn: updateProductStatus,
@@ -131,7 +150,7 @@ const Product = () => {
     <>
       <Button
         onClick={() => navigate(from, { state: { statusFilter } })}
-        className="ml-6 mt-6 border border-zinc-200 text-sm rounded-lg hover:bg-zinc-100"
+        className="ml-10 mt-4 text-sm rounded-lg"
       >
         <KeyboardBackspaceIcon />
       </Button>
@@ -151,19 +170,32 @@ const Product = () => {
             {product.name}
           </h1>
           <p className="text-lg mt-4 text-zinc-600">{product.description}</p>
-          <p className="text-xl font-semibold mt-6 text-zinc-900">
-            {product.price} €
-          </p>
-
-          <div className="mt-6 flex space-x-4">
-            <Button
-              color="gradient"
-              onClick={() => addToCart(product)}
-              className="w-full md:w-auto border border-zinc-200 rounded-lg py-2 text-sm hover:bg-zinc-100 hover:border-zinc-300"
-            >
-              Add to cart
-            </Button>
-          </div>
+          {!hasPurchased ? (
+            <>
+              <p className="text-xl font-semibold mt-6 text-zinc-800">
+                {product.price} €
+              </p>
+              <div className="mt-6 flex space-x-4">
+                <Button
+                  color="gradient"
+                  onClick={() => addToCart(product)}
+                  className="w-full md:w-auto border border-zinc-200 rounded-lg py-2 text-sm hover:bg-zinc-100 hover:border-zinc-300"
+                >
+                  Add to cart
+                </Button>
+              </div>
+            </>
+          ) : (
+            <p className="mt-4 underline">
+              <a
+                href={product.productUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Download file
+              </a>
+            </p>
+          )}
 
           {isOwner && (
             <div className="mt-20 space-y-4">

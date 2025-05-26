@@ -21,16 +21,19 @@ const ViewStores = () => {
   }, []);
 
   return (
-    <div className="grid grid-cols-4">
+    <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-4">
       {stores.map((store) => (
         <Card
           key={store.id}
           isPressable
-          className="hover:shadow-lg rounded-lg"
+          className="bg-white hover:cursor-pointer"
           onClick={() => navigate(`${store.id}`)}
         >
           <CardBody className="flex items-center">
-            <Image src={store.profileUrl} className="rounded-lg h-48 w-48" />
+            <Image
+              src={store.profileUrl}
+              className="object-cover w-full h-[200px]"
+            />
             <h3 className="text-lg mt-4">{store.name}</h3>
             <p>{store.description}</p>
           </CardBody>

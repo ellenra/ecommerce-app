@@ -23,7 +23,7 @@ const Search = ({ setSearch }) => {
             <SearchIcon className="cursor-pointer" />
           </button>
         }
-        className="border rounded-lg w-full bg-white"
+        className="border rounded-s bg-white"
       />
     </form>
   );

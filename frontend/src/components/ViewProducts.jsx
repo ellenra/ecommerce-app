@@ -95,7 +95,7 @@ const ViewProducts = () => {
           }`}
         </p>
       )}
-      <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8">
+      <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-4">
         {products.length === 0 ? (
           <p>No products found.</p>
         ) : (
@@ -119,12 +119,10 @@ const ViewProducts = () => {
                 <Image
                   alt={product.name}
                   src={product.imageUrl}
-                  height={200}
-                  width={200}
-                  className="object-cover"
+                  className="object-cover w-full h-[200px]"
                 />
               </CardBody>
-              <div className="absolute top-2 right-2 z-20">
+              <div className="absolute top-2 -right-2 z-20">
                 {session && isFavorite(product.id) ? (
                   <Button
                     size="sm"

@@ -8,7 +8,6 @@ orderRouter.get("/:orderId", authMiddleware, async (req, res) => {
   const { orderId } = req.params;
 
   //TODO: Add check if user is owner of the products being ordered
-
   try {
     const order = await prisma.order.findUnique({
       where: { id: orderId },
@@ -45,7 +44,7 @@ orderRouter.get("/", authMiddleware, async (req, res) => {
       }
 
       orders = await prisma.order.findMany({
-        where: { userId: userId },
+        where: { userId: userId, paymentStatus: "COMPLETED" },
         include: {
           user: true,
           orderItems: {
@@ -120,6 +119,27 @@ orderRouter.put("/:orderId", authMiddleware, async (req, res) => {
     res.json(updatedOrder);
   } catch (error) {
     res.status(500).json({ message: "Error changing status" });
+  }
+});
+
+orderRouter.get("/order-item/:productId", authMiddleware, async (req, res) => {
+  const { productId } = req.params;
+  const userIdFromToken = req.user.user.id;
+
+  try {
+    const hasPurchased = await prisma.orderItem.findFirst({
+      where: {
+        productId: productId,
+        order: {
+          userId: userIdFromToken,
+          paymentStatus: "COMPLETED",
+        },
+      },
+    });
+
+    res.json({ hasPurchased: !!hasPurchased });
+  } catch (error) {
+    res.status(500).json({ message: "Error checking if purchased" });
   }
 });
 

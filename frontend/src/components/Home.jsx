@@ -77,7 +77,7 @@ const Home = () => {
 
   return (
     <>
-      <div className="container mx-auto text-center py-28 px-4">
+      <div className="container max-w-7xl mx-auto text-center py-24 px-4">
         <h1 className="text-5xl">
           Discover, Buy and Sell Digital Products Effortlessly
         </h1>
@@ -100,7 +100,7 @@ const Home = () => {
         </Button>
       </div>
 
-      <section className="container mx-auto">
+      <section className="container max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl">Popular Categories</h2>
           <Button
@@ -111,32 +111,20 @@ const Home = () => {
           </Button>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {categories.slice(0, 4).map((category) => (
+          {categories.slice(0, 8).map((category) => (
             <div
               key={category.value}
-              className="group bg-white rounded-xl shadow hover:shadow:lg overflow-hidden"
+              className="group flex justify-center p-2 rounded-md border border-b-[#ececec]"
             >
-              <Card className="bg-gray-50 hover:cursor-pointer">
-                <CardHeader
-                  onClick={() =>
-                    navigate(`/products?category=${category.value}`)
-                  }
-                  className="-mb-3 mt-1"
-                >
-                  <p className="overflow-hidden text-ellipsis text-lg">
-                    {category.label}
-                  </p>
-                </CardHeader>
+              <Card className="hover:cursor-pointer">
                 <CardBody
                   onClick={() =>
                     navigate(`/products?category=${category.value}`)
                   }
                 >
-                  <Image
-                    src={"../../mobile.png"}
-                    alt={category.label}
-                    className="object-cover rounded-xl"
-                  />
+                  <p className="overflow-hidden text-ellipsis text-lg">
+                    {category.label}
+                  </p>
                 </CardBody>
               </Card>
             </div>
@@ -144,7 +132,7 @@ const Home = () => {
         </div>
       </section>
 
-      <section className="container mx-auto mt-6 mb-10">
+      <section className="container max-w-7xl mx-auto mt-6 mb-10">
         <h2 className="text-2xl pt-6 pb-4">Best Sellers</h2>
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6 mb-10 pb-10">
           {products.map((product) => (
@@ -171,7 +159,7 @@ const Home = () => {
       </section>
 
       <section className="py-20 bg-zinc-100">
-        <div className="container mx-auto px-6 text-center">
+        <div className="container max-w-7xl mx-auto px-6 text-center">
           <h2 className="text-3xl sm:text-4xl font-semibold mb-10">
             What Is DIGITRA?
           </h2>
@@ -197,7 +185,7 @@ const Home = () => {
               placeholder="Enter your email"
               className="rounded-md w-80 text-white"
             />
-            <Button className="bg-white text-black hover:bg-black hover:text-white hover:border hover:border-white font-semibold px-6 py-2 rounded-md">
+            <Button className="bg-white text-black hover:bg-black hover:text-white hover:border hover:border-white px-6 py-2 rounded-md">
               Subscribe
             </Button>
           </div>

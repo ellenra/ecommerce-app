@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "../hooks/AuthContext";
 import {
   Table,
@@ -41,7 +41,7 @@ const StoreOwnerOrdersPage = ({ store }) => {
       <Table>
         <TableHeader>
           <TableColumn>Order Number</TableColumn>
-          <TableColumn>Status</TableColumn>
+          <TableColumn>Payment Status</TableColumn>
           <TableColumn>Order Date</TableColumn>
           <TableColumn>Total</TableColumn>
         </TableHeader>
@@ -58,7 +58,7 @@ const StoreOwnerOrdersPage = ({ store }) => {
               className="hover:bg-zinc-100 cursor-pointer"
             >
               <TableCell>{order.id}</TableCell>
-              <TableCell>{order.status}</TableCell>
+              <TableCell>{order.paymentStatus}</TableCell>
               <TableCell>
                 {new Date(order.createdAt).toLocaleDateString()}
               </TableCell>

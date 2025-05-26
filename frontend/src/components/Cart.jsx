@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import CheckoutButton from "./checkout/CheckoutButton";
 
 const Cart = () => {
-  const { cartItems, removeFromCart, clearCart, addToCart } = useCart();
+  const { cartItems, clearCart } = useCart();
   const navigate = useNavigate();
 
   const totalPrice = cartItems.reduce(
@@ -17,68 +17,55 @@ const Cart = () => {
       <h1 className="text-2xl text-center mb-6">Shopping Cart</h1>
 
       {cartItems.length > 0 ? (
-        <div className="flex flex-col items-center gap-6">
+        <div className="flex flex-col items-center gap-6 p-6 max-w-3xl mx-auto">
           {cartItems.map((item) => (
-            <Card
-              key={item.id}
-              className="w-4/5 lg:w-[40%] shadow-lg rounded-lg"
-            >
-              <CardBody
-                className="flex flex-row items-center gap-4 hover:cursor-pointer"
-                onClick={() =>
-                  navigate(`/stores/${item.storeId}/products/${item.id}`)
+            <>
+              <Card
+                key={item.id}
+                className="w-full rounded-sm"
+                isPressable
+                onPress={() =>
+                  navigate(`/stores/${item.storeId}/products/${item.id}`, {
+                    state: { from: "/cart" },
+                  })
                 }
               >
-                <Image
-                  alt={item.name}
-                  src={item.imageUrl}
-                  className="w-28 h-28 rounded-lg mt-4"
-                />
-                <div className="flex-1">
-                  <h2>{item.name}</h2>
-                  <p>{item.price} €</p>
-                  <p className="text-sm text-zinc-500">
-                    Quantity: {item.count}
-                  </p>
+                <CardBody className="flex flex-row gap-10">
+                  <Image
+                    alt={item.name}
+                    src={item.imageUrl}
+                    className="w-28 h-28 rounded-sm"
+                  />
+                  <div className="flex-1">
+                    <h2>{item.name}</h2>
+                    <p>{item.price} €</p>
+                  </div>
+                </CardBody>
+              </Card>
+              <div className="p-6 bg-zinc-50 rounded-sm w-full">
+                <h3 className="ml-4">Order Summary</h3>
+                <p className="text-sm ml-4">
+                  Total:
+                  <span className="font-bold">{totalPrice.toFixed(2)} €</span>
+                </p>
+                <div className="mt-4 flex justify-between">
+                  <Button onClick={clearCart}>Clear Cart</Button>
+                  <CheckoutButton cartItems={cartItems} />
                 </div>
-              </CardBody>
-              <CardFooter className="flex justify-between items-center">
-                <div>
-                  <Button onClick={() => removeFromCart(item.id, null)}>
-                    -
-                  </Button>
-                  <Button onClick={() => addToCart(item)}>+</Button>
-                </div>
-                <Button onClick={() => removeFromCart(item.id, item)}>
-                  Remove
+                <Button
+                  className="text-sm underline"
+                  onClick={() => navigate("/stores")}
+                >
+                  Continue shopping
                 </Button>
-              </CardFooter>
-            </Card>
+              </div>
+            </>
           ))}
         </div>
       ) : (
         <p className="text-center mt-10">
           Your cart is empty. Start adding items!
         </p>
-      )}
-
-      {cartItems.length > 0 && (
-        <div className="m-6 p-6 bg-zinc-50 rounded-lg w-4/5 lg:w-[40%] mx-auto shadow-lg">
-          <h3 className="ml-4">Orger Summary</h3>
-          <p className="text-sm ml-4">
-            Total: <span className="font-bold">{totalPrice.toFixed(2)} €</span>
-          </p>
-          <div className="mt-4 flex justify-between">
-            <Button onClick={clearCart}>Clear Cart</Button>
-            <CheckoutButton cartItems={cartItems} />
-          </div>
-          <Button
-            className="text-sm underline"
-            onClick={() => navigate("/stores")}
-          >
-            Continue shopping
-          </Button>
-        </div>
       )}
     </div>
   );
