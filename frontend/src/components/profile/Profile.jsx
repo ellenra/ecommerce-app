@@ -9,6 +9,7 @@ import { useFavorites } from "../../hooks/favoriteProducts";
 import ProfileForm from "./ProfileForm";
 import OrdersPage from "./OrdersPage";
 import { toast } from "react-toastify";
+import AccountDashboard from "./AccountDashboard";
 
 const Profile = () => {
   const { session } = useAuth();
@@ -73,6 +74,14 @@ const Profile = () => {
           My Account
         </Button>
         <Button
+          onClick={() => handleViewChange("profile")}
+          className={`w-full p-6 ${
+            selectedView === "profile" ? "bg-zinc-100" : "hover:bg-zinc-100"
+          }`}
+        >
+          Profile
+        </Button>
+        <Button
           onClick={() => handleViewChange("favorites")}
           className={`w-full p-6 ${
             selectedView === "favorites" ? "bg-zinc-100" : "hover:bg-zinc-100"
@@ -81,12 +90,14 @@ const Profile = () => {
           Favorites
         </Button>
         <Button
-          onClick={() => handleViewChange("orders")}
+          onClick={() => handleViewChange("order-history")}
           className={`w-full p-6 ${
-            selectedView === "orders" ? "bg-zinc-100" : "hover:bg-zinc-100"
+            selectedView === "order-history"
+              ? "bg-zinc-100"
+              : "hover:bg-zinc-100"
           }`}
         >
-          Orders
+          Order History
         </Button>
       </div>
 
@@ -94,6 +105,13 @@ const Profile = () => {
         {selectedView === "account" && (
           <div>
             <h2 className="text-2xl font-semibold mb-6">My Account</h2>
+            <AccountDashboard user={user} />
+          </div>
+        )}
+
+        {selectedView === "profile" && (
+          <div>
+            <h2 className="text-2xl font-semibold mb-6">Profile</h2>
             <ProfileForm user={user} onProfileUpdate={fetchUserData} />
           </div>
         )}
@@ -160,9 +178,9 @@ const Profile = () => {
           </div>
         )}
 
-        {selectedView === "orders" && (
+        {selectedView === "order-history" && (
           <div>
-            <h2 className="text-2xl font-semibold mb-6">Orders</h2>
+            <h2 className="text-2xl font-semibold mb-6">Order History</h2>
             <OrdersPage />
           </div>
         )}

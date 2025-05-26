@@ -14,8 +14,8 @@ const OrderPage = () => {
   return (
     <>
       <Button
-        onClick={() => navigate("/profile/orders")}
-        className="ml-10 rounded px-4 py-2 hover:bg-gray-100 text-sm"
+        onClick={() => navigate("/profile/purchases")}
+        className="ml-10 mt-4 rounded text-sm"
       >
         {" "}
         <KeyboardBackspaceIcon />
@@ -34,34 +34,8 @@ const OrderPage = () => {
               </p>
             </div>
             <div className="flex justify-between items-center border-b pb-4 mb-6">
-              <p className="text-sm">Status:</p>
-              {order.status === "PENDING" ? (
-                <p className="font-semibold">PROCESSING</p>
-              ) : (
-                <p className="font-semibold">{order.status}</p>
-              )}
-            </div>
-            <div className="flex justify-between items-center border-b pb-4 mb-6">
               <p className="text-sm">Total:</p>
               <p className="font-semibold">${order.total.toFixed(2)}</p>
-            </div>
-
-            <div className="flex justify-between">
-              <p className="text-sm">Shipping Address:</p>
-              <p className="font-semibold">{order.shippingAddress.line1}</p>
-            </div>
-            {order.shippingAddress.line2 && (
-              <div className="flex justify-end">
-                <p className="font-semibold">{order.shippingAddress.line2}</p>
-              </div>
-            )}
-            <div className="flex justify-end">
-              <p className="font-semibold">
-                {order.shippingAddress.postalCode} {order.shippingAddress.city}
-              </p>
-            </div>
-            <div className="flex justify-end">
-              <p className="font-semibold">{order.shippingAddress.country}</p>
             </div>
 
             <ul>

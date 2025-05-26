@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "../../hooks/AuthContext";
 import orderservice from "../../services/orderservice";
 import {
@@ -43,7 +43,6 @@ const OrdersPage = () => {
       <Table>
         <TableHeader>
           <TableColumn>Order Number</TableColumn>
-          <TableColumn>Status</TableColumn>
           <TableColumn>Order Date</TableColumn>
           <TableColumn>Total</TableColumn>
         </TableHeader>
@@ -52,14 +51,11 @@ const OrdersPage = () => {
             <TableRow
               key={order.id}
               onClick={() =>
-                navigate(`/orders/${order.id}`, { state: { order } })
+                navigate(`/purchases/${order.id}`, { state: { order } })
               }
               className="hover:bg-zinc-100 cursor-pointer"
             >
               <TableCell>{order.id}</TableCell>
-              <TableCell>
-                {order.status === "PENDING" ? "PROCESSING" : order.status}
-              </TableCell>
               <TableCell>
                 {new Date(order.createdAt).toLocaleDateString()}
               </TableCell>

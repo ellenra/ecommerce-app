@@ -82,28 +82,30 @@ const ProfileForm = ({ user, onProfileUpdate }) => {
   return (
     <div className="mt-10">
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        <div className="pb-2">
-          <label className="ml-3">First Name:</label>
-          <Controller
-            name="firstName"
-            control={control}
-            render={({ field }) => <Input {...field} />}
-          />
-          {errors.firstName && (
-            <p className="text-red-500">{errors.firstName.message}</p>
-          )}
-        </div>
+        <div className="flex flex-row">
+          <div className="pb-2">
+            <label className="ml-3">First Name:</label>
+            <Controller
+              name="firstName"
+              control={control}
+              render={({ field }) => <Input {...field} />}
+            />
+            {errors.firstName && (
+              <p className="text-red-500">{errors.firstName.message}</p>
+            )}
+          </div>
 
-        <div className="pb-2">
-          <label className="ml-3">Last Name:</label>
-          <Controller
-            name="lastName"
-            control={control}
-            render={({ field }) => <Input {...field} />}
-          />
-          {errors.lastName && (
-            <p className="text-red-500">{errors.lastName.message}</p>
-          )}
+          <div className="pb-2">
+            <label className="ml-3">Last Name:</label>
+            <Controller
+              name="lastName"
+              control={control}
+              render={({ field }) => <Input {...field} />}
+            />
+            {errors.lastName && (
+              <p className="text-red-500">{errors.lastName.message}</p>
+            )}
+          </div>
         </div>
 
         <div className="pb-2">
@@ -130,26 +132,30 @@ const ProfileForm = ({ user, onProfileUpdate }) => {
           )}
         </div>
 
-        <div className="pb-2">
-          <label className="ml-3">Postal Code:</label>
-          <Controller
-            name="postalCode"
-            control={control}
-            render={({ field }) => <Input {...field} />}
-          />
-          {errors.postalCode && (
-            <p className="text-red-500">{errors.postalCode.message}</p>
-          )}
-        </div>
+        <div className="flex flex-row">
+          <div className="pb-2">
+            <label className="ml-3">Postal Code:</label>
+            <Controller
+              name="postalCode"
+              control={control}
+              render={({ field }) => <Input {...field} />}
+            />
+            {errors.postalCode && (
+              <p className="text-red-500">{errors.postalCode.message}</p>
+            )}
+          </div>
 
-        <div className="pb-2">
-          <label className="ml-3">City:</label>
-          <Controller
-            name="city"
-            control={control}
-            render={({ field }) => <Input {...field} />}
-          />
-          {errors.city && <p className="text-red-500">{errors.city.message}</p>}
+          <div className="pb-2">
+            <label className="ml-3">City:</label>
+            <Controller
+              name="city"
+              control={control}
+              render={({ field }) => <Input {...field} />}
+            />
+            {errors.city && (
+              <p className="text-red-500">{errors.city.message}</p>
+            )}
+          </div>
         </div>
 
         <div className="pb-2">
