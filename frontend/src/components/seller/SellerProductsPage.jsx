@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardBody, CardFooter, Image } from "@nextui-org/react";
 import Select from "react-select";
 import { useLocation, useNavigate } from "react-router-dom";
 
-const StoreOwnerProductsPage = ({ store }) => {
+const SellerProductsPage = ({ store }) => {
   const [statusFilter, setStatusFilter] = useState({
     value: "all",
     label: "All",
@@ -100,4 +100,4 @@ const StoreOwnerProductsPage = ({ store }) => {
   );
 };
 
-export default StoreOwnerProductsPage;
+export default SellerProductsPage;

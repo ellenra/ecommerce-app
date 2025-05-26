@@ -73,14 +73,16 @@ const Login = () => {
             <p className="text-red-500">{errors.password.message}</p>
           )}
         </div>
-        <Button
-          type="submit"
-          className="ml-3 border border-zinc-200 rounded-lg hover:bg-zinc-100 hover:border-zinc-300"
-        >
-          Login
-        </Button>
+        <div className="flex justify-center">
+          <Button
+            type="submit"
+            className="ml-3 border border-zinc-200 rounded-lg hover:bg-zinc-100 hover:border-zinc-300"
+          >
+            Login
+          </Button>
+        </div>
       </form>
-      <div className="pt-4 p-10 ml-3">
+      <div className="flex flex-col items-center pt-4 p-10 ml-3">
         <p className="mb-4">Don't have an account?</p>
         <Button
           onClick={() => {

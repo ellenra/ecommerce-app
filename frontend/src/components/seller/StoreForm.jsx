@@ -5,9 +5,9 @@ import { z } from "zod";
 import { toast } from "react-toastify";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button, Input, Image, Link } from "@nextui-org/react";
-import storeCategories from "../utils/storeCategories.json";
-import storeservice from "../services/storeservice";
-import { useAuth } from "../hooks/AuthContext";
+import storeCategories from "../../utils/storeCategories.json";
+import storeservice from "../../services/storeservice";
+import { useAuth } from "../../hooks/AuthContext";
 
 const storeSchema = z.object({
   name: z.string().min(1, { message: "Store name is required" }),

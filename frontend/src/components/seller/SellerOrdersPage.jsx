@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useAuth } from "../hooks/AuthContext";
+import { useAuth } from "../../hooks/AuthContext";
 import {
   Table,
   TableBody,
@@ -9,9 +9,9 @@ import {
   TableRow,
 } from "@nextui-org/react";
 import { useNavigate } from "react-router-dom";
-import orderservice from "../services/orderservice";
+import orderservice from "../../services/orderservice";
 
-const StoreOwnerOrdersPage = ({ store }) => {
+const SellerOrdersPage = ({ store }) => {
   const { session } = useAuth();
   const [orders, setOrders] = useState(null);
   const navigate = useNavigate();
@@ -71,4 +71,4 @@ const StoreOwnerOrdersPage = ({ store }) => {
   );
 };
 
-export default StoreOwnerOrdersPage;
+export default SellerOrdersPage;

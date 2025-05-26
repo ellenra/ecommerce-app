@@ -55,7 +55,6 @@ storeRouter.get("/:id", optionalAuthMiddleware, async (req, res) => {
             name: true,
             description: true,
             price: true,
-            quantity: true,
             storeId: true,
             imageUrl: true,
           },
@@ -227,7 +226,7 @@ storeRouter.post(
     const storeId = req.params.storeId;
     const userIdFromToken = req.user.user.id;
 
-    let { name, description, price, quantity, categories, userId } = req.body;
+    let { name, description, price, categories, userId } = req.body;
 
     try {
       const storeToEdit = await prisma.store.findUnique({
@@ -244,10 +243,9 @@ storeRouter.post(
 
       categories = JSON.parse(categories);
       const parsedPrice = parseFloat(price);
-      const parsedQuantity = parseInt(quantity, 10);
 
-      if (isNaN(parsedPrice) || isNaN(parsedQuantity)) {
-        return res.status(400).json({ error: "Invalid price or quantity" });
+      if (isNaN(parsedPrice)) {
+        return res.status(400).json({ error: "Invalid price" });
       }
 
       if (!req.files.file?.[0]) {
@@ -301,7 +299,6 @@ storeRouter.post(
           name,
           description,
           price: parsedPrice,
-          quantity: parsedQuantity,
           imageUrl: image.publicUrl,
           productUrl: productFileUrl.publicUrl,
           categories: {
@@ -399,24 +396,15 @@ storeRouter.put(
     const storeId = req.params.storeId;
     const userIdFromToken = req.user.user.id;
 
-    let {
-      name,
-      description,
-      price,
-      quantity,
-      categories,
-      imageUrl,
-      productUrl,
-      userId,
-    } = req.body;
+    let { name, description, price, categories, imageUrl, productUrl, userId } =
+      req.body;
 
     const parsedPrice = parseFloat(price);
-    const parsedQuantity = parseInt(quantity, 10);
 
     categories = JSON.parse(categories);
 
-    if (isNaN(parsedPrice) || isNaN(parsedQuantity)) {
-      return res.status(400).json({ error: "Invalid price or quantity" });
+    if (isNaN(parsedPrice)) {
+      return res.status(400).json({ error: "Invalid price" });
     }
 
     try {
@@ -491,7 +479,6 @@ storeRouter.put(
           name,
           description,
           price: parsedPrice,
-          quantity: parsedQuantity,
           imageUrl: imageUrl,
           productUrl: productUrl,
           storeId,

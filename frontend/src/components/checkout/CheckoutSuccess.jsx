@@ -72,9 +72,7 @@ const CheckoutSuccess = () => {
                     />
                     <div className="flex-1">
                       <p className="text-lg font-medium">{item.product.name}</p>
-                      <p className="text-sm">
-                        {item.quantity} x ${item.product.price}
-                      </p>
+                      <p className="text-sm">${item.product.price}</p>
                       <p className="mt-4 underline">
                         <a
                           href={item.product.productUrl}
@@ -86,7 +84,7 @@ const CheckoutSuccess = () => {
                       </p>
                     </div>
                     <div className="font-semibold">
-                      ${(item.quantity * item.product.price).toFixed(2)}
+                      ${item.product.price.toFixed(2)}
                     </div>
                   </CardBody>
                 </Card>

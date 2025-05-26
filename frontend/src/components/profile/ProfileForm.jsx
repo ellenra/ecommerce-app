@@ -82,7 +82,7 @@ const ProfileForm = ({ user, onProfileUpdate }) => {
   return (
     <div className="mt-10">
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        <div className="flex flex-row">
+        <div className="lg:flex lg:flex-row">
           <div className="pb-2">
             <label className="ml-3">First Name:</label>
             <Controller
@@ -132,7 +132,7 @@ const ProfileForm = ({ user, onProfileUpdate }) => {
           )}
         </div>
 
-        <div className="flex flex-row">
+        <div className="lg:flex lg:flex-row">
           <div className="pb-2">
             <label className="ml-3">Postal Code:</label>
             <Controller

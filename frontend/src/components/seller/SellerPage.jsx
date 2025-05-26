@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { Button } from "@nextui-org/react";
-import StoreOwnerOrdersPage from "./StoreOwnerOrdersPage";
-import { useAuth } from "../hooks/AuthContext";
-import storeservice from "../services/storeservice";
-import StoreOwnerProductsPage from "./StoreOwnerProductsPage";
+import { useAuth } from "../../hooks/AuthContext";
+import storeservice from "../../services/storeservice";
+import SellerOrdersPage from "./SellerOrdersPage";
+import SellerProductsPage from "./SellerProductsPage";
 
-const StoreOwnerPage = () => {
+const SellerPage = () => {
   const { session } = useAuth();
   const { storeId } = useParams();
   const [store, setStore] = useState(null);
@@ -58,12 +58,20 @@ const StoreOwnerPage = () => {
   }
 
   return (
-    <div className="flex">
-      <div className="mt-10 w-1/4 mr-10">
-        <div>
+    <>
+      <Button
+        className="ml-6 mt-6 border border-zinc-200 rounded-lg hover:bg-zinc-100 hover:border-zinc-300 text-sm md:text-base"
+        onClick={() => {
+          navigate(`/stores/${storeId}`);
+        }}
+      >
+        View Store
+      </Button>
+      <div className="flex flex-col md:flex-row">
+        <div className="flex w-full md:flex-col md:w-1/4 pl-4 pr-4 mt-4 md:mt-10">
           <Button
             onClick={() => handleViewChange("dashboard")}
-            className={`w-full p-6 ${
+            className={`w-full p-6 text-sm md:text-base ${
               selectedView === "dashboard" ? "bg-zinc-100" : "hover:bg-zinc-100"
             }`}
           >
@@ -71,7 +79,7 @@ const StoreOwnerPage = () => {
           </Button>
           <Button
             onClick={() => handleViewChange("products")}
-            className={`w-full p-6 ${
+            className={`w-full p-6 text-sm md:text-base ${
               selectedView === "products" ? "bg-zinc-100" : "hover:bg-zinc-100"
             }`}
           >
@@ -79,32 +87,32 @@ const StoreOwnerPage = () => {
           </Button>
           <Button
             onClick={() => handleViewChange("orders")}
-            className={`w-full p-6 ${
+            className={`w-full p-6 text-sm md:text-base ${
               selectedView === "orders" ? "bg-zinc-100" : "hover:bg-zinc-100"
             }`}
           >
             Manage Orders
           </Button>
         </div>
+        {selectedView === "dashboard" && (
+          <div className="m-4">
+            <Link to={`/stores/${storeId}/products/new`}>
+              <Button className="border border-zinc-200 text-sm rounded-lg hover:bg-zinc-100 hover:border-zinc-300 mr-4">
+                List new product
+              </Button>
+            </Link>
+            <Link to={`/stores/${storeId}/edit`}>
+              <Button className="border border-zinc-200 text-sm rounded-lg hover:bg-zinc-100 hover:border-zinc-300">
+                Edit Store Info
+              </Button>
+            </Link>
+          </div>
+        )}
+        {selectedView === "orders" && <SellerOrdersPage store={store} />}
+        {selectedView === "products" && <SellerProductsPage store={store} />}
       </div>
-      {selectedView === "dashboard" && (
-        <div className="mt-10">
-          <Link to={`/stores/${storeId}/products/new`}>
-            <Button className="border border-zinc-200 text-sm rounded-lg hover:bg-zinc-100 hover:border-zinc-300 mr-4">
-              List new product
-            </Button>
-          </Link>
-          <Link to={`/stores/${storeId}/edit`}>
-            <Button className="border border-zinc-200 text-sm rounded-lg hover:bg-zinc-100 hover:border-zinc-300">
-              Edit Store Info
-            </Button>
-          </Link>
-        </div>
-      )}
-      {selectedView === "orders" && <StoreOwnerOrdersPage store={store} />}
-      {selectedView === "products" && <StoreOwnerProductsPage store={store} />}
-    </div>
+    </>
   );
 };
 
-export default StoreOwnerPage;
+export default SellerPage;

@@ -5,18 +5,18 @@ import Login from "./components//auth/LoginForm";
 import Profile from "./components/profile/Profile";
 import Store from "./components/Store";
 import ViewStores from "./components/ViewStores";
-import StoreForm from "./components/StoreForm";
+import StoreForm from "./components/seller/StoreForm";
 import Product from "./components/Product";
-import ProductForm from "./components/ProductForm";
+import ProductForm from "./components/seller/ProductForm";
 import Cart from "./components/Cart";
 import Home from "./components/Home";
 import CheckoutSuccess from "./components/checkout/CheckoutSuccess";
 import ViewProducts from "./components/ViewProducts";
 import OrderPage from "./components/profile/OrderPage";
-import StoreOwnerPage from "./components/StoreOwnerPage";
-import StoreOwnerOrderPage from "./components/StoreOwnerOrderPage";
 import StoreAdPage from "./components/StoreAdPage";
 import AdminDashboard from "./components/AdminDashboard";
+import SellerPage from "./components/seller/SellerPage";
+import SellerOrderPage from "./components/seller/SellerOrderPage";
 
 function App() {
   return (
@@ -31,10 +31,10 @@ function App() {
           <Route path="stores/create" element={<StoreForm />} />
           <Route path="stores/ad" element={<StoreAdPage />} />
           <Route path="stores/:storeId" element={<Store />} />
-          <Route path="stores/:storeId/:view" element={<StoreOwnerPage />} />
+          <Route path="stores/:storeId/:view" element={<SellerPage />} />
           <Route
             path="stores/:storeId/orders/:orderId"
-            element={<StoreOwnerOrderPage />}
+            element={<SellerOrderPage />}
           />
           <Route path="stores/:storeId/edit" element={<StoreForm />} />
           <Route

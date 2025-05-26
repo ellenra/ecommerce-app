@@ -5,9 +5,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Button, Input, Image, Link } from "@nextui-org/react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
-import storeservice from "../services/storeservice";
-import { useAuth } from "../hooks/AuthContext";
-import productservice from "../services/productservice";
+import storeservice from "../../services/storeservice";
+import { useAuth } from "../../hooks/AuthContext";
+import productservice from "../../services/productservice";
 import Select from "react-select";
 
 const productSchema = z.object({
@@ -21,15 +21,6 @@ const productSchema = z.object({
         invalid_type_error: "Price is required",
       })
       .positive({ message: "Price must be positive" })
-  ),
-  quantity: z.preprocess(
-    (value) => parseInt(value, 10),
-    z
-      .number({
-        required_error: "Quantity is required",
-        invalid_type_error: "Quantity is required",
-      })
-      .positive({ message: "Quantity must be positive" })
   ),
   imageUrl: z.string(),
   file: z
@@ -65,7 +56,6 @@ const ProductForm = () => {
       name: "",
       description: "",
       price: 0,
-      quantity: 0,
       imageUrl: "",
       file: null,
       productFile: null,
@@ -104,7 +94,6 @@ const ProductForm = () => {
           setValue("name", productData.name);
           setValue("description", productData.description);
           setValue("price", productData.price);
-          setValue("quantity", productData.quantity);
           setValue("imageUrl", productData.imageUrl);
           setViewProductPicture(productData.imageUrl);
           const categoryIds = productData.categories.map(
@@ -145,7 +134,7 @@ const ProductForm = () => {
   const onSubmit = async (data) => {
     try {
       const formData = new FormData();
-      const { name, description, price, quantity, file, categories } = data;
+      const { name, description, price, file, categories } = data;
       if (productId) {
         formData.append("productId", productId);
       }
@@ -154,7 +143,6 @@ const ProductForm = () => {
       formData.append("name", name);
       formData.append("description", description);
       formData.append("price", price);
-      formData.append("quantity", quantity);
       formData.append("categories", JSON.stringify(categories));
       if (file instanceof File) {
         formData.append("file", file);
@@ -232,18 +220,6 @@ const ProductForm = () => {
           />
           {errors.price && (
             <p className="text-red-500">{errors.price.message}</p>
-          )}
-        </div>
-
-        <div>
-          <label className="ml-3">Quantity:</label>
-          <Controller
-            name="quantity"
-            control={control}
-            render={({ field }) => <Input {...field} />}
-          />
-          {errors.quantity && (
-            <p className="text-red-500">{errors.quantity.message}</p>
           )}
         </div>
 

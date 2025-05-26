@@ -217,8 +217,8 @@ const Layout = () => {
         <Outlet />{" "}
       </main>
       <div>
-        <footer className="p-6 text-center border border-b-[#ececec]">
-          <p className="text-xl">DIGITRA</p>
+        <footer className="p-2 text-center border border-b-[#ececec]">
+          <p>DIGITRA</p>
         </footer>
       </div>
     </div>

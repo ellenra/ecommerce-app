@@ -34,7 +34,6 @@ router.post("/create-checkout-session", async (req, res) => {
         },
         unit_amount: item.price * 100,
       },
-      quantity: item.count,
     };
   });
 
@@ -51,7 +50,6 @@ router.post("/create-checkout-session", async (req, res) => {
       orderItems: {
         create: req.body.cartItems.map((item) => ({
           productId: item.id,
-          quantity: item.count,
         })),
       },
     },
@@ -182,22 +180,6 @@ router.post("/webhook", (request, response) => {
         });
 
         console.log("Order updated, payment completed:", order);
-
-        const orderItems = await prisma.orderItem.findMany({
-          where: { orderId: orderId },
-        });
-
-        for (const item of orderItems) {
-          await prisma.product.update({
-            where: { id: item.productId },
-            data: {
-              quantity: { decrement: item.quantity },
-            },
-          });
-        }
-
-        console.log(customer);
-        console.log(data);
       })
       .catch((error) => console.log(error.message));
   }

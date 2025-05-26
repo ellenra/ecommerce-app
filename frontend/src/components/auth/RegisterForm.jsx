@@ -81,28 +81,30 @@ const Register = () => {
           )}
         </div>
         <div>
-          <label className="ml-3">Password:</label>
-          <Input type="password" {...register("password")} />
-          {errors.password && (
-            <p className="text-red-500">{errors.password.message}</p>
-          )}
-        </div>
-        <div>
           <label className="ml-3">Email:</label>
           <Input type="email" {...register("email")} />
           {errors.email && (
             <p className="text-red-500">{errors.email.message}</p>
           )}
         </div>
-        <Button
-          type="submit"
-          className="ml-3 border border-zinc-200 rounded-lg hover:bg-zinc-100 hover:border-zinc-300"
-        >
-          Create account
-        </Button>
+        <div>
+          <label className="ml-3">Password:</label>
+          <Input type="password" {...register("password")} />
+          {errors.password && (
+            <p className="text-red-500">{errors.password.message}</p>
+          )}
+        </div>
+        <div className="flex justify-center">
+          <Button
+            type="submit"
+            className="ml-3 border border-zinc-200 rounded-lg hover:bg-zinc-100 hover:border-zinc-300"
+          >
+            Create account
+          </Button>
+        </div>
       </form>
 
-      <div className="pt-4 p-10 ml-3">
+      <div className="flex flex-col items-center pt-4 p-10 ml-3">
         <p className="mb-4">Already have an account?</p>
         <Button
           onClick={() => navigate("/login")}

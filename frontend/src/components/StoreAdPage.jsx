@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@nextui-org/react";
 import { useAuth } from "../hooks/AuthContext";
@@ -18,10 +18,10 @@ const StoreAdPage = () => {
           session.user.id,
           session.access_token
         );
-        if (fetchedUser.store.id) {
+        if (fetchedUser.store) {
           navigate(`/stores/${fetchedUser.store.id}/dashboard`);
         } else {
-          navigate("stores/create");
+          navigate("/stores/create");
         }
       } catch (error) {
         console.error("Error fetching user data:", error);
@@ -34,7 +34,7 @@ const StoreAdPage = () => {
   if (!session) {
     return (
       <div className="flex flex-col items-center p-10">
-        <p className="text-2xl text-center mb-6">Ready to become a seller?</p>
+        <p className="text-2xl text-center m-6">Ready to become a seller?</p>
         <Button
           onClick={() => {
             navigate("/login", { state: { from: "/stores/create" } });
@@ -43,7 +43,7 @@ const StoreAdPage = () => {
         >
           Create Store
         </Button>{" "}
-        <p className="text-l text-center mt-10 mb-4">Already have a store?</p>
+        <p className="text-l text-center mt-10 mb-2">Already have a store?</p>
         <Button
           onClick={() => {
             navigate("/login", { state: { from: "/stores/create" } });

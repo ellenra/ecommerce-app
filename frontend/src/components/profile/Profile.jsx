@@ -63,11 +63,11 @@ const Profile = () => {
   }
 
   return (
-    <div className="flex">
-      <div className="mt-10 w-1/4 mr-10">
+    <div className="flex flex-col md:flex-row">
+      <div className="flex w-full md:flex-col md:w-1/4 pl-4 pr-4 mt-4 md:mt-10">
         <Button
           onClick={() => handleViewChange("account")}
-          className={`w-full p-6 ${
+          className={`w-full p-6 text-sm md:text-base ${
             selectedView === "account" ? "bg-zinc-100" : "hover:bg-zinc-100"
           }`}
         >
@@ -75,7 +75,7 @@ const Profile = () => {
         </Button>
         <Button
           onClick={() => handleViewChange("profile")}
-          className={`w-full p-6 ${
+          className={`w-full p-6 text-sm md:text-base ${
             selectedView === "profile" ? "bg-zinc-100" : "hover:bg-zinc-100"
           }`}
         >
@@ -83,7 +83,7 @@ const Profile = () => {
         </Button>
         <Button
           onClick={() => handleViewChange("favorites")}
-          className={`w-full p-6 ${
+          className={`w-full p-6 text-sm md:text-base ${
             selectedView === "favorites" ? "bg-zinc-100" : "hover:bg-zinc-100"
           }`}
         >
@@ -91,7 +91,7 @@ const Profile = () => {
         </Button>
         <Button
           onClick={() => handleViewChange("order-history")}
-          className={`w-full p-6 ${
+          className={`w-full p-6 text-sm md:text-base ${
             selectedView === "order-history"
               ? "bg-zinc-100"
               : "hover:bg-zinc-100"

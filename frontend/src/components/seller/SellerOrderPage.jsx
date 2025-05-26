@@ -1,7 +1,7 @@
 import { Button, Card, CardBody, Image } from "@nextui-org/react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
-import orderservice from "../services/orderservice";
+import orderservice from "../../services/orderservice";
 import { useQuery } from "@tanstack/react-query";
 
 const fetchOrderById = async (orderId, accessToken) => {
@@ -9,7 +9,7 @@ const fetchOrderById = async (orderId, accessToken) => {
   return response;
 };
 
-const StoreOwnerOrderPage = () => {
+const SellerOrderPage = () => {
   const { storeId, orderId } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
@@ -83,12 +83,10 @@ const StoreOwnerOrderPage = () => {
                     />
                     <div className="flex-1">
                       <p className="text-lg font-medium">{item.product.name}</p>
-                      <p className="text-sm">
-                        {item.quantity} x ${item.product.price}
-                      </p>
+                      <p className="text-sm">${item.product.price}</p>
                     </div>
                     <div className="font-semibold">
-                      ${(item.quantity * item.product.price).toFixed(2)}
+                      ${item.product.price.toFixed(2)}
                     </div>
                   </CardBody>
                 </Card>
@@ -101,4 +99,4 @@ const StoreOwnerOrderPage = () => {
   );
 };
 
-export default StoreOwnerOrderPage;
+export default SellerOrderPage;
