@@ -45,9 +45,15 @@ const Layout = () => {
     const fetchCategories = async () => {
       try {
         const categories = await productservice.getProductCategories();
-        setCategories(
-          categories.map((cat) => ({ value: cat.id, label: cat.name }))
-        );
+        const fetchedCategories = categories.map((cat) => ({
+          value: cat.id,
+          label: cat.name,
+        }));
+
+        setCategories([
+          { value: "1", label: "All Categories" },
+          ...fetchedCategories,
+        ]);
       } catch (error) {
         console.error("Error fetching categories", error.message);
       }

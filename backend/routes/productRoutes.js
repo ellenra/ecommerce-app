@@ -8,6 +8,10 @@ productRouter.get("/", async (req, res) => {
     const search = req.query.search || "";
     let category = req.query.category || "";
 
+    if (category === "1") {
+      category = "";
+    }
+
     const products = await prisma.product.findMany({
       where: {
         isActive: true,
