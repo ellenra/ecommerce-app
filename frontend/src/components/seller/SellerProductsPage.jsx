@@ -1,14 +1,13 @@
 import { useState, useEffect } from "react";
-import { Card, CardBody, CardFooter, Image } from "@nextui-org/react";
 import Select from "react-select";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
+import ProductTable from "../ProductTable";
 
-const SellerProductsPage = ({ store }) => {
+const SellerProductsPage = ({ store, session }) => {
   const [statusFilter, setStatusFilter] = useState({
     value: "all",
     label: "All",
   });
-  const navigate = useNavigate();
   const location = useLocation();
 
   if (!store) {
@@ -39,7 +38,7 @@ const SellerProductsPage = ({ store }) => {
   };
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col px-4">
       <Select
         value={statusFilter}
         onChange={handleStatusChange}
@@ -57,45 +56,11 @@ const SellerProductsPage = ({ store }) => {
           }),
         }}
       />
-      <div className="grid grid-cols-4 lg:grid-cols-8 gap-6">
-        {filteredProducts.map((product) => (
-          <Card
-            key={product.id}
-            shadow="sm"
-            className="hover:shadow-lg rounded-lg bg-white"
-          >
-            <CardBody
-              onClick={() => {
-                navigate(`/stores/${product.storeId}/products/${product.id}`, {
-                  state: { from: `/stores/${store.id}/products`, statusFilter },
-                });
-              }}
-              className="p-0 hover:cursor-pointer"
-            >
-              <Image
-                alt={product.name}
-                src={product.imageUrl}
-                height={200}
-                width={200}
-                className="object-cover"
-              />
-            </CardBody>
-            <CardFooter
-              className="text-small justify-between hover:cursor-pointer"
-              onClick={() => {
-                navigate(`/stores/${product.storeId}/products/${product.id}`, {
-                  state: { from: `/stores/${store.id}/products`, statusFilter },
-                });
-              }}
-            >
-              <b>{product.name}</b>
-              <div className="flex items-center">
-                <p>{product.price} $</p>
-              </div>
-            </CardFooter>
-          </Card>
-        ))}
-      </div>
+      <ProductTable
+        products={filteredProducts}
+        session={session}
+        like={false}
+      />
     </div>
   );
 };

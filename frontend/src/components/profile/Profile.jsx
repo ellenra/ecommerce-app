@@ -1,24 +1,18 @@
 import { useEffect, useState } from "react";
-import { Button, Card, CardBody, CardFooter, Image } from "@nextui-org/react";
+import { Button } from "@nextui-org/react";
 import { useLocation, useNavigate } from "react-router-dom";
-import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
-import FavoriteIcon from "@mui/icons-material/Favorite";
 import userservice from "../../services/userservice";
 import { useAuth } from "../../hooks/AuthContext";
-import { useFavorites } from "../../hooks/favoriteProducts";
 import ProfileForm from "./ProfileForm";
 import OrdersPage from "./OrdersPage";
 import { toast } from "react-toastify";
 import AccountDashboard from "./AccountDashboard";
+import ProductTable from "../ProductTable";
 
 const Profile = () => {
   const { session } = useAuth();
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
-  const { addFavorite, deleteFavorite, isFavorite } = useFavorites(
-    user,
-    setUser
-  );
   const [selectedView, setSelectedView] = useState("account");
   const location = useLocation();
 
@@ -116,65 +110,15 @@ const Profile = () => {
           </div>
         )}
 
-        {selectedView === "favorites" && (
+        {user && selectedView === "favorites" && (
           <div>
             <h2 className="text-2xl font-bold mb-6">Favorites</h2>
-            <div className="grid grid-cols-6 gap-6">
-              {user.favorites.map((product, index) => (
-                <Card
-                  key={index}
-                  className="min-w-[200px] shadow-md rounded-lg hover:shadow-xl cursor-pointer"
-                >
-                  <CardBody
-                    className="p-0 hover:cursor-pointer"
-                    onClick={() =>
-                      navigate(
-                        `/stores/${product.storeId}/products/${product.id}`
-                      )
-                    }
-                  >
-                    <Image
-                      src={product.imageUrl}
-                      alt={product.name}
-                      width="200px"
-                      height="200px"
-                    />
-                  </CardBody>
-                  <div className="absolute top-2 right-0 z-20">
-                    {isFavorite(product.id) ? (
-                      <Button
-                        size="sm"
-                        onClick={() =>
-                          deleteFavorite(product.id, session.access_token)
-                        }
-                      >
-                        <FavoriteIcon />
-                      </Button>
-                    ) : (
-                      <Button
-                        size="sm"
-                        onClick={() =>
-                          addFavorite(product.id, session?.access_token)
-                        }
-                      >
-                        <FavoriteBorderIcon />
-                      </Button>
-                    )}
-                  </div>
-                  <CardFooter
-                    className="flex flex-row justify-between hover:cursor-pointer"
-                    onClick={() =>
-                      navigate(
-                        `/stores/${product.storeId}/products/${product.id}`
-                      )
-                    }
-                  >
-                    <p>{product.name}</p>
-                    <p>{product.price} €</p>
-                  </CardFooter>
-                </Card>
-              ))}
-            </div>
+            <ProductTable
+              products={user.favorites}
+              session={session}
+              user={user}
+              setUser={setUser}
+            />
           </div>
         )}
 

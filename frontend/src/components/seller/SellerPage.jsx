@@ -109,7 +109,9 @@ const SellerPage = () => {
           </div>
         )}
         {selectedView === "orders" && <SellerOrdersPage store={store} />}
-        {selectedView === "products" && <SellerProductsPage store={store} />}
+        {selectedView === "products" && (
+          <SellerProductsPage store={store} session={session} />
+        )}
       </div>
     </>
   );

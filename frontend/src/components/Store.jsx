@@ -1,12 +1,10 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/AuthContext";
 import userservice from "../services/userservice";
-import { useFavorites } from "../hooks/favoriteProducts";
-import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
-import FavoriteIcon from "@mui/icons-material/Favorite";
-import { Button, Card, CardBody, CardFooter, Image } from "@nextui-org/react";
+import { Button } from "@nextui-org/react";
 import storeservice from "../services/storeservice";
+import ProductTable from "./ProductTable";
 
 const Store = () => {
   const { storeId } = useParams();
@@ -14,10 +12,6 @@ const Store = () => {
   const [user, setUser] = useState(null);
   const [store, setStore] = useState(null);
   const [isOwner, setIsOwner] = useState(false);
-  const { addFavorite, deleteFavorite, isFavorite } = useFavorites(
-    user,
-    setUser
-  );
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -65,7 +59,7 @@ const Store = () => {
   const filteredProducts = store.products.filter((product) => product.isActive);
 
   return (
-    <div>
+    <div className="max-w-7xl mx-auto p-8">
       {isOwner && (
         <Button
           className="ml-6 mt-6 border border-zinc-200 rounded-lg hover:bg-zinc-100 hover:border-zinc-300"
@@ -81,68 +75,12 @@ const Store = () => {
           <h1 className="text-3xl font-bold">{store.name}</h1>
           <p className="text-lg mt-2">{store.description}</p>
         </div>
-        <div className="grid md:grid-cols-4 lg:grid-cols-8 gap-6 p-6">
-          {filteredProducts.map((product, index) => (
-            <Card
-              key={index}
-              className="min-w-[200px] shadow-md rounded-lg hover:shadow-xl"
-            >
-              <CardBody
-                className="p-0 hover:cursor-pointer"
-                onClick={() =>
-                  navigate(
-                    `/stores/${product.storeId}/products/${product.id}`,
-                    {
-                      state: { from: `/stores/${product.storeId}` },
-                    }
-                  )
-                }
-              >
-                <Image
-                  src={product.imageUrl}
-                  alt={product.name}
-                  width="200px"
-                  height="200px"
-                />
-              </CardBody>
-              <div className="absolute top-2 right-0 z-20">
-                {session && isFavorite(product.id) ? (
-                  <Button
-                    size="sm"
-                    onClick={() =>
-                      deleteFavorite(product.id, session.access_token)
-                    }
-                  >
-                    <FavoriteIcon />
-                  </Button>
-                ) : (
-                  <Button
-                    size="sm"
-                    onClick={() =>
-                      addFavorite(product.id, session?.access_token)
-                    }
-                  >
-                    <FavoriteBorderIcon />
-                  </Button>
-                )}
-              </div>
-              <CardFooter
-                className="flex flex-row justify-between hover:cursor-pointer"
-                onClick={() =>
-                  navigate(
-                    `/stores/${product.storeId}/products/${product.id}`,
-                    {
-                      state: { from: `/stores/${product.storeId}` },
-                    }
-                  )
-                }
-              >
-                <p>{product.name}</p>
-                <p>{product.price} €</p>
-              </CardFooter>
-            </Card>
-          ))}
-        </div>
+        <ProductTable
+          products={filteredProducts}
+          session={session}
+          user={user}
+          setUser={setUser}
+        />
       </>
     </div>
   );
