@@ -51,6 +51,4 @@ Backend is built with Node.js and Express.js for practice, Supabase is used only
   - I can view orders and mark them as shipped
 
 ## Screenshots
-
-![Screenshot from 2025-02-05 14-51-46](https://github.com/user-attachments/assets/f0a646a3-0cee-4c62-997d-4bad21baad87)
-![Screenshot from 2025-02-05 14-52-05](https://github.com/user-attachments/assets/45600631-d9e1-4a78-85ad-b9568e4fa3bc)
+![Screenshot from 2025-06-06 17-00-09](https://github.com/user-attachments/assets/b6010c2b-d9e1-46fc-8807-3d0e593dde0e)
