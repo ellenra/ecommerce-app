@@ -20,7 +20,21 @@ const getProductCategories = async () => {
   }
 };
 
+const postReview = async (productId, data, accessToken) => {
+  try {
+    const response = await axios.post(`${baseUrl}/${productId}/reviews`, data, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error posting review!", error.message);
+  }
+};
+
 export default {
   getProducts,
   getProductCategories,
+  postReview,
 };

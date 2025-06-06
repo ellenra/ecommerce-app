@@ -54,7 +54,7 @@ const StoreForm = () => {
             storeId,
             session?.access_token || null
           );
-          if (user.id !== storeData.userId) {
+          if (storeData.userId !== session.user.id) {
             navigate("/");
             return;
           }

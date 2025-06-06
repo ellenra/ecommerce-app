@@ -49,4 +49,23 @@ productRouter.get("/categories", async (req, res) => {
   }
 });
 
+productRouter.post("/:productId/reviews", async (req, res) => {
+  try {
+    const { productId } = req.params;
+    const { rating, comment, userId } = req.body;
+
+    const newRating = await prisma.review.create({
+      data: {
+        rating,
+        comment,
+        userId,
+        productId,
+      },
+    });
+    res.status(201).json(newRating);
+  } catch (error) {
+    console.log(error.message);
+  }
+});
+
 export default productRouter;

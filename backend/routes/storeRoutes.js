@@ -329,6 +329,12 @@ storeRouter.get("/:storeId/products/:id", async (req, res) => {
         categories: {
           include: { category: true },
         },
+        store: {
+          select: {
+            name: true,
+          },
+        },
+        reviews: true,
       },
     });
     res.json(product);

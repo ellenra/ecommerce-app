@@ -1,24 +1,14 @@
 import { useEffect, useState } from "react";
-import {
-  Card,
-  CardBody,
-  Image,
-  Button,
-  Input,
-  CardHeader,
-} from "@nextui-org/react";
-import axios from "axios";
+import { Card, CardBody, Image, Button, Input } from "@nextui-org/react";
 import { useNavigate } from "react-router-dom";
 import productservice from "../services/productservice";
 import userservice from "../services/userservice";
 import { useAuth } from "../hooks/AuthContext";
-import { useFavorites } from "../hooks/favoriteProducts";
 
 const Home = () => {
   const { session } = useAuth();
   const [user, setUser] = useState(null);
   const [products, setProducts] = useState([]);
-  const [stores, setStores] = useState([]);
   const [categories, setCategories] = useState([]);
   const navigate = useNavigate();
 
@@ -61,18 +51,8 @@ const Home = () => {
       }
     };
 
-    const fetchStores = async () => {
-      try {
-        const response = await axios.get("http://localhost:5000/api/stores");
-        setStores(response.data);
-      } catch (error) {
-        console.error("Error fetching stores:", error.message);
-      }
-    };
-
     fetchCategories();
     fetchProducts();
-    fetchStores();
   }, []);
 
   return (
@@ -100,7 +80,7 @@ const Home = () => {
         </Button>
       </div>
 
-      <section className="container max-w-7xl mx-auto">
+      <section className="container max-w-7xl mx-auto px-4">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl">Popular Categories</h2>
           <Button
@@ -132,23 +112,26 @@ const Home = () => {
         </div>
       </section>
 
-      <section className="container max-w-7xl mx-auto mt-6 mb-10">
+      <section className="container max-w-7xl mx-auto mt-6 mb-10 px-4">
         <h2 className="text-2xl pt-6 pb-4">Best Sellers</h2>
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6 mb-10 pb-10">
           {products.map((product) => (
             <Card
               key={product.id}
               isPressable
-              className="bg-white rounded-lg"
+              className="rounded-sm"
               onPress={() =>
                 navigate(`/stores/${product.storeId}/products/${product.id}`)
               }
             >
-              <Image
-                src={"../../mobile.png"}
-                alt={product.name}
-                className="object-cover"
-              />
+              <div className="aspect-square overflow-hidden">
+                <Image
+                  alt={product.name}
+                  src={product.imageUrl}
+                  className="object-cover w-full h-full"
+                  removeWrapper
+                />
+              </div>
               <CardBody>
                 <h3>{product.name}</h3>
                 <p className="text-sm">{product.price}€</p>

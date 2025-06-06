@@ -48,7 +48,6 @@ model Store {
   bannerUrl      String?
   categoryId     String
   status         StoreStatus   @default(PENDING)
-  ratings        Float         @default(0)
   products       Product[]
   user           User          @relation(fields: [userId], references: [id])
   paymentDetails StorePayment?
@@ -85,7 +84,6 @@ model Product {
   imageUrl    String                 @default("")
   productUrl  String
   isActive    Boolean                @default(true)
-  ratings     Float                  @default(0)
   storeId     String
   userId      String
   carts       CartItem[]

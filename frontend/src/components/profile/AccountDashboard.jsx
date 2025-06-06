@@ -39,11 +39,10 @@ const AccountDashboard = ({ user }) => {
           <p>No purchases found.</p>
         ) : (
           orders.map((order) => (
-            <div key={order.id}>
+            <>
               {order.orderItems.map((product) => (
                 <Card
                   key={product.id}
-                  shadow="sm"
                   isPressable
                   onPress={() =>
                     navigate(
@@ -61,8 +60,10 @@ const AccountDashboard = ({ user }) => {
                       className="object-cover w-full h-[200px]"
                     />
                   </CardBody>
-                  <CardFooter className="flex flex-col items-start -ml-3">
-                    <p>{product.product.name}</p>
+                  <CardFooter className="flex flex-col items-start -ml-2">
+                    <p className="font-bold truncate block max-w-full">
+                      {product.product.name}
+                    </p>
                     <p className="underline">
                       <a
                         href={product.product.productUrl}
@@ -75,7 +76,7 @@ const AccountDashboard = ({ user }) => {
                   </CardFooter>
                 </Card>
               ))}
-            </div>
+            </>
           ))
         )}
       </div>

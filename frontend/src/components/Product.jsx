@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import {
   Button,
@@ -9,15 +9,18 @@ import {
   ModalBody,
   ModalFooter,
   useDisclosure,
-  Link,
 } from "@nextui-org/react";
+import { Link } from "react-router-dom";
 import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
+import StarBorderIcon from "@mui/icons-material/StarBorder";
+import StarIcon from "@mui/icons-material/Star";
 import { useCart } from "../hooks/CartContext";
 import storeservice from "../services/storeservice";
 import { useAuth } from "../hooks/AuthContext";
 import { toast } from "react-toastify";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import orderservice from "../services/orderservice";
+import productservice from "../services/productservice";
 
 const fetchProductById = async (productId, storeId) => {
   const response = await storeservice.getProduct(productId, storeId);
@@ -42,6 +45,22 @@ const checkIfPurchased = async (userId, productId, accessToken) => {
   return response.hasPurchased;
 };
 
+const postReview = async ({
+  productId,
+  userId,
+  rating,
+  comment,
+  accessToken,
+}) => {
+  const data = { userId, rating, comment };
+  const response = await productservice.postReview(
+    productId,
+    data,
+    accessToken
+  );
+  return response;
+};
+
 const Product = () => {
   const { storeId, productId } = useParams();
   const { session } = useAuth();
@@ -57,6 +76,9 @@ const Product = () => {
   } = useDisclosure();
   const { addToCart } = useCart();
   const [isOwner, setIsOwner] = useState(false);
+  const [showReviewForm, setShowReviewForm] = useState(false);
+  const [rating, setRating] = useState(0);
+  const [comment, setComment] = useState("");
   const location = useLocation();
   const from = location.state?.from || "/";
   const statusFilter = location.state?.statusFilter;
@@ -86,8 +108,6 @@ const Product = () => {
       setIsOwner(session.user.id === product.userId);
     }
   }, [session, product]);
-
-  useEffect(() => {});
 
   const mutation = useMutation({
     mutationFn: updateProductStatus,
@@ -143,18 +163,49 @@ const Product = () => {
     }
   };
 
+  const reviewMutation = useMutation({
+    mutationFn: () =>
+      postReview({
+        productId,
+        userId: session.user.id,
+        rating,
+        comment,
+        accessToken: session.access_token,
+      }),
+    onSuccess: () => {
+      toast.success("Review submitted!");
+      setShowReviewForm(false);
+      setRating(0);
+      setComment("");
+      queryClient.invalidateQueries(["product", productId]);
+    },
+    onError: () => {
+      toast.error("Failed to submit review.");
+    },
+  });
+
+  const handleReviewSubmit = (e) => {
+    e.preventDefault();
+    if (rating === 0) {
+      toast.error("Please select a rating.");
+      return;
+    }
+    reviewMutation.mutate();
+  };
+
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error loading product</div>;
+  console.log(product);
 
   return (
-    <>
+    <div className="pb-10">
       <Button
         onClick={() => navigate(from, { state: { statusFilter } })}
-        className="ml-10 mt-4 text-sm rounded-lg"
+        className="md:ml-4 mt-4 text-sm rounded-lg"
       >
         <KeyboardBackspaceIcon />
       </Button>
-      <div className="flex justify-center items-center flex-row p-10 space-x-10">
+      <div className="flex justify-center items-center flex-col md:flex-row p-6 md:p-10 md:space-x-10">
         <div>
           <Image
             shadow="lg"
@@ -165,11 +216,18 @@ const Product = () => {
           />
         </div>
 
-        <div className="mt-6">
-          <h1 className="text-3xl font-semibold text-zinc-800">
-            {product.name}
-          </h1>
-          <p className="text-lg mt-4 text-zinc-600">{product.description}</p>
+        <div className="container flex items-start justify-start flex-col mt-6">
+          <h1 className="text-3xl font-semibold">{product.name}</h1>
+          <p className="text-lg mt-4">{product.description}</p>
+          <p className="mt-2">
+            Store:{" "}
+            <Link
+              to={`/stores/${product.storeId}`}
+              className="hover:cursor-pointer"
+            >
+              {product.store.name}
+            </Link>
+          </p>
           {!hasPurchased ? (
             <>
               <p className="text-xl font-semibold mt-6 text-zinc-800">
@@ -186,15 +244,77 @@ const Product = () => {
               </div>
             </>
           ) : (
-            <p className="mt-4 underline">
-              <a
-                href={product.productUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Download file
-              </a>
-            </p>
+            <>
+              <p className="mt-4 underline">
+                <a
+                  href={product.productUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Download file
+                </a>
+              </p>
+
+              <div className="mt-6 w-full max-w-md">
+                {!showReviewForm ? (
+                  <Button
+                    onClick={() => setShowReviewForm(true)}
+                    className="mr-4 border border-zinc-200 text-sm rounded-lg hover:bg-zinc-100"
+                  >
+                    Add Review
+                  </Button>
+                ) : (
+                  <form
+                    onSubmit={handleReviewSubmit}
+                    className="flex flex-col space-y-3 mt-4"
+                  >
+                    <p>Your Rating:</p>
+                    <div className="flex space-x-2">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <button
+                          key={star}
+                          type="button"
+                          onClick={() => setRating(star)}
+                        >
+                          {rating >= star ? <StarIcon /> : <StarBorderIcon />}
+                        </button>
+                      ))}
+                    </div>
+
+                    <p>Comment:</p>
+                    <textarea
+                      id="comment"
+                      value={comment}
+                      onChange={(e) => setComment(e.target.value)}
+                      className="border border-zinc-200 rounded-sm p-2"
+                      rows={4}
+                      placeholder="Write your review here..."
+                    />
+
+                    <div>
+                      <Button
+                        className="mr-4 border border-zinc-200 text-sm rounded-lg hover:bg-zinc-100"
+                        onClick={() => {
+                          setShowReviewForm(false);
+                          setRating(0);
+                          setComment("");
+                        }}
+                      >
+                        Cancel
+                      </Button>
+                      <Button
+                        type="submit"
+                        className="mr-4 border border-zinc-200 text-sm rounded-lg hover:bg-zinc-100"
+                        isLoading={reviewMutation.isLoading}
+                        disabled={reviewMutation.isLoading}
+                      >
+                        Submit
+                      </Button>
+                    </div>
+                  </form>
+                )}
+              </div>
+            </>
           )}
 
           {isOwner && (
@@ -297,7 +417,29 @@ const Product = () => {
           )}
         </div>
       </div>
-    </>
+
+      {product.reviews && product.reviews.length > 0 && (
+        <>
+          <h2 className="text-xl font-semibold pl-6 md:pl-10 pb-4">Reviews</h2>
+          <div className="flex flex-col gap-3 pl-6 md:pl-10 ">
+            {product.reviews.map((review) => (
+              <div key={review.id} className="pt-4">
+                <div className="flex items-center mb-2">
+                  {[1, 2, 3, 4, 5].map((star) =>
+                    review.rating >= star ? (
+                      <StarIcon key={star} />
+                    ) : (
+                      <StarBorderIcon key={star} />
+                    )
+                  )}
+                </div>{" "}
+                <p className="">{review.comment}</p>
+              </div>
+            ))}
+          </div>
+        </>
+      )}
+    </div>
   );
 };
 
