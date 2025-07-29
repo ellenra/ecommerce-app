@@ -129,24 +129,14 @@ model Order {
   createdAt         DateTime         @default(now())
   updatedAt         DateTime         @default(now()) @updatedAt
   userId            String
+  customerId        String
+  sellerId          String
   total             Float
   paymentStatus     PaymentStatus    @default(PENDING)
-  shippingAddressId Int?
-  shippingAddress   ShippingAddress? @relation(fields: [shippingAddressId], references: [id])
   user              User             @relation(fields: [userId], references: [id])
   orderItems        OrderItem[]
 }
 
-model ShippingAddress {
-  id         Int     @id @default(autoincrement())
-  line1      String
-  line2      String?
-  city       String
-  state      String?
-  postalCode String
-  country    String
-  Order      Order[]
-}
 
 model OrderItem {
   id        String   @id @default(cuid())

@@ -16,6 +16,7 @@ const CheckoutSuccess = () => {
   }, []);
 
   useEffect(() => {
+    if (!session) return;
     const orderId = new URLSearchParams(window.location.search).get("orderId");
 
     const fetchOrder = async () => {
@@ -31,7 +32,7 @@ const CheckoutSuccess = () => {
     };
 
     fetchOrder();
-  }, []);
+  }, [session]);
 
   return (
     <div className="py-10">

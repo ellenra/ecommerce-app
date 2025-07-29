@@ -10,31 +10,30 @@ import { useAuth } from "../../hooks/AuthContext";
 import productservice from "../../services/productservice";
 import Select from "react-select";
 
-const productSchema = z.object({
-  name: z.string().min(1, { message: "Product name is required" }),
-  description: z.string().min(1, { message: "Description is required" }),
-  price: z.preprocess(
-    (value) => parseFloat(value),
-    z
-      .number({
-        required_error: "Price is required",
-        invalid_type_error: "Price is required",
-      })
-      .positive({ message: "Price must be positive" })
-  ),
-  imageUrl: z.string(),
-  file: z
-    .instanceof(File, { message: "Image is required" })
-    .optional()
-    .nullable(),
-  productFile: z
-    .instanceof(File, { message: "Product file is required" })
-    .optional()
-    .nullable(),
-  categories: z
-    .array(z.string())
-    .min(1, { message: "Select at least one category" }),
-});
+const productSchema = (isEdit) =>
+  z.object({
+    name: z.string().min(1, { message: "Product name is required" }),
+    description: z.string().min(1, { message: "Description is required" }),
+    price: z.preprocess(
+      (value) => parseFloat(value),
+      z
+        .number({
+          required_error: "Price is required",
+          invalid_type_error: "Price is required",
+        })
+        .positive({ message: "Price must be positive" })
+    ),
+    imageUrl: z.string(),
+    file: isEdit
+      ? z.any()
+      : z.instanceof(File, { message: "Image is required" }),
+    productFile: isEdit
+      ? z.any()
+      : z.instanceof(File, { message: "Product file is required" }),
+    categories: z
+      .array(z.string())
+      .min(1, { message: "Select at least one category" }),
+  });
 
 const ProductForm = () => {
   const { session, loading } = useAuth();
@@ -44,6 +43,8 @@ const ProductForm = () => {
   const [categoryList, setCategoryList] = useState([]);
   const navigate = useNavigate();
 
+  const isEdit = Boolean(productId);
+
   const {
     handleSubmit,
     setValue,
@@ -51,7 +52,7 @@ const ProductForm = () => {
     control,
     formState: { errors },
   } = useForm({
-    resolver: zodResolver(productSchema),
+    resolver: zodResolver(productSchema(isEdit)),
     defaultValues: {
       name: "",
       description: "",

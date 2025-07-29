@@ -13,10 +13,10 @@ router.post("/create-checkout-session", async (req, res) => {
   const sellers = {};
 
   req.body.cartItems.forEach((item) => {
-    if (!sellers[item.product.userId]) {
-      sellers[item.product.userId] = [];
+    if (!sellers[item.userId]) {
+      sellers[item.userId] = [];
     }
-    sellers[item.product.userId].push(item);
+    sellers[item.userId].push(item);
   });
 
   const customer = await stripe.customers.create({
@@ -46,13 +46,13 @@ router.post("/create-checkout-session", async (req, res) => {
       data: {
         userId: req.body.userId,
         total: items.reduce((total, item) => total + item.price, 0),
-        status: "PENDING",
         paymentStatus: "PENDING",
         customerId: customer.id,
         sellerId: sellerId,
         orderItems: {
           create: items.map((item) => ({
             productId: item.id,
+            sellerId: sellerId,
           })),
         },
       },
@@ -71,6 +71,7 @@ router.post("/create-checkout-session", async (req, res) => {
           },
           unit_amount: item.price * 100,
         },
+        quantity: 1,
       };
     });
 

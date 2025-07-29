@@ -17,7 +17,6 @@ orderRouter.get("/:orderId", authMiddleware, async (req, res) => {
             product: true,
           },
         },
-        shippingAddress: true,
       },
     });
 
