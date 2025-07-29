@@ -25,7 +25,7 @@ app.use("/api/stripe/webhook", express.raw({ type: "application/json" }));
 
 const allowedOrigins = [
   "http://localhost:5173",
-  "https://ecommerce-app-mu-opal.vercel.app/",
+  "https://ecommerce-5yqj6ztsd-ellenras-projects.vercel.app",
 ];
 
 app.use(
@@ -39,6 +39,7 @@ app.use(
     },
   })
 );
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
