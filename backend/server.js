@@ -23,8 +23,22 @@ if (!jwt_secret) {
 
 app.use("/api/stripe/webhook", express.raw({ type: "application/json" }));
 
-app.use(cors());
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://ecommerce-app-mu-opal.vercel.app/",
+];
 
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+  })
+);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
