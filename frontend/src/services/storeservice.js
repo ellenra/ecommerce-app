@@ -1,10 +1,10 @@
 import axios from "axios";
 
-const baseUrl = "http://localhost:5000/api/stores/";
+const baseUrl = process.env.API_URL;
 
 const createStore = async (data, accessToken) => {
   try {
-    const response = await axios.post(baseUrl, data, {
+    const response = await axios.post(`${baseUrl}/api/stores`, data, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
@@ -23,7 +23,10 @@ const getStore = async (storeId, accessToken = null) => {
     if (accessToken) {
       config.headers.Authorization = `Bearer ${accessToken}`;
     }
-    const response = await axios.get(`${baseUrl}${storeId}`, config);
+    const response = await axios.get(
+      `${baseUrl}/api/stores/${storeId}`,
+      config
+    );
     return response.data;
   } catch (error) {
     console.error("Error in fetching store:", error.message);
@@ -32,7 +35,7 @@ const getStore = async (storeId, accessToken = null) => {
 
 const getUserStore = async (userId, accessToken) => {
   try {
-    const response = await axios.get(`${baseUrl}/user/${userId}`, {
+    const response = await axios.get(`${baseUrl}/api/stores/user/${userId}`, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
@@ -45,7 +48,7 @@ const getUserStore = async (userId, accessToken) => {
 
 const updateStore = async (storeId, data, accessToken) => {
   try {
-    const response = await axios.put(`${baseUrl}${storeId}`, data, {
+    const response = await axios.put(`${baseUrl}/api/stores/${storeId}`, data, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
@@ -59,7 +62,7 @@ const updateStore = async (storeId, data, accessToken) => {
 const listProduct = async (data, accessToken) => {
   try {
     const response = await axios.post(
-      `${baseUrl}${data.get("storeId")}/products`,
+      `${baseUrl}/api/stores/${data.get("storeId")}/products`,
       data,
       {
         headers: {
@@ -76,7 +79,7 @@ const listProduct = async (data, accessToken) => {
 const getProduct = async (productId) => {
   try {
     const response = await axios.get(
-      `${baseUrl}/:storeId/products/${productId}`,
+      `${baseUrl}/api/stores/:storeId/products/${productId}`,
       productId
     );
     return response.data;
@@ -88,7 +91,7 @@ const getProduct = async (productId) => {
 const changeProductStatus = async (productId, storeId, accessToken) => {
   try {
     const response = await axios.put(
-      `${baseUrl}${storeId}/products/${productId}/status`,
+      `${baseUrl}/api/stores/${storeId}/products/${productId}/status`,
       {},
       {
         headers: {
@@ -108,7 +111,7 @@ const changeProductStatus = async (productId, storeId, accessToken) => {
 const deleteProduct = async (productId, storeId, accessToken) => {
   try {
     const response = await axios.delete(
-      `${baseUrl}${storeId}/products/${productId}`,
+      `${baseUrl}/api/stores/${storeId}/products/${productId}`,
       {
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -127,7 +130,9 @@ const deleteProduct = async (productId, storeId, accessToken) => {
 const updateProduct = async (data, accessToken) => {
   try {
     const response = await axios.put(
-      `${baseUrl}${data.get("storeId")}/products/${data.get("productId")}`,
+      `${baseUrl}/api/stores/${data.get("storeId")}/products/${data.get(
+        "productId"
+      )}`,
       data,
       {
         headers: {

@@ -1,13 +1,10 @@
 import axios from "axios";
 
-const baseUrl = "http://localhost:5000/api/users";
+const baseUrl = process.env.API_URL;
 
 const register = async (data) => {
   try {
-    const response = await axios.post(
-      "http://localhost:5000/api/auth/register",
-      data
-    );
+    const response = await axios.post(`${baseUrl}/api/auth/register`, data);
   } catch (error) {
     console.error("Error in register:", error.message);
   }
@@ -15,11 +12,15 @@ const register = async (data) => {
 
 const getUser = async (userId, accessToken) => {
   try {
-    const response = await axios.get(`${baseUrl}/${userId}`, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
+    const response = await axios.get(
+      `${baseUrl}/api/users
+/${userId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
 
     return response.data;
   } catch (error) {
@@ -31,7 +32,7 @@ const getUser = async (userId, accessToken) => {
 const addProductToFavorites = async (productId, userId, accessToken) => {
   try {
     const response = await axios.post(
-      `${baseUrl}/${userId}/favorites`,
+      `${baseUrl}/api/users/${userId}/favorites`,
       {
         productId,
       },
@@ -50,7 +51,7 @@ const addProductToFavorites = async (productId, userId, accessToken) => {
 const deleteProductFromFavorites = async (productId, userId, accessToken) => {
   try {
     const response = await axios.delete(
-      `${baseUrl}/${userId}/favorites/${productId}`,
+      `${baseUrl}/api/users/${userId}/favorites/${productId}`,
       {
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -65,7 +66,7 @@ const deleteProductFromFavorites = async (productId, userId, accessToken) => {
 
 const updateUser = async (userId, data, accessToken) => {
   try {
-    const response = await axios.put(`${baseUrl}/${userId}`, data, {
+    const response = await axios.put(`${baseUrl}/api/users/${userId}`, data, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },

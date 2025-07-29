@@ -1,10 +1,10 @@
 import axios from "axios";
 
-const baseUrl = "http://localhost:5000/api/orders";
+const baseUrl = process.env.API_URL;
 
 const getOrder = async (orderId, accessToken) => {
   try {
-    const response = await axios.get(`${baseUrl}/${orderId}`, {
+    const response = await axios.get(`${baseUrl}/api/orders/${orderId}`, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
@@ -17,7 +17,7 @@ const getOrder = async (orderId, accessToken) => {
 
 const getOrdersByUserId = async (userId, accessToken) => {
   try {
-    const response = await axios.get(`${baseUrl}`, {
+    const response = await axios.get(`${baseUrl}/api/orders/`, {
       params: { userId },
       headers: {
         Authorization: `Bearer ${accessToken}`,
@@ -31,7 +31,7 @@ const getOrdersByUserId = async (userId, accessToken) => {
 
 const getOrdersByStoreId = async (storeId, accessToken) => {
   try {
-    const response = await axios.get(baseUrl, {
+    const response = await axios.get(`${baseUrl}/api/orders/`, {
       params: { storeId },
       headers: {
         Authorization: `Bearer ${accessToken}`,
@@ -46,7 +46,7 @@ const getOrdersByStoreId = async (storeId, accessToken) => {
 const updateOrderStatus = async (orderId, status, accessToken) => {
   try {
     const response = await axios.put(
-      `${baseUrl}/${orderId}`,
+      `${baseUrl}/api/orders/${orderId}`,
       { status },
       {
         headers: {
@@ -62,12 +62,15 @@ const updateOrderStatus = async (orderId, status, accessToken) => {
 
 const checkIfPurchased = async (userId, productId, accessToken) => {
   try {
-    const response = await axios.get(`${baseUrl}/order-item/${productId}`, {
-      params: { userId },
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
+    const response = await axios.get(
+      `${baseUrl}/api/orders/order-item/${productId}`,
+      {
+        params: { userId },
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
 
     return response.data;
   } catch (error) {

@@ -1,11 +1,11 @@
 import axios from "axios";
 
-const baseUrl = "http://localhost:5000/api/cart/";
+const baseUrl = process.env.API_URL;
 
 const addToCart = async (data, accessToken) => {
   try {
     const response = await axios.post(
-      `${baseUrl}${data.get("storeId")}/products`,
+      `${baseUrl}/api/cart/${data.get("storeId")}/products`,
       data,
       {
         headers: {
