@@ -10,6 +10,15 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 const router = express.Router();
 
 router.post("/create-checkout-session", async (req, res) => {
+  const sellers = {};
+
+  req.body.cartItems.forEach((item) => {
+    if (!sellers[item.product.userId]) {
+      sellers[item.product.userId] = [];
+    }
+    sellers[item.product.userId].push(item);
+  });
+
   const customer = await stripe.customers.create({
     metadata: {
       userId: req.body.userId,
@@ -20,111 +29,131 @@ router.post("/create-checkout-session", async (req, res) => {
       ),
     },
   });
-  const line_items = req.body.cartItems.map((item) => {
-    return {
-      price_data: {
-        currency: "usd",
-        product_data: {
-          name: item.name,
-          images: [item.imageUrl],
-          description: item.description,
-          metadata: {
-            id: item.id,
-          },
+
+  const checkoutSessions = [];
+
+  for (const [sellerId, items] of Object.entries(sellers)) {
+    const seller = await prisma.user.findUnique({
+      where: { id: sellerId },
+      select: { stripeAccountId: true },
+    });
+
+    if (!seller?.stripeAccountId) {
+      return res.status(400).send("Seller doesn't have Stripe account!");
+    }
+
+    const order = await prisma.order.create({
+      data: {
+        userId: req.body.userId,
+        total: items.reduce((total, item) => total + item.price, 0),
+        status: "PENDING",
+        paymentStatus: "PENDING",
+        customerId: customer.id,
+        sellerId: sellerId,
+        orderItems: {
+          create: items.map((item) => ({
+            productId: item.id,
+          })),
         },
-        unit_amount: item.price * 100,
       },
-    };
-  });
+    });
+    const line_items = items.map((item) => {
+      return {
+        price_data: {
+          currency: "usd",
+          product_data: {
+            name: item.name,
+            images: [item.imageUrl],
+            description: item.description,
+            metadata: {
+              id: item.id,
+            },
+          },
+          unit_amount: item.price * 100,
+        },
+      };
+    });
 
-  const order = await prisma.order.create({
-    data: {
-      userId: req.body.userId,
-      total: req.body.cartItems.reduce(
-        (total, item) => total + item.price * item.count,
-        0
-      ),
-      status: "PENDING",
-      paymentStatus: "PENDING",
-      customerId: customer.id,
-      orderItems: {
-        create: req.body.cartItems.map((item) => ({
-          productId: item.id,
-        })),
+    const session = await stripe.checkout.sessions.create({
+      customer: customer.id,
+      line_items,
+      mode: "payment",
+      billing_address_collection: "required",
+      shipping_address_collection: {
+        allowed_countries: [
+          "US",
+          "CA",
+          "AL",
+          "AD",
+          "AM",
+          "AT",
+          "AZ",
+          "BY",
+          "BE",
+          "BA",
+          "BG",
+          "HR",
+          "CY",
+          "CZ",
+          "DK",
+          "EE",
+          "FI",
+          "FR",
+          "GE",
+          "DE",
+          "GR",
+          "HU",
+          "IS",
+          "IE",
+          "IT",
+          "KZ",
+          "LV",
+          "LI",
+          "LT",
+          "LU",
+          "MT",
+          "MD",
+          "MC",
+          "ME",
+          "NL",
+          "MK",
+          "NO",
+          "PL",
+          "PT",
+          "RO",
+          "RU",
+          "SM",
+          "RS",
+          "SK",
+          "SI",
+          "ES",
+          "SE",
+          "CH",
+          "TR",
+          "UA",
+          "GB",
+          "VA",
+        ],
       },
-    },
-  });
-  console.log("Order created, payment pending:", order);
+      success_url: `${process.env.CLIENT_URL}/checkout-success?orderId=${order.id}`,
+      cancel_url: `${process.env.CLIENT_URL}/checkout-error`,
+      metadata: {
+        orderId: order.id,
+        sellerId: sellerId,
+      },
+      payment_intent_data: {
+        transfer_data: {
+          destination: seller.stripeAccountId,
+        },
+      },
+    });
 
-  const session = await stripe.checkout.sessions.create({
-    customer: customer.id,
-    line_items,
-    mode: "payment",
-    billing_address_collection: "required",
-    shipping_address_collection: {
-      allowed_countries: [
-        "US",
-        "CA",
-        "AL",
-        "AD",
-        "AM",
-        "AT",
-        "AZ",
-        "BY",
-        "BE",
-        "BA",
-        "BG",
-        "HR",
-        "CY",
-        "CZ",
-        "DK",
-        "EE",
-        "FI",
-        "FR",
-        "GE",
-        "DE",
-        "GR",
-        "HU",
-        "IS",
-        "IE",
-        "IT",
-        "KZ",
-        "LV",
-        "LI",
-        "LT",
-        "LU",
-        "MT",
-        "MD",
-        "MC",
-        "ME",
-        "NL",
-        "MK",
-        "NO",
-        "PL",
-        "PT",
-        "RO",
-        "RU",
-        "SM",
-        "RS",
-        "SK",
-        "SI",
-        "ES",
-        "SE",
-        "CH",
-        "TR",
-        "UA",
-        "GB",
-        "VA",
-      ],
-    },
-    success_url: `${process.env.CLIENT_URL}/checkout-success?orderId=${order.id}`,
-    cancel_url: `${process.env.CLIENT_URL}/checkout-error`,
-    metadata: {
-      orderId: order.id,
-    },
-  });
+    checkoutSessions.push(session.url);
+  }
 
-  res.send({ url: session.url });
+  console.log(checkoutSessions);
+
+  res.send({ url: checkoutSessions[0] });
 });
 
 const endpointSecret = process.env.STRIPE_WEBHOOK;
@@ -153,23 +182,6 @@ router.post("/webhook", (request, response) => {
       .then(async (customer) => {
         const session = event.data.object;
         const orderId = session.metadata.orderId;
-        const shippingAddress = session.shipping_details?.address || null;
-
-        let shippingAddressId = null;
-
-        if (shippingAddress) {
-          const address = await prisma.shippingAddress.create({
-            data: {
-              line1: shippingAddress.line1,
-              line2: shippingAddress.line2 || null,
-              city: shippingAddress.city,
-              state: shippingAddress.state || null,
-              postalCode: shippingAddress.postal_code,
-              country: shippingAddress.country,
-            },
-          });
-          shippingAddressId = address.id;
-        }
 
         const order = await prisma.order.update({
           where: { id: orderId },

@@ -54,7 +54,6 @@ const Register = () => {
       });
       navigate(from);
     } catch (exception) {
-      console.log("error in registration", exception.message);
       toast.error(`Failed to register! Reason: ${exception.message}`);
     }
   };

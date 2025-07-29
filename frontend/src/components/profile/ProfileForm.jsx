@@ -74,7 +74,6 @@ const ProfileForm = ({ user, onProfileUpdate }) => {
         onProfileUpdate();
       }
     } catch (exception) {
-      console.log("error in profile form", exception.message);
       toast.error("Failed to update profile.");
     }
   };

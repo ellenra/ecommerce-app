@@ -54,7 +54,7 @@ const StoreForm = () => {
             storeId,
             session?.access_token || null
           );
-          if (storeData.userId !== session.user.id) {
+          if (!storeData || storeData.userId !== session.user.id) {
             navigate("/");
             return;
           }
@@ -103,15 +103,19 @@ const StoreForm = () => {
         toast.success("Store updated successfully!");
         navigate(`/stores/${storeId}/dashboard`);
       } else {
+        formData.append("userEmail", session.user.email);
+
         const newStore = await storeservice.createStore(
           formData,
           session.access_token
         );
+        if (newStore) {
+          window.location.href = newStore.onboardingUrl;
+        }
         toast.success("Store created!");
         navigate(`/stores/${newStore.id}`);
       }
     } catch (exception) {
-      console.log("error in store form", exception.message);
       if (storeId) {
         toast.error("Failed to update store.");
       } else {
@@ -216,7 +220,7 @@ const StoreForm = () => {
           type="submit"
           className="border border-zinc-200 text-sm rounded-lg hover:bg-zinc-100 hover:border-zinc-300"
         >
-          {storeId ? "Update Store" : "Create Store"}
+          {storeId ? "Update Store" : "Continue"}
         </Button>
       </form>
     </div>

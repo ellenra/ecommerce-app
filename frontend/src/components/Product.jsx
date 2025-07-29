@@ -195,7 +195,6 @@ const Product = () => {
 
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error loading product</div>;
-  console.log(product);
 
   return (
     <div className="pb-10">

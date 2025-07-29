@@ -30,6 +30,7 @@ model User {
   imageUrl   String     @default("")
   status     UserStatus @default(ACTIVE)
   seller     Boolean    @default(false)
+  stripeAccountId String?
   cart       Cart?
   orders     Order[]
   reviews    Review[]
@@ -153,6 +154,7 @@ model OrderItem {
   updatedAt DateTime @default(now()) @updatedAt
   orderId   String
   productId String
+  sellerId  String
   order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
   product   Product  @relation(fields: [productId], references: [id])
 }

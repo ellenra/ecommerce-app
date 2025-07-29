@@ -46,7 +46,6 @@ const Login = () => {
         navigate(from);
       }
     } catch (exception) {
-      console.log("error in login", exception);
       toast.error(`Log in failed! ${exception.message}!`);
     }
   };

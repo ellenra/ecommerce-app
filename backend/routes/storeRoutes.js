@@ -4,6 +4,12 @@ import multer from "multer";
 import supabase from "../services/supabaseClient.js";
 import { decode } from "base64-arraybuffer";
 import { authMiddleware, optionalAuthMiddleware } from "../middleware/auth.js";
+import Stripe from "stripe";
+import dotenv from "dotenv";
+
+dotenv.config({ path: "./.env" });
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 const storeRouter = express.Router();
 
@@ -92,7 +98,10 @@ storeRouter.post(
   authMiddleware,
   upload.single("file"),
   async (req, res) => {
-    const { userId, name, description, categoryId, bannerUrl } = req.body;
+    const { userId, name, description, categoryId, bannerUrl, userEmail } =
+      req.body;
+
+    let store;
 
     try {
       if (req.file) {
@@ -113,7 +122,7 @@ storeRouter.post(
           .from("store-images")
           .getPublicUrl(data.path);
 
-        const store = await prisma.store.create({
+        store = await prisma.store.create({
           data: {
             userId,
             name,
@@ -123,9 +132,8 @@ storeRouter.post(
             bannerUrl,
           },
         });
-        res.status(201).json(store);
       } else {
-        const store = await prisma.store.create({
+        store = await prisma.store.create({
           data: {
             userId,
             name,
@@ -134,7 +142,35 @@ storeRouter.post(
             bannerUrl,
           },
         });
-        res.status(201).json(store);
+      }
+      if (store) {
+        const stripeAccount = await stripe.accounts.create({
+          type: "express",
+          country: "FI",
+          email: userEmail,
+          business_type: "individual",
+          business_profile: {
+            url: "https://digitra.com",
+            product_description: "Seller on DIGITRA",
+          },
+          capabilities: {
+            card_payments: { requested: true },
+            transfers: { requested: true },
+          },
+        });
+
+        await prisma.user.update({
+          where: { id: userId },
+          data: { stripeAccountId: stripeAccount.id, seller: true },
+        });
+
+        const stripeLink = await stripe.accountLinks.create({
+          account: stripeAccount.id,
+          type: "account_onboarding",
+          refresh_url: `${process.env.CLIENT_URL}/stripe-onboarding-error`,
+          return_url: `${process.env.CLIENT_URL}/stores/${store.id}`,
+        });
+        return res.status(201).json({ onboardingUrl: stripeLink.url });
       }
     } catch (error) {
       console.log(error.message);
@@ -311,7 +347,6 @@ storeRouter.post(
       });
       res.json(product);
     } catch (error) {
-      console.log("errorrr", error);
       res.status(500).json({ error: "Error listing product" });
     }
   }
