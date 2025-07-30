@@ -34,6 +34,8 @@ app.use(
         callback(new Error("Not allowed"));
       }
     },
+    methods: ["GET", "PUT", "POST", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 
