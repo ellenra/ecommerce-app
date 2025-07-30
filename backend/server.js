@@ -23,10 +23,7 @@ if (!jwt_secret) {
 
 app.use("/api/stripe/webhook", express.raw({ type: "application/json" }));
 
-const allowedOrigins = [
-  "http://localhost:5173",
-  "https://ecommerce-5yqj6ztsd-ellenras-projects.vercel.app",
-];
+const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(",") || [];
 
 app.use(
   cors({
@@ -34,7 +31,7 @@ app.use(
       if (!origin || allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {
-        callback(new Error("Not allowed by CORS"));
+        callback(new Error("Not allowed"));
       }
     },
   })
