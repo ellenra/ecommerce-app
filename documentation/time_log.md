@@ -1,7 +1,7 @@
 ## Work hour log
 
 |   date   | hours | what did i do                                                                                              |
-| :------: | :---- | :--------------------------------------------------------------------------------------------------------- | --- |
+| :------: | :---- | :--------------------------------------------------------------------------------------------------------- |
 |  13.11   | 1     | Configured settings, initialized dependencies and started initial build.                                   |
 |  14.11.  | 3     | Added tailwindcss and nextui for styling. Configured stuff and planned structure of app.                   |
 |  15.11.  | 3     | Created initial database schema, setted up Supabase database and configured local development environment. |
@@ -42,10 +42,10 @@
 |  24.5.   | 3     | Fix and improve homepage                                                                                   |
 |  26.5.   | 5     | Add profile dashboard, improve purchased products and responsiveness                                       |
 |  27.5.   |  4    | Improve product filtering and codebase                                                                     |
-|   5.6.   | 4     |  Add product review feature                                                                                |     |
+|   5.6.   | 4     |  Add product review feature                                                                                |
 |   6.6.   | 4     |  Stripe connect, after store creation user must set up stripe                                              |
 |  28.7.   |  5    |  Start setting up deployment                                                                               |
 |  29.7.   |  5    | Setting up deployment                                                                                      |
 |  30.7.   |  4    |  Fixing errors                                                                                             |
-
-| yht | 165 |
+| | | |
+| yht | 165 | |
