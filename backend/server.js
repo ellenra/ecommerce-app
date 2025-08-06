@@ -25,9 +25,12 @@ app.use("/api/stripe/webhook", express.raw({ type: "application/json" }));
 
 const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(",") || [];
 
+console.log("Allowed origins:", allowedOrigins);
+
 app.use(
   cors({
     origin: function (origin, callback) {
+      console.log("Origin:", origin);
       if (!origin || allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {
