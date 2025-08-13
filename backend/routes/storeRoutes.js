@@ -63,6 +63,7 @@ storeRouter.get("/:id", optionalAuthMiddleware, async (req, res) => {
             price: true,
             storeId: true,
             imageUrl: true,
+            isActive: true,
           },
         },
       },
@@ -205,7 +206,7 @@ storeRouter.put(
       if (req.file) {
         const file = req.file;
         //TODO: Edit so that if image exists, use that, don't upload new
-        const uniqueFileName = `${Date.now()}-${file.name}`;
+        const uniqueFileName = `${Date.now()}-${file.originalname}`;
         const fileBase64 = decode(file.buffer.toString("base64"));
 
         const { data, error } = await supabase.storage
@@ -259,6 +260,7 @@ storeRouter.post(
     { name: "productFile", maxCount: 1 },
   ]),
   async (req, res) => {
+    console.log("Files received:", req.files);
     const storeId = req.params.storeId;
     const userIdFromToken = req.user.user.id;
 
@@ -291,7 +293,10 @@ storeRouter.post(
       }
 
       const file = req.files.file[0];
-      const uniqueFileName = `${Date.now()}-${file.name}`;
+      if (!file || !file.originalname) {
+        return res.status(400).json({ error: "File not uploaded properly." });
+      }
+      const uniqueFileName = `${Date.now()}-${file.originalname}`;
 
       const { data, error } = await supabase.storage
         .from("product-images")
@@ -347,7 +352,10 @@ storeRouter.post(
       });
       res.json(product);
     } catch (error) {
-      res.status(500).json({ error: "Error listing product" });
+      console.error("Error listing product", error);
+      res
+        .status(500)
+        .json({ error: "Error listing product", details: error.message });
     }
   }
 );

@@ -9,8 +9,8 @@ import {
   ModalBody,
   ModalFooter,
   useDisclosure,
+  Link,
 } from "@nextui-org/react";
-import { Link } from "react-router-dom";
 import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
 import StarIcon from "@mui/icons-material/Star";
@@ -221,7 +221,7 @@ const Product = () => {
           <p className="mt-2">
             Store:{" "}
             <Link
-              to={`/stores/${product.storeId}`}
+              href={`/stores/${product.storeId}`}
               className="hover:cursor-pointer"
             >
               {product.store.name}
@@ -367,7 +367,7 @@ const Product = () => {
                 </ModalContent>
               </Modal>
 
-              <Link href={`/stores/${storeId}/products/${productId}/edit`}>
+              <Link href={`/stores/${storeId}/products/${product.id}/edit`}>
                 <Button className="mr-4 border border-zinc-200 text-sm rounded-lg hover:bg-zinc-100 hover:border-zinc-300">
                   Edit product info
                 </Button>

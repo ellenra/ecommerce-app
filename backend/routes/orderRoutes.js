@@ -51,7 +51,6 @@ orderRouter.get("/", authMiddleware, async (req, res) => {
               product: true,
             },
           },
-          shippingAddress: true,
         },
         orderBy: {
           createdAt: "desc",
@@ -86,13 +85,11 @@ orderRouter.get("/", authMiddleware, async (req, res) => {
               product: true,
             },
           },
-          shippingAddress: true,
         },
       });
     } else {
       return res.status(400).json({ message: "Missing userId or storeId" });
     }
-
     if (orders) {
       res.json(orders);
     } else {

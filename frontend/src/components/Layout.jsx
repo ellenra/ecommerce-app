@@ -73,8 +73,10 @@ const Layout = () => {
   const handleCategoryChange = (selectedOption) => {
     setSelectedCategory(selectedOption);
 
-    if (selectedOption && selectedOption.value) {
+    if (selectedOption.value) {
       navigate(`/products?category=${selectedOption.value}`);
+    } else {
+      navigate("/products");
     }
   };
 

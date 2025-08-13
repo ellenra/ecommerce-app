@@ -188,7 +188,6 @@ router.post("/webhook", (request, response) => {
           where: { id: orderId },
           data: {
             paymentStatus: "COMPLETED",
-            shippingAddressId: shippingAddressId,
           },
         });
 

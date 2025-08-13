@@ -13,7 +13,7 @@ const ViewProducts = () => {
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState({
     label: "All Categories",
-    value: "",
+    value: "1",
   });
   const location = useLocation();
   const searchQuery = new URLSearchParams(location.search).get("search");
@@ -53,9 +53,16 @@ const ViewProducts = () => {
     if (!categoryQuery || categories.length === 0) return;
 
     if (selectedCategory.value !== categoryQuery) {
-      const category = categories.find((cat) => cat.value === categoryQuery);
-      if (category) {
-        setSelectedCategory(category);
+      if (categoryQuery === "1") {
+        setSelectedCategory({
+          label: "All Categories",
+          value: "1",
+        });
+      } else {
+        const category = categories.find((cat) => cat.value === categoryQuery);
+        if (category) {
+          setSelectedCategory(category);
+        }
       }
     }
   }, [categories, categoryQuery]);
@@ -78,13 +85,7 @@ const ViewProducts = () => {
 
   return (
     <div className="max-w-7xl mx-auto p-8">
-      {categoryQuery && (
-        <p className="mb-6">
-          {`Categories / ${
-            categories.find((cat) => cat.value === categoryQuery)?.label
-          }`}
-        </p>
-      )}
+      <p className="mb-6">{`Categories / ${selectedCategory.label}`}</p>
       <ProductTable
         products={products}
         session={session}

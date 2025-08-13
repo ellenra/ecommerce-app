@@ -36,7 +36,7 @@ const productSchema = (isEdit) =>
   });
 
 const ProductForm = () => {
-  const { session, loading } = useAuth();
+  const { session } = useAuth();
   const { storeId, productId } = useParams();
   const [viewProductPicture, setViewProductPicture] = useState(null);
   const [productUrl, setProductUrl] = useState(null);
@@ -110,7 +110,7 @@ const ProductForm = () => {
 
       fetchProductData();
     }
-  }, [session, loading, productId]);
+  }, [session, productId]);
 
   const handleImageUpload = (event) => {
     const file = event.target.files[0];
@@ -175,10 +175,6 @@ const ProductForm = () => {
       }
     }
   };
-
-  if (!session) {
-    return null;
-  }
 
   return (
     <div className="flex justify-center">

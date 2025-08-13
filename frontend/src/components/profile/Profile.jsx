@@ -37,9 +37,9 @@ const Profile = () => {
     if (!session) {
       navigate("/login");
       return;
+    } else if (session.user && !user) {
+      fetchUserData();
     }
-
-    fetchUserData();
   }, [session]);
 
   useEffect(() => {
