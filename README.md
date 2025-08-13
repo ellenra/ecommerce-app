@@ -1,5 +1,7 @@
 # Ecommerce Marketplace For Digital Products
 
+https://ecommerce-app-mu-opal.vercel.app/
+
 ## About
 
 This web application allows registered users to create their own online stores to sell all kinds of digital products, or simply browse products and stores as a buyer and make purchases.
@@ -41,14 +43,13 @@ Backend is built with Node.js and Express.js for practice, Supabase is used only
   - I can search products by category and search query
   - I can register, login and logout
   - I can edit my profile info
-  - I can add and delete favorite products and view them on my profile
   - I can add and delete items from my cart
   - I can checkout my cart
   - I can view my orders and their statuses
 - As a seller,
   - I can create store and edit it
-  - I can add, edit and delete products to sell
-  - I can view orders and mark them as shipped
+  - I can add, edit, unlist/list and delete products to sell
+  - I can view orders
 
 ## Screenshots
 ![Screenshot from 2025-06-06 17-00-09](https://github.com/user-attachments/assets/b6010c2b-d9e1-46fc-8807-3d0e593dde0e)
