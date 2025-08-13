@@ -70,11 +70,11 @@ const ViewProducts = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const url = `http://localhost:5000/api/products?category=${
-          selectedCategory.value || ""
-        }&search=${searchQuery || ""}`;
-        const response = await axios.get(url);
-        setProducts(response.data);
+        const response = await productservice.getFilteredProducts(
+          selectedCategory.value,
+          searchQuery
+        );
+        setProducts(response);
       } catch (error) {
         console.error("Error fetching products:", error.message);
       }

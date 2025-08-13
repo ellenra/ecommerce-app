@@ -11,6 +11,17 @@ const getProducts = async () => {
   }
 };
 
+const getFilteredProducts = async (category, query) => {
+  try {
+    const response = await axios.get(
+      `${baseUrl}/api/products?category=${category || ""}&search=${query || ""}`
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error getting products:", error.message);
+  }
+};
+
 const getProductCategories = async () => {
   try {
     const response = await axios.get(`${baseUrl}/api/products/categories`);
@@ -39,6 +50,7 @@ const postReview = async (productId, data, accessToken) => {
 
 export default {
   getProducts,
+  getFilteredProducts,
   getProductCategories,
   postReview,
 };

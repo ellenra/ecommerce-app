@@ -33,6 +33,15 @@ const getStore = async (storeId, accessToken = null) => {
   }
 };
 
+const getStores = async () => {
+  try {
+    const response = await axios.get(`${baseUrl}/api/stores`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching stores", error.message);
+  }
+};
+
 const getUserStore = async (userId, accessToken) => {
   try {
     const response = await axios.get(`${baseUrl}/api/stores/user/${userId}`, {
@@ -149,6 +158,7 @@ const updateProduct = async (data, accessToken) => {
 export default {
   createStore,
   getStore,
+  getStores,
   getUserStore,
   updateStore,
   listProduct,

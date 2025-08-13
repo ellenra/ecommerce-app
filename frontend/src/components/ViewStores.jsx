@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { Button, Card, CardBody, Image } from "@nextui-org/react";
-import axios from "axios";
+import { Card, CardBody, Image } from "@nextui-org/react";
 import { useNavigate } from "react-router-dom";
+import storeservice from "../services/storeservice";
 
 const ViewStores = () => {
   const [stores, setStores] = useState([]);
@@ -10,8 +10,8 @@ const ViewStores = () => {
   useEffect(() => {
     const fetchStores = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/stores");
-        setStores(response.data);
+        const response = await storeservice.getStores();
+        setStores(response);
       } catch (error) {
         console.error("Error fetching stores:", error.message);
       }

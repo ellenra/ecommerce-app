@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/AuthContext";
-import userservice from "../services/userservice";
 import { Button } from "@nextui-org/react";
 import storeservice from "../services/storeservice";
 import ProductTable from "./ProductTable";
@@ -9,28 +8,10 @@ import ProductTable from "./ProductTable";
 const Store = () => {
   const { storeId } = useParams();
   const { session } = useAuth();
-  const [user, setUser] = useState(null);
   const [store, setStore] = useState(null);
   const [isOwner, setIsOwner] = useState(false);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const fetchUserData = async () => {
-      if (!session) return;
-
-      try {
-        const fetchedUser = await userservice.getUser(
-          session.user.id,
-          session.access_token
-        );
-        setUser(fetchedUser);
-      } catch (error) {
-        console.error("Error fetching user data:", error);
-      }
-    };
-
-    fetchUserData();
-  }, [session]);
 
   useEffect(() => {
     const fetchStore = async () => {
@@ -45,14 +26,23 @@ const Store = () => {
         }
       } catch (error) {
         console.error("Error fetching store data:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchStore();
   }, [storeId]);
 
+  if (loading) {
+    return (
+      <div className="max-w-7xl mx-auto p-8 text-center">Loading store...</div>
+    );
+  }
   if (!store) {
-    return <div>No store found.</div>;
+    return (
+      <div className="max-w-7xl mx-auto p-8 text-center">No store found.</div>
+    );
   }
 
   //Show only listed products in store view for store owners too
@@ -75,12 +65,7 @@ const Store = () => {
           <h1 className="text-3xl font-bold">{store.name}</h1>
           <p className="text-lg mt-2">{store.description}</p>
         </div>
-        <ProductTable
-          products={filteredProducts}
-          session={session}
-          user={user}
-          setUser={setUser}
-        />
+        <ProductTable products={filteredProducts} />
       </>
     </div>
   );

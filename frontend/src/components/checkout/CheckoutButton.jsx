@@ -4,7 +4,7 @@ import { useAuth } from "../../hooks/AuthContext";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-const baseUrl = "http://localhost:5000/api";
+const baseUrl = process.env.API_URL;
 
 const CheckoutButton = ({ cartItems }) => {
   const session = useAuth();
@@ -20,7 +20,7 @@ const CheckoutButton = ({ cartItems }) => {
 
   const handleCheckout = () => {
     axios
-      .post(`${baseUrl}/stripe/create-checkout-session`, {
+      .post(`${baseUrl}/api/stripe/create-checkout-session`, {
         cartItems,
         userId: session.user.id,
       })

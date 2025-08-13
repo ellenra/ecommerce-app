@@ -20,6 +20,7 @@ const StoreForm = () => {
   const { storeId } = useParams();
   const { session, user } = useAuth();
   const [viewProfilePicture, setViewProfilePicture] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
 
   const {
@@ -84,6 +85,7 @@ const StoreForm = () => {
   };
 
   const onSubmit = async (data) => {
+    setIsSubmitting(true);
     try {
       const formData = new FormData();
       const { name, description, categoryId, file } = data;
@@ -121,6 +123,8 @@ const StoreForm = () => {
       } else {
         toast.error("Failed to create store.");
       }
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -218,9 +222,16 @@ const StoreForm = () => {
         </Link>
         <Button
           type="submit"
+          disabled={isSubmitting}
           className="border border-zinc-200 text-sm rounded-lg hover:bg-zinc-100 hover:border-zinc-300"
         >
-          {storeId ? "Update Store" : "Continue"}
+          {isSubmitting
+            ? storeId
+              ? "Updating..."
+              : "Creating..."
+            : storeId
+            ? "Update Store"
+            : "Create"}
         </Button>
       </form>
     </div>

@@ -1,15 +1,8 @@
-import { Button, Card, CardBody, CardFooter, Image } from "@nextui-org/react";
+import { Card, CardBody, CardFooter, Image } from "@nextui-org/react";
 import { useNavigate } from "react-router-dom";
-import { useFavorites } from "../hooks/favoriteProducts";
-import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
-import FavoriteIcon from "@mui/icons-material/Favorite";
 
-const ProductTable = ({ products, session, user, setUser, like = true }) => {
+const ProductTable = ({ products }) => {
   const navigate = useNavigate();
-  const { addFavorite, deleteFavorite, isFavorite } = useFavorites(
-    user,
-    setUser
-  );
 
   return (
     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
@@ -39,29 +32,6 @@ const ProductTable = ({ products, session, user, setUser, like = true }) => {
                   />
                 </div>
               </CardBody>
-              {like && (
-                <div className="absolute top-2 -right-2 z-20">
-                  {session && isFavorite(product.id) ? (
-                    <Button
-                      size="sm"
-                      onClick={() =>
-                        deleteFavorite(product.id, session.access_token)
-                      }
-                    >
-                      <FavoriteIcon />
-                    </Button>
-                  ) : (
-                    <Button
-                      size="sm"
-                      onClick={() =>
-                        addFavorite(product.id, session?.access_token)
-                      }
-                    >
-                      <FavoriteBorderIcon />
-                    </Button>
-                  )}
-                </div>
-              )}
             </div>
             <CardFooter
               className="text-small flex flex-col items-start -ml-3"

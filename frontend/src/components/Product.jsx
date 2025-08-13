@@ -193,8 +193,14 @@ const Product = () => {
     reviewMutation.mutate();
   };
 
-  if (isLoading) return <div>Loading...</div>;
-  if (error) return <div>Error loading product</div>;
+  if (isLoading)
+    return <div className="max-w-7xl mx-auto p-8 text-center">Loading...</div>;
+  if (error)
+    return (
+      <div className="max-w-7xl mx-auto p-8 text-center">
+        Error loading product
+      </div>
+    );
 
   return (
     <div className="pb-10">
