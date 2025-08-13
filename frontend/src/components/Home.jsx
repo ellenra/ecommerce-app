@@ -77,9 +77,7 @@ const Home = () => {
             >
               <Card>
                 <CardBody>
-                  <p className="overflow-hidden text-ellipsis text-lg">
-                    {category.label}
-                  </p>
+                  <p className="truncate text-lg">{category.label}</p>
                 </CardBody>
               </Card>
             </div>
@@ -122,11 +120,11 @@ const Home = () => {
             What Is DIGITRA?
           </h2>
           <p>
-            DIGITAL is a global online marketplace where... Lorem ipsum dolor,
-            sit amet consectetur adipisicing elit. Accusamus facilis non ad
-            saepe rem id iure magnam, similique ullam, aspernatur error nisi
-            veritatis temporibus culpa ex asperiores, numquam maiores?
-            Dignissimos.
+            DIGITAL is a global online marketplace where you can buy and sell
+            all kinds of digital products... Lorem ipsum dolor, sit amet
+            consectetur adipisicing elit. Accusamus facilis non ad saepe rem id
+            iure magnam, similique ullam, aspernatur error nisi veritatis
+            temporibus culpa ex asperiores, numquam maiores? Dignissimos.
           </p>
         </div>
       </section>

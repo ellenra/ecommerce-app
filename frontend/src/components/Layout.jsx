@@ -20,6 +20,7 @@ const Layout = () => {
   const navigate = useNavigate();
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState();
+  const [loadingCategories, setLoadingCategories] = useState(false);
 
   const location = useLocation();
 
@@ -43,6 +44,7 @@ const Layout = () => {
 
   useEffect(() => {
     const fetchCategories = async () => {
+      setLoadingCategories(true);
       try {
         const categories = await productservice.getProductCategories();
         const fetchedCategories = categories.map((cat) => ({
@@ -56,6 +58,8 @@ const Layout = () => {
         ]);
       } catch (error) {
         console.error("Error fetching categories", error.message);
+      } finally {
+        setLoadingCategories(false);
       }
     };
     fetchCategories();
@@ -115,6 +119,7 @@ const Layout = () => {
               options={categories}
               className="w-44"
               placeholder="Categories"
+              isLoading={loadingCategories}
               menuPortalTarget={document.body}
               styles={{
                 menuPortal: (base) => ({ ...base, zIndex: 9999 }),
@@ -127,6 +132,11 @@ const Layout = () => {
               }}
               components={{
                 DropdownIndicator: () => <MenuIcon className="mr-2" />,
+                LoadingMessage: () => (
+                  <div className="flex items-center justify-center py-2">
+                    <div className="w-4 h-4 border-2 border-gray-300 border-t-transparent rounded-full animate-spin" />
+                  </div>
+                ),
               }}
             />
             <div className="flex-1">
