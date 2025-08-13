@@ -41,6 +41,7 @@ const ProductForm = () => {
   const [viewProductPicture, setViewProductPicture] = useState(null);
   const [productUrl, setProductUrl] = useState(null);
   const [categoryList, setCategoryList] = useState([]);
+  const [buttonLoading, setButtonLoading] = useState(false);
   const navigate = useNavigate();
 
   const isEdit = Boolean(productId);
@@ -133,6 +134,7 @@ const ProductForm = () => {
   };
 
   const onSubmit = async (data) => {
+    setButtonLoading(true);
     try {
       const formData = new FormData();
       const { name, description, price, file, categories } = data;
@@ -173,6 +175,8 @@ const ProductForm = () => {
       } else {
         toast.error("Failed to create product.");
       }
+    } finally {
+      setButtonLoading(false);
     }
   };
 
@@ -334,9 +338,16 @@ const ProductForm = () => {
 
         <Button
           type="submit"
-          className="border border-gray-200 rounded hover:bg-gray-100 text-sm"
+          disabled={buttonLoading}
+          className="border border-zinc-200 text-sm rounded-lg hover:bg-zinc-100 hover:border-zinc-300"
         >
-          {productId ? "Save Changes" : "Add Product"}
+          {buttonLoading ? (
+            <div className="w-5 h-5 border-2 border-zinc-200 border-t-transparent rounded-full animate-spin"></div>
+          ) : productId ? (
+            "Save Changes"
+          ) : (
+            "Add Product"
+          )}
         </Button>
       </form>
     </div>

@@ -7,6 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useAuth } from "../../hooks/AuthContext";
 import { toast } from "react-toastify";
 import adminservice from "../../services/adminservice";
+import { useState } from "react";
 
 const loginSchema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
@@ -15,6 +16,7 @@ const loginSchema = z.object({
 
 const Login = () => {
   const { session } = useAuth();
+  const [buttonLoading, setButtonLoading] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const from = location.state?.from || "/";
@@ -30,6 +32,7 @@ const Login = () => {
   }
 
   const onSubmit = async (data) => {
+    setButtonLoading(true);
     try {
       const { email, password } = data;
       const { data: user, error } = await supabase.auth.signInWithPassword({
@@ -47,6 +50,8 @@ const Login = () => {
       }
     } catch (exception) {
       toast.error(`Log in failed! ${exception.message}!`);
+    } finally {
+      setButtonLoading(false);
     }
   };
 
@@ -75,9 +80,14 @@ const Login = () => {
         <div className="flex justify-center">
           <Button
             type="submit"
+            disabled={buttonLoading}
             className="ml-3 border border-zinc-200 rounded-lg hover:bg-zinc-100 hover:border-zinc-300"
           >
-            Login
+            {buttonLoading ? (
+              <div className="w-5 h-5 border-2 border-zinc-200 border-t-transparent rounded-full animate-spin"></div>
+            ) : (
+              "Login"
+            )}
           </Button>
         </div>
       </form>

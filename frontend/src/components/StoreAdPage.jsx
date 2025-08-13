@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@nextui-org/react";
 import { useAuth } from "../hooks/AuthContext";
@@ -6,6 +6,7 @@ import userservice from "../services/userservice";
 
 const StoreAdPage = () => {
   const { session } = useAuth();
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -13,6 +14,7 @@ const StoreAdPage = () => {
       return;
     }
     const fetchUserData = async () => {
+      setLoading(true);
       try {
         const fetchedUser = await userservice.getUser(
           session.user.id,
@@ -25,11 +27,17 @@ const StoreAdPage = () => {
         }
       } catch (error) {
         console.error("Error fetching user data:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchUserData();
   }, [session]);
+
+  if (loading) {
+    return <div className="max-w-7xl mx-auto p-8 text-center">Loading...</div>;
+  }
 
   if (!session) {
     return (

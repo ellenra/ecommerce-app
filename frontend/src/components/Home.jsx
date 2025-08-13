@@ -2,33 +2,11 @@ import { useEffect, useState } from "react";
 import { Card, CardBody, Image, Button, Input } from "@nextui-org/react";
 import { useNavigate } from "react-router-dom";
 import productservice from "../services/productservice";
-import userservice from "../services/userservice";
-import { useAuth } from "../hooks/AuthContext";
 
 const Home = () => {
-  const { session } = useAuth();
-  const [user, setUser] = useState(null);
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const fetchUserData = async () => {
-      if (!session) return;
-
-      try {
-        const fetchedUser = await userservice.getUser(
-          session.user.id,
-          session.access_token
-        );
-        setUser(fetchedUser);
-      } catch (error) {
-        console.error("Error fetching user data:", error);
-      }
-    };
-
-    fetchUserData();
-  }, [session]);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -74,7 +52,7 @@ const Home = () => {
         </Button>
         <Button
           className="mt-8 ml-4 bg-white border border-black hover:bg-black hover:text-white rounded-lg px-6 py-2"
-          onClick={() => navigate("/stores/create")}
+          onClick={() => navigate("/stores/ad")}
         >
           Become a seller
         </Button>
@@ -94,14 +72,11 @@ const Home = () => {
           {categories.slice(0, 8).map((category) => (
             <div
               key={category.value}
-              className="group flex justify-center p-2 rounded-md border border-b-[#ececec]"
+              className="group flex justify-center p-2 rounded-md border border-b-[#ececec] hover:cursor-pointer"
+              onClick={() => navigate(`/products?category=${category.value}`)}
             >
-              <Card className="hover:cursor-pointer">
-                <CardBody
-                  onClick={() =>
-                    navigate(`/products?category=${category.value}`)
-                  }
-                >
+              <Card>
+                <CardBody>
                   <p className="overflow-hidden text-ellipsis text-lg">
                     {category.label}
                   </p>

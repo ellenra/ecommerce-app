@@ -15,6 +15,7 @@ const ViewProducts = () => {
     label: "All Categories",
     value: "1",
   });
+  const [loading, setLoading] = useState(true);
   const location = useLocation();
   const searchQuery = new URLSearchParams(location.search).get("search");
   const categoryQuery = new URLSearchParams(location.search).get("category");
@@ -77,11 +78,17 @@ const ViewProducts = () => {
         setProducts(response);
       } catch (error) {
         console.error("Error fetching products:", error.message);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchProducts();
   }, [selectedCategory, searchQuery]);
+
+  if (loading) {
+    return <div className="max-w-7xl mx-auto p-8 text-center">Loading...</div>;
+  }
 
   return (
     <div className="max-w-7xl mx-auto p-8">

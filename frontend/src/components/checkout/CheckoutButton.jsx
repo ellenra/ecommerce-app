@@ -9,6 +9,7 @@ const baseUrl = process.env.API_URL;
 const CheckoutButton = ({ cartItems }) => {
   const session = useAuth();
   const [userFetched, setUserFetched] = useState(false);
+  const [buttonLoading, setButtonLoading] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -18,18 +19,22 @@ const CheckoutButton = ({ cartItems }) => {
     setUserFetched(true);
   }, [session]);
 
-  const handleCheckout = () => {
-    axios
-      .post(`${baseUrl}/api/stripe/create-checkout-session`, {
-        cartItems,
-        userId: session.user.id,
-      })
-      .then((response) => {
-        if (response.data.url) {
-          window.location.href = response.data.url;
+  const handleCheckout = async () => {
+    setButtonLoading(true);
+    try {
+      const response = await axios.post(
+        `${baseUrl}/api/stripe/create-checkout-session`,
+        {
+          cartItems,
+          userId: session.user.id,
         }
-      })
-      .catch((err) => console.log(err.message));
+      );
+      if (response.data.url) {
+        window.location.href = response.data.url;
+      }
+    } catch (error) {
+      console.error(error.message);
+    }
   };
 
   if (!userFetched) {
@@ -39,7 +44,13 @@ const CheckoutButton = ({ cartItems }) => {
   return (
     <>
       {session.user ? (
-        <Button onClick={() => handleCheckout()}>Check out</Button>
+        <Button onClick={() => handleCheckout()} disabled={buttonLoading}>
+          {buttonLoading ? (
+            <div className="w-5 h-5 border-2 border-zinc-200 border-t-transparent rounded-full animate-spin"></div>
+          ) : (
+            "Check out"
+          )}
+        </Button>
       ) : (
         <Button
           onClick={() => navigate("/login", { state: { from: "/cart" } })}

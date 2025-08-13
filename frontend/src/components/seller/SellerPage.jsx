@@ -11,6 +11,7 @@ const SellerPage = () => {
   const { storeId } = useParams();
   const [store, setStore] = useState(null);
   const [selectedView, setSelectedView] = useState("dashboard");
+  const [loading, setLoading] = useState(true);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -33,6 +34,8 @@ const SellerPage = () => {
         setStore(response);
       } catch (error) {
         console.error("Error fetching store data:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -51,6 +54,10 @@ const SellerPage = () => {
 
   if (!session) {
     return null;
+  }
+
+  if (loading) {
+    return <div className="max-w-7xl mx-auto p-8 text-center">Loading...</div>;
   }
 
   if (!store) {

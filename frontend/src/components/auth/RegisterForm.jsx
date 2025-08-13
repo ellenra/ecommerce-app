@@ -7,6 +7,7 @@ import { toast } from "react-toastify";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAuth } from "../../hooks/AuthContext";
+import { useState } from "react";
 
 const registerSchema = z.object({
   firstName: z.string().min(1, { message: "First name is required" }),
@@ -19,6 +20,7 @@ const registerSchema = z.object({
 
 const Register = () => {
   const session = useAuth();
+  const [buttonLoading, setButtonLoading] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const from = location.state?.from || "/";
@@ -36,6 +38,7 @@ const Register = () => {
   }
 
   const onSubmit = async (data) => {
+    setButtonLoading(true);
     try {
       const { email, password, firstName, lastName } = data;
       const { data: signUpData, error } = await supabase.auth.signUp({
@@ -55,6 +58,8 @@ const Register = () => {
       navigate(from);
     } catch (exception) {
       toast.error(`Failed to register! Reason: ${exception.message}`);
+    } finally {
+      setButtonLoading(false);
     }
   };
 
@@ -96,9 +101,14 @@ const Register = () => {
         <div className="flex justify-center">
           <Button
             type="submit"
+            disabled={buttonLoading}
             className="ml-3 border border-zinc-200 rounded-lg hover:bg-zinc-100 hover:border-zinc-300"
           >
-            Create account
+            {buttonLoading ? (
+              <div className="w-5 h-5 border-2 border-zinc-200 border-t-transparent rounded-full animate-spin"></div>
+            ) : (
+              "Create Account"
+            )}
           </Button>
         </div>
       </form>
